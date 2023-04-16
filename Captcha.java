@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class Captcha {
     private static int spaceNoiseValue = 2; // THIS SHOWS THE AMOUNT OF NOISE BETWEEN NUMBERS
-    private static int textNoiseValue = 10; // THIS SHOWS THE AMOUNT OF NOISE ON NUMBERS
+    private static int textNoiseValue = 8; // THIS SHOWS THE AMOUNT OF NOISE ON NUMBERS
     // YOU CAN CHANGE THESE --> HIGHER NUMBER MEANS LOWER NOISE (BOTH NUMBERS SHOULD BE >= 2)
     private static String theLastGenerated;
     public static void generateCaptcha()

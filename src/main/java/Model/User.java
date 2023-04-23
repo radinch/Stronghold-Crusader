@@ -11,6 +11,7 @@ public class User {
     private String slogan;
     private int securityQuestion;
     private String answer;
+    private int failedAttemptsToLogin;
 
     public User(String username, String password,String nickname,String email) {
         this.username = username;
@@ -80,6 +81,14 @@ public class User {
         this.answer = answer;
     }
 
+    public void setFailedAttemptsToLogin(int failedAttemptsToLogin) {
+        this.failedAttemptsToLogin = failedAttemptsToLogin;
+    }
+
+    public int getFailedAttemptsToLogin() {
+        return failedAttemptsToLogin;
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
     public static String hashString(String password) {
         try {
@@ -95,17 +104,7 @@ public class User {
         }
     }
 
-    public static String decodeString(String passwordHash) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(passwordHash.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hash) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+    public int calculateTimeToWait(){
+        return failedAttemptsToLogin*5;
     }
 }

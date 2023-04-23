@@ -7,22 +7,27 @@ import java.util.regex.Pattern;
 
 public enum LoginRegexes {
     REGISTER("user\\s+create\\s+.+"),
-    NICKNAME("\\-n\\s+((?<nickname>\\S+)|(\"(?<nickname>.+)\"))"),
-    USERNAME("\\-u\\s+((?<username>\\S+)|(\"(?<username>.+)\"))"),
-    PASSWORD("\\-p\\s+((?<password>\\S+)|(\"(?<password>.+)\"))"),
-    PASSWORD_CONFIRMATION("\\-p\\s+((?<password>\\S+)|(\"(?<password>.+)\"))\\s+((?<repeated>\\S+)|(\"(?<repeated>.+)\"))"),
+    NICKNAME("\\-n\\s+(?<nickname>\\S+|(\"(.+)\"))"),
+    USERNAME("\\-u\\s+(?<username>\\S+|(\"(.+)\"))"),
+    PASSWORD("\\-p\\s+(?<password>\\S+|(\"(.+)\"))"),
+    PASSWORD_CONFIRMATION("\\-p\\s+(?<password>\\S+|(\"(.+)\"))\\s+(?<repeated>\\S+|(\"(.+)\"))"),
     EMAIL("\\-email\\s+(?<email>\\S+)"),
-    SLOGAN("\\-s\\s+((?<slogan>\\S+)|(\"(?<slogan>.+)\"))"),
+    SLOGAN("\\-s\\s+(?<slogan>\\S+|(\"(.+)\"))"),
     IS_A_FIELD_EMPTY("\\-\\S+\\s+\\-"),
-    PICK_QUESTION("question\\s+pick\\s+-q\\s+(?<number>\\d)\\s+-a\\s+((?<answer>\\S+)|(\"(?<answer>.+)\"))\\s+-c\\s+((?<confirm>\\S+)|(\"(?<confirm>.+)\"))");
+    PICK_QUESTION("question\\s+pick\\s+.+"),
+    QUESTION_NUMBER("\\-q\\s+(?<number>\\d)"),
+    QUESTION_ANSWER("\\-a\\s+(?<answer>\\S+|(\"(.+)\"))"),
+    QUESTION_CONFIRMATION("\\-c\\s+(?<confirm>\\S+|(\"(.+)\"))");
 
     private String regex;
-    private LoginRegexes(String regex){
-        this.regex=regex;
+
+    private LoginRegexes(String regex) {
+        this.regex = regex;
     }
-    public Matcher getMatcher(String input){
-        Pattern pattern=Pattern.compile(regex);
-        Matcher matcher= pattern.matcher(input);
+
+    public Matcher getMatcher(String input) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(input);
         return matcher;
     }
 }

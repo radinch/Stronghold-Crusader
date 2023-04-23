@@ -4,17 +4,11 @@ import Model.Regex.LoginRegexes;
 import Model.User;
 import View.Captcha;
 import View.Slogan;
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsonschema.SchemaAware;
 
-import javax.print.DocFlavor;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.LinkPermission;
 import java.security.SecureRandom;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -23,20 +17,22 @@ import java.util.regex.Pattern;
 public class LoginController {
     public String register(String input, Scanner scanner) {
         ArrayList<User> users = readFromJson();
-        String slogan = "";
-        DataBank.setAllUsers(users);
-        if (!LoginRegexes.NICKNAME.getMatcher(input).find()) return "you entered no nickname!";
-        if (!LoginRegexes.PASSWORD.getMatcher(input).find()) return "you entered no password!";
-        if (!LoginRegexes.USERNAME.getMatcher(input).find()) return "you entered no username!";
-        if (!LoginRegexes.EMAIL.getMatcher(input).find()) return "you entered no email!";
-        if (LoginRegexes.SLOGAN.getMatcher(input).find())
-            slogan = LoginRegexes.SLOGAN.getMatcher(input).group("slogan");
+        String slogan = null;
+        DataBank.setAllUsers(users); Matcher nickMatcher=LoginRegexes.NICKNAME.getMatcher(input);
+        Matcher passMatcher=LoginRegexes.PASSWORD.getMatcher(input); Matcher userMatcher=LoginRegexes.USERNAME.getMatcher(input);
+        Matcher emailMatcher=LoginRegexes.EMAIL.getMatcher(input); Matcher sloganMatcher=LoginRegexes.SLOGAN.getMatcher(input);
+        if (!nickMatcher.find()) return "you entered no nickname!";
+        if (!passMatcher.find()) return "you entered no password!";
+        if (!userMatcher.find()) return "you entered no username!";
+        if (!emailMatcher.find()) return "you entered no email!";
+        if (sloganMatcher.find())
+           slogan = withoutQuotation(sloganMatcher.group("slogan"));
         if (LoginRegexes.IS_A_FIELD_EMPTY.getMatcher(input).find() || input.charAt(input.length() - 2) == '-')
             return "a field is empty";
-        String username = LoginRegexes.USERNAME.getMatcher(input).group("username");
-        String password = LoginRegexes.PASSWORD.getMatcher(input).group("password");
-        String nickname = LoginRegexes.NICKNAME.getMatcher(input).group("nickname");
-        String email = LoginRegexes.EMAIL.getMatcher(input).group("email");
+        String username = withoutQuotation(userMatcher.group("username"));
+        String password = withoutQuotation(passMatcher.group("password"));
+        String nickname = withoutQuotation(nickMatcher.group("nickname"));
+        String email = withoutQuotation(emailMatcher.group("email"));
         String repeated = null;
         String randomPassword = generateRandomString(10);
         if (!isUsernameValid(username)) return "username format invalid";
@@ -47,42 +43,52 @@ public class LoginController {
         }
         if (!password.equals("random")) {
             if (!isPasswordStrong(password)) return "password is weak";
-            if (LoginRegexes.PASSWORD_CONFIRMATION.getMatcher(input).find())
-                repeated = LoginRegexes.PASSWORD_CONFIRMATION.getMatcher(input).group("repeated");
+            Matcher confirmMatcher=LoginRegexes.PASSWORD_CONFIRMATION.getMatcher(input);
+            if (confirmMatcher.find())
+                repeated = withoutQuotation(confirmMatcher.group("repeated"));
             if (!repeated.equals(password)) return "please make sure that password matches repeated password";
         }
-        if (!whenPasswordIsRandom(scanner, password)) return "so please re-register again";
+        password=whenPasswordIsRandom(scanner,password);
+        if(password.equals("false")) return "so please try registering again!";
         if (isEmailUsed(email)) return "this email is already used";
         if (!isEmailFormatOk(email)) return "email format is not corroct";
-        if (slogan.equals("random")) slogan = randomSlogan();
+        if (slogan.equals("random")) {
+            slogan = randomSlogan();
+            System.out.println("your random slogan is: "+slogan);
+        }
         User newUser = new User(username, password, nickname, email);
         if (!slogan.equals("")) newUser.setSlogan(slogan);
         users.add(newUser);
         System.out.println(securityQuestion(scanner, newUser));
         System.out.println(checkingCaptcha(scanner));
+        writeToJson(users);
         return "your register was successful";
     }
 
-    private boolean whenPasswordIsRandom(Scanner scanner, String password) {
+    private String whenPasswordIsRandom(Scanner scanner, String password) {
+        String newPass=generateRandomString(9);
+        password=newPass;
         System.out.println("Your random password is: " + password + "\n" + "Please re-enter your password here:");
         if (scanner.nextLine().equals(password)) {
             System.out.println("nice job! remember your password for next time!");
-            return true;
+            return password;
         }
         System.out.println("you did not re-enter your password right!");
-        return false;
+        return "false";
     }
 
     private ArrayList<User> readFromJson() {
         File file = new File("users.json");
         ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.readValue(file, new TypeReference<ArrayList<User>>() {
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ArrayList<User>();
+        if(file.length()!=0) {
+            try {
+                return objectMapper.readValue(file, new TypeReference<ArrayList<User>>(){});
+            } catch (IOException e) {
+                e.printStackTrace();
+                return new ArrayList<User>();
+            }
         }
+        return new ArrayList<>();
     }
 
     private boolean isUsernameValid(String username) {
@@ -180,16 +186,23 @@ public class LoginController {
 
     private String securityQuestion(Scanner scanner, User user) {
         while (true) {
+            System.out.println("Pick your security question: 1. What is my fathers name? 2. What\n" + "was my first pets name? 3. What is my mothers last name?");
             String input = scanner.nextLine().trim();
-            System.out.println("Pick your security question: 1. What is my father’s name? 2. What\n" + "was my first pet’s name? 3. What is my mother’s last name?");
-            if (LoginRegexes.PICK_QUESTION.getMatcher(input).matches()) {
-                if (!LoginRegexes.PICK_QUESTION.getMatcher(input).group("answer").equals(LoginRegexes.PICK_QUESTION.getMatcher(input).group("confirm"))) {
-                    System.out.println("you did not confirm your answer correctly");
-                } else {
-                    user.setSecurityQuestion(Integer.parseInt(LoginRegexes.PICK_QUESTION.getMatcher(input).group("number")));
-                    user.setAnswer(LoginRegexes.PICK_QUESTION.getMatcher(input).group("answer"));
-                    return "successful";
+            Matcher matcher=LoginRegexes.PICK_QUESTION.getMatcher(input);
+            if (matcher.matches()) {
+                Matcher confirmMatcher=LoginRegexes.QUESTION_CONFIRMATION.getMatcher(input);
+                Matcher answerMatcher=LoginRegexes.QUESTION_ANSWER.getMatcher(input);
+                Matcher numberMatcher=LoginRegexes.QUESTION_NUMBER.getMatcher(input);
+                if(confirmMatcher.find()&&answerMatcher.find()&&numberMatcher.find()) {
+                    if (!withoutQuotation(answerMatcher.group("answer")).equals(withoutQuotation(confirmMatcher.group("confirm")))) {
+                        System.out.println("you did not confirm your answer correctly");
+                    } else {
+                        user.setSecurityQuestion(Integer.parseInt(numberMatcher.group("number")));
+                        user.setAnswer(withoutQuotation(answerMatcher.group("answer")));
+                        return "successful";
+                    }
                 }
+                else System.out.println("invalid command!");
             } else System.out.println("invalid command");
         }
     }
@@ -199,7 +212,7 @@ public class LoginController {
             Captcha.generateCaptcha();
             String input=scanner.nextLine().trim();
             if(Captcha.checkCaptcha(input))  return"correct!";
-            else System.out.println("incorrect");
+            else System.out.println("incorrect! try again!");
         }
     }
     private void writeToJson(ArrayList<User> users){
@@ -209,6 +222,10 @@ public class LoginController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+    public String withoutQuotation(String string){
+        if(string.charAt(0)=='"') return string.substring(1,string.length()-1);
+        return string;
     }
 }
 

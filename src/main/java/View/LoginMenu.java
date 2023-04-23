@@ -10,8 +10,10 @@ public class LoginMenu {
         String input;
         LoginController loginController=new LoginController();
         while (true){
-            input= scanner.nextLine();
+            input= scanner.nextLine().trim();
             if(LoginRegexes.REGISTER.getMatcher(input).matches()) System.out.println(loginController.register(input,scanner));
+            if(input.equals("exit")) break;
+            else System.out.println("invalid command");
         }
     }
 }

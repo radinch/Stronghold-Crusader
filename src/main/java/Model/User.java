@@ -20,6 +20,9 @@ public class User {
         answer=null;
         this.codedPassword=hashString(password);
     }
+    public User(){
+
+    }
     ////////////////////////////////////////////////////////////////////////////// setters and getters
     public String getUsername() {
         return username;

@@ -85,6 +85,7 @@ public class ProfileMenuController {
                 return Validations.WEAK_PASSWORD;
             System.out.println(signUpController.checkingCaptcha(scanner));
             currentUser.setCodedPassword(User.hashString(newPassword));
+            SignUpController.writeToJson(DataBank.getAllUsers());
             return Validations.PASSWORD_CHANGE_SUCCESSFUL;
         } else {
             newPassword = signUpController.whenPasswordIsRandom(scanner, newPassword);

@@ -1,9 +1,8 @@
 package Controller;
 
-import Model.Regex.ProfileMenuRegexes;
-import Model.User;
-import View.ProfileMenu;
-import Model.Slogan;
+import Model.signup_login_profile.User;
+import View.menus.ProfileMenu;
+import Model.signup_login_profile.Slogan;
 import View.enums.Validations;
 
 import java.util.Random;
@@ -23,8 +22,8 @@ public class ProfileMenuController {
         currentUser = DataBank.getCurrentUser();
     }
 
-    public void run() {
-        profileMenu.run();
+    public void run(Scanner scanner) {
+        profileMenu.run(scanner);
     }
 
     public User getCurrentUser() {
@@ -68,8 +67,8 @@ public class ProfileMenuController {
     }
 
     public Validations changeProfilePassword(String command, Scanner scanner) {
-        String newPasswordRegex="\\-n\\s+(?<password>\"[^\"]+\"|\\S+)";
-        String oldPasswordRegex="\\-o\\s+(?<password>\"[^\"]+\"|\\S+)";
+        String newPasswordRegex = "\\-n\\s+(?<password>\"[^\"]+\"|\\S+)";
+        String oldPasswordRegex = "\\-o\\s+(?<password>\"[^\"]+\"|\\S+)";
         Matcher newPassMatcher = Pattern.compile(newPasswordRegex).matcher(command);
         Matcher oldPassMatcher = Pattern.compile(oldPasswordRegex).matcher(command);
         if (!newPassMatcher.find() || !oldPassMatcher.find())

@@ -1,4 +1,4 @@
-package Model;
+package Model.signup_login_profile;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

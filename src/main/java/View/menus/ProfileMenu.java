@@ -1,25 +1,25 @@
-package View;
+package View.menus;
 
 import java.util.Scanner;
 import java.util.regex.Matcher;
 
+import Controller.MainMenuController;
 import Controller.ProfileMenuController;
 import Model.Regex.ProfileMenuRegexes;
-import Model.User;
+import Model.signup_login_profile.User;
 import View.enums.Validations;
 
 public class ProfileMenu {
 
     private final ProfileMenuController profileMenuController;
-
     public ProfileMenu(ProfileMenuController profileMenuController) {
         this.profileMenuController = profileMenuController;
     }
 
-    public void run() {
+    public void run(Scanner scanner) {
+        System.out.println("Welcome to the profile menu");
         String command;
         Matcher matcher;
-        Scanner scanner = ProfileMenuRegexes.getScanner();
         while (true) {
             command = scanner.nextLine();
             if ((matcher = ProfileMenuRegexes.getMatcher(command, ProfileMenuRegexes.CHANGE_PROFILE_ATTRIBUTE)) != null) {
@@ -42,10 +42,14 @@ public class ProfileMenu {
             else if (ProfileMenuRegexes.getMatcher(command, ProfileMenuRegexes.REMOVE_SLOGAN) != null) {
                 profileMenuController.removeSlogan();
                 System.out.println("your slogan removed successfully");
-            } else if(command.matches("user\\s+logout")) {
+            } else if (command.matches("user\\s+logout")) {
                 System.out.println("user successfully logged out");
                 return;
+            } else if(command.matches("main\\s+menu")) {
+                MainMenuController mainMenuController = new MainMenuController();
+                mainMenuController.run(scanner);
             }
+            else if(command.equals("exit")) return;
             else
                 System.out.println("invalid command");
         }

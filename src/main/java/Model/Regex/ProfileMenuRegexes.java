@@ -18,13 +18,14 @@ public enum ProfileMenuRegexes {
 
     private final String regex;
     private static final Scanner scanner = new Scanner(System.in);
+
     ProfileMenuRegexes(String regex) {
-        this.regex=regex;
+        this.regex = regex;
     }
 
     public static Matcher getMatcher(String input, ProfileMenuRegexes profileMenuRegexes) {
-        Matcher matcher= Pattern.compile(profileMenuRegexes.regex).matcher(input);
-        if(matcher.matches())
+        Matcher matcher = Pattern.compile(profileMenuRegexes.regex).matcher(input);
+        if (matcher.matches())
             return matcher;
         return null;
     }

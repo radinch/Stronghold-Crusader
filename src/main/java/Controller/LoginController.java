@@ -1,19 +1,18 @@
 package Controller;
 
 import Model.Regex.LoginRegexes;
-import Model.SecurityQuestion;
-import Model.User;
+import Model.signup_login_profile.SecurityQuestion;
+import Model.signup_login_profile.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 
 public class LoginController {
-    public String login(String input) throws IOException {
+    public String login(String input, Scanner scanner) throws IOException {
         DataBank.setAllUsers(SignUpController.readFromJson());
         boolean wantToStayLoggedIn;
         String username = null;
@@ -42,8 +41,9 @@ public class LoginController {
         }
         DataBank.setCurrentUser(DataBank.getUserByUsername(username));
         DataBank.getUserByUsername(username).setFailedAttemptsToLogin(0);
+        System.out.println(SignUpController.checkingCaptcha(scanner));
         SignUpController.writeToJson(DataBank.getAllUsers());
-        return "welcome to the profile menu!";
+        return "Welcome to the profile menu!";
     }
 
     public String forgotPassword(Scanner scanner, Matcher matcher) {
@@ -53,7 +53,9 @@ public class LoginController {
         System.out.println("answer this:\n" + SecurityQuestion.getQuestionByNUmber(user.getSecurityQuestion()));
         if (scanner.nextLine().trim().equals(user.getAnswer())) {
             System.out.println("alright! type in another password:");
-            user.setCodedPassword(User.hashString(scanner.nextLine()));
+            String newPassword = scanner.nextLine();
+            if (!SignUpController.isPasswordStrong(newPassword)) return "password is weak";
+            user.setCodedPassword(User.hashString(newPassword));
             SignUpController.writeToJson(DataBank.getAllUsers());
             return "password changed successfully!";
         }
@@ -62,6 +64,6 @@ public class LoginController {
 
     private void writeToJson(User user) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue(new File("loggedInUser.json"), User.class);
+        mapper.writeValue(new File("loggedInUser.json"), user);
     }
 }

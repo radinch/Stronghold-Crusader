@@ -1,4 +1,4 @@
-package Model;
+package Model.signup_login_profile;
 
 public enum SecurityQuestion {
     FIRST("What is my father’s name"),
@@ -13,9 +13,10 @@ public enum SecurityQuestion {
     public String getQuestion() {
         return question;
     }
-    public static String getQuestionByNUmber(int number){
-        if(number==1) return FIRST.question;
-        if(number==2) return SECOND.question;
+
+    public static String getQuestionByNUmber(int number) {
+        if (number == 1) return FIRST.question;
+        if (number == 2) return SECOND.question;
         return THIRD.question;
     }
 }

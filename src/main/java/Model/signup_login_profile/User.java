@@ -1,9 +1,11 @@
-package Model;
+package Model.signup_login_profile;
 
 import Controller.DataBank;
+import Model.gameandbattle.shop.Request;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 public class User {
     private String username;
@@ -16,18 +18,22 @@ public class User {
     private int failedAttemptsToLogin;
     private int highScore;
     private int rank;
-
+    private ArrayList<Request> requests;
+    private ArrayList<Request> acceptedOrMadeRequests;
     public User(String username, String password, String nickname, String email) {
         this.username = username;
-        this.email=email;
-        this.nickname=nickname;
-        slogan=null;
-        answer=null;
-        this.codedPassword=hashString(password);
-        highScore=0;
-        rank= DataBank.getAllUsers().size()+1;
+        this.email = email;
+        this.nickname = nickname;
+        slogan = null;
+        answer = null;
+        this.codedPassword = hashString(password);
+        highScore = 0;
+        rank = DataBank.getAllUsers().size() + 1;
+        requests=new ArrayList<>();
+        acceptedOrMadeRequests=new ArrayList<>();
     }
-    public User(){
+
+    public User() {
 
     }
     ////////////////////////////////////////////////////////////////////////////// setters and getters
@@ -127,7 +133,8 @@ public class User {
         }
     }
 
-    public int calculateTimeToWait(){
-        return failedAttemptsToLogin*5;
+    public int calculateTimeToWait() {
+        return failedAttemptsToLogin * 5;
     }
+
 }

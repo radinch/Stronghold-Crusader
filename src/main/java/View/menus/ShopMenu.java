@@ -28,4 +28,12 @@ public class ShopMenu {
             else System.out.println("invalid command");
         }
     }
+
+    public Government getGovernment() {
+        return government;
+    }
+
+    public void setGovernment(Government government) {
+        this.government = government;
+    }
 }

@@ -53,4 +53,20 @@ public class TradeMenu {
         }
         return null;
     }
+
+    public Government getGovernment() {
+        return government;
+    }
+
+    public void setGovernment(Government government) {
+        this.government = government;
+    }
+
+    public Government getOtherGovernment() {
+        return otherGovernment;
+    }
+
+    public void setOtherGovernment(Government otherGovernment) {
+        this.otherGovernment = otherGovernment;
+    }
 }

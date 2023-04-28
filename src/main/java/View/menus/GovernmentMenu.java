@@ -8,6 +8,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 
 public class GovernmentMenu {
+
     private final GovernmentMenuController governmentMenuController = new GovernmentMenuController();
 
     public void run(Scanner scanner, Government government) {
@@ -42,4 +43,5 @@ public class GovernmentMenu {
             else System.out.println("invalid command");
         }
     }
+
 }

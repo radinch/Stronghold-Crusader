@@ -10,6 +10,7 @@ import Model.gameandbattle.stockpile.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Scanner;
 
 public class CastleBuilding extends Building {
     private Integer capacity;
@@ -37,8 +38,8 @@ public class CastleBuilding extends Building {
     }
 
     @Override
-    public void whenBuildingIsSelected(int x, int y, Map map) {
-        super.whenBuildingIsSelected(x, y, map);
+    public void whenBuildingIsSelected(int x, int y, Map map, Scanner scanner) {
+        super.whenBuildingIsSelected(x, y, map,scanner);
     }
 
     private void freeHorse(int x, int y){

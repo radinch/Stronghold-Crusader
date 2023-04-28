@@ -18,7 +18,7 @@ public class Government {
     private int foodRate;
     private User ruler;
     private int taxRate;
-    private int coin;
+    private double coin;
     private int fearRate;
     private Stockpile stockpile;
     private Granary granary;
@@ -28,12 +28,13 @@ public class Government {
     private String color;
     private Troop king;
     private int workersEfficiency;
-    private int[] foods;
+    private double[] foods;
     private int[] weapons;
     private ArrayList<Request> requestsMadeByMe;
     private ArrayList<Request> requestsToMe;
     private ArrayList<Request> requestsAcceptedByMe;
     private ArrayList<Request> unseenRequests;
+    private boolean isAlive;
     public Government(int popularity, int foodRate, User ruler, int taxRate, int coin, int fearRate, int population) {
         this.popularity = popularity;
         //initialize food here
@@ -47,12 +48,13 @@ public class Government {
         stockpile=new Stockpile(0,0,0,0,0,0,0,0);
         granary=new Granary(0,0,0,0);
         workersEfficiency=100;
-        foods= new int[]{0, 0, 0, 0};
+        foods= new double[]{0, 0, 0, 0};
         weapons= new int[]{0, 0, 0, 0, 0, 0, 0, 0};
         requestsAcceptedByMe=new ArrayList<>();
         requestsToMe=new ArrayList<>();
         requestsMadeByMe=new ArrayList<>();
         unseenRequests=new ArrayList<>();
+        isAlive=true;
     }
     ////////////////////setters and getters////////////////////
 
@@ -109,8 +111,12 @@ public class Government {
         this.taxRate = taxRate;
     }
 
-    public int getCoin() {
+    public double getCoin() {
         return coin;
+    }
+
+    public void setCoin(double coin) {
+        this.coin = coin;
     }
 
     public void setCoin(int coin) {
@@ -190,11 +196,11 @@ public class Government {
         this.king = king;
     }
 
-    public int[] getFoods() {
+    public double[] getFoods() {
         return foods;
     }
 
-    public void setFoods(int[] foods) {
+    public void setFoods(double[] foods) {
         this.foods = foods;
     }
     public int amountOfAllResources(){
@@ -240,5 +246,20 @@ public class Government {
 
     public void setUnseenRequests(ArrayList<Request> unseenRequests) {
         this.unseenRequests = unseenRequests;
+    }
+
+    public boolean isAlive() {
+        return isAlive;
+    }
+
+    public void setAlive(boolean alive) {
+        isAlive = alive;
+    }
+    public int nonZeroFoods(){
+        int counter=0;
+        for(int i=0;i<4;i++) {
+            if (foods[i] < 0.1 && foods[i] > -0.1) counter++;
+        }
+        return counter;
     }
 }

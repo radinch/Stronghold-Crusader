@@ -11,4 +11,20 @@ public class UnitMenu {
     public void run(Scanner scanner){
         System.out.println("Welcome to the unit menu");
     }
+
+    public Map getMap() {
+        return map;
+    }
+
+    public void setMap(Map map) {
+        this.map = map;
+    }
+
+    public Government getGovernment() {
+        return government;
+    }
+
+    public void setGovernment(Government government) {
+        this.government = government;
+    }
 }

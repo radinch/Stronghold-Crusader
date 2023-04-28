@@ -9,6 +9,7 @@ import Model.gameandbattle.map.Texture;
 import Model.gameandbattle.stockpile.Resource;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class WeaponBuilding extends Building {
     private ArrayList<Resource> consumableResources;
@@ -23,8 +24,8 @@ public class WeaponBuilding extends Building {
     }
 
     @Override
-    public void whenBuildingIsSelected(int x, int y, Map map) {
-        super.whenBuildingIsSelected(x, y, map);
+    public void whenBuildingIsSelected(int x, int y, Map map, Scanner scanner) {
+        super.whenBuildingIsSelected(x, y, map,scanner);
     }
 
     @Override

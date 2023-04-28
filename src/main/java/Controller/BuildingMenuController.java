@@ -5,6 +5,7 @@ import Model.gameandbattle.map.Building;
 import Model.gameandbattle.map.Map;
 import Model.gameandbattle.map.Texture;
 
+import java.util.Scanner;
 import java.util.regex.Matcher;
 
 public class BuildingMenuController {
@@ -14,7 +15,8 @@ public class BuildingMenuController {
         int x = Integer.parseInt(matcher.group("y"));
         int y = Integer.parseInt(matcher.group("x"));
         String type = matcher.group("type");
-        if(isCoordinateValid(x,y) != null)
+        if(!doIHaveAKingPlace()) return "you have to place a small stone gatehouse first";
+        else if(isCoordinateValid(x,y) != null)
             return isCoordinateValid(x,y);
         else if(!DataBank.getBuildingName().containsKey(type))
             return "invalid name of building";
@@ -22,21 +24,33 @@ public class BuildingMenuController {
             return "can't put building on building";
         else if(!isThisCellMaterialValid(x,y,DataBank.getBuildingName().get(type)))
             return "can't put building on this texture";
+        else if(!isResourceEnough(DataBank.getBuildingName().get(type),government))
+            return "resource is not enough";
+        else if(isGoldEnough(DataBank.getBuildingName().get(type),government ))
+            return "gold is not enough";
         else {
             Building tempBuilding = DataBank.getBuildingName().get(type);
             tempBuilding.setGovernment(government);
             map.getACell(x,y).setBuilding(tempBuilding);
+            map.getACell(x,y).setDetail('B');
+            government.getStockpile().increaseByName(tempBuilding.getResourceRequired().getName(),(-1)*tempBuilding.getAmountOfResource());
+            government.setCoin(government.getCoin() - tempBuilding.getGold());
+            if(tempBuilding.getName().equals("Hovel"))government.setMaxPopulation(government.getMaxPopulation()+8);
             return "success";
         }
     }
-    public String selectBuilding(Matcher matcher){
+    public String selectBuilding(Matcher matcher, Scanner scanner){
+        int x = Integer.parseInt(matcher.group("y"));
+        int y = Integer.parseInt(matcher.group("x"));
+        if(!isThereABuilding(x,y))
+            return "there is no building at this location";
+        else if(!doIHaveABuilding(x,y))
+            return "this building is not for you";
+        map.getACell(x,y).getBuilding().whenBuildingIsSelected(x,y,map,scanner);
         return  null;
     }
     public String createUnit(Matcher matcher){
         return null;
-    }
-    public String repair(){
-        return  null;
     }
     public boolean isStockPilePlaceOK(int x ,int y){
         return false;
@@ -58,8 +72,22 @@ public class BuildingMenuController {
     private boolean isThereABuilding(int x,int y){
         return map.getACell(x,y).getBuilding() != null;
     }
-    private boolean doIHaveABuilding(int x,int y){
+
+    private boolean doIHaveABuilding(int x,int y) {
+        return map.getACell(x,y).getBuilding().getGovernment().equals(government);
+    }
+    private boolean doIHaveAKingPlace(){
+        if(government.getBuildingByName("Small stone gatehouse")!=null) return true;
         return false;
+    }
+
+    private boolean isResourceEnough(Building building, Government government) {
+        String resourceName = building.getResourceRequired().getName();
+        return government.getStockpile().getByName(resourceName) >= building.getAmountOfResource();
+    }
+
+    private boolean isGoldEnough(Building building, Government government) {
+        return building.getGold() <= government.getCoin();
     }
     private boolean isResourcesEnough(int x,int y){
         return false;
@@ -71,9 +99,6 @@ public class BuildingMenuController {
         return false;
     }
     private boolean isStoneEnough(int number){
-        return false;
-    }
-    private boolean isEnemyClose(){
         return false;
     }
     public BuildingMenuController(Map map, Government government) {

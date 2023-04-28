@@ -67,7 +67,10 @@ public class ShopMenuController {
     public static void addItem(String name,Government government,int amount){
         Shop shop=Shop.getShop();
         for(int i=0;i<shop.getFoods().length;i++){
-            if(shop.getFoods()[i].getName().equals(name)) government.getFoods()[i]=government.getFoods()[i]+amount;
+            if(shop.getFoods()[i].getName().equals(name)) {
+                government.getFoods()[i]=government.getFoods()[i]+amount;
+                government.getGranary().setGranaryByName(name,  government.getFoods()[i]);
+            }
         }
         for(int i=0;i<shop.getWeapons().length;i++){
             if(shop.getWeapons()[i].getName().equals(name)) government.getWeapons()[i]=government.getWeapons()[i]+amount;

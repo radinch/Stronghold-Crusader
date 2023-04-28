@@ -2,13 +2,14 @@ package View.menus;
 
 import Controller.DropMenuController;
 import Model.Regex.DropElementMenuRegexes;
+import Model.gameandbattle.Government;
 import Model.gameandbattle.map.Map;
 
 import java.util.Scanner;
 import java.util.regex.Matcher;
 
 public class DropElementMenu {
-
+    private Government government;
     private final DropMenuController dropMenuController;
     public DropElementMenu(DropMenuController dropMenuController) {
         this.dropMenuController = dropMenuController;
@@ -40,4 +41,15 @@ public class DropElementMenu {
         }
     }
 
+    public Government getGovernment() {
+        return government;
+    }
+
+    public void setGovernment(Government government) {
+        this.government = government;
+    }
+
+    public DropMenuController getDropMenuController() {
+        return dropMenuController;
+    }
 }

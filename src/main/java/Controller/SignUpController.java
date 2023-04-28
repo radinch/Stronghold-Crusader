@@ -1,9 +1,9 @@
 package Controller;
 
 import Model.Regex.SignUpRegexes;
-import Model.User;
-import Model.Captcha;
-import Model.Slogan;
+import Model.signup_login_profile.User;
+import Model.signup_login_profile.Captcha;
+import Model.signup_login_profile.Slogan;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -13,20 +13,22 @@ import java.security.SecureRandom;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 public class SignUpController {
     public String register(String input, Scanner scanner) {
         ArrayList<User> users = readFromJson();
         String slogan = "";
-        DataBank.setAllUsers(users); Matcher nickMatcher= SignUpRegexes.NICKNAME.getMatcher(input);
-        Matcher passMatcher= SignUpRegexes.PASSWORD.getMatcher(input); Matcher userMatcher= SignUpRegexes.USERNAME.getMatcher(input);
-        Matcher emailMatcher= SignUpRegexes.EMAIL.getMatcher(input); Matcher sloganMatcher= SignUpRegexes.SLOGAN.getMatcher(input);
+        DataBank.setAllUsers(users);
+        Matcher nickMatcher = SignUpRegexes.NICKNAME.getMatcher(input);
+        Matcher passMatcher = SignUpRegexes.PASSWORD.getMatcher(input);
+        Matcher userMatcher = SignUpRegexes.USERNAME.getMatcher(input);
+        Matcher emailMatcher = SignUpRegexes.EMAIL.getMatcher(input);
+        Matcher sloganMatcher = SignUpRegexes.SLOGAN.getMatcher(input);
         if (!nickMatcher.find()) return "you entered no nickname!";
         if (!passMatcher.find()) return "you entered no password!";
         if (!userMatcher.find()) return "you entered no username!";
         if (!emailMatcher.find()) return "you entered no email!";
         if (sloganMatcher.find())
-           slogan = withoutQuotation(sloganMatcher.group("slogan"));
+            slogan = withoutQuotation(sloganMatcher.group("slogan"));
         if (SignUpRegexes.IS_A_FIELD_EMPTY.getMatcher(input).find() || input.charAt(input.length() - 2) == '-')
             return "a field is empty";
         String username = withoutQuotation(userMatcher.group("username"));
@@ -43,20 +45,19 @@ public class SignUpController {
         }
         if (!password.equals("random")) {
             if (!isPasswordStrong(password)) return "password is weak";
-            Matcher confirmMatcher= SignUpRegexes.PASSWORD_CONFIRMATION.getMatcher(input);
+            Matcher confirmMatcher = SignUpRegexes.PASSWORD_CONFIRMATION.getMatcher(input);
             if (confirmMatcher.find())
                 repeated = withoutQuotation(confirmMatcher.group("repeated"));
             if (!repeated.equals(password)) return "please make sure that password matches repeated password";
-        }
-        else {
-            password=whenPasswordIsRandom(scanner,password);
-            if(password.equals("false")) return "so please try registering again!";
+        } else {
+            password = whenPasswordIsRandom(scanner, password);
+            if (password.equals("false")) return "so please try registering again!";
         }
         if (isEmailUsed(email)) return "this email is already used";
         if (!isEmailFormatOk(email)) return "email format is not corroct";
         if (slogan.equals("random")) {
             slogan = randomSlogan();
-            System.out.println("your random slogan is: "+slogan);
+            System.out.println("your random slogan is: " + slogan);
         }
         User newUser = new User(username, password, nickname, email);
         if (!slogan.equals("")) newUser.setSlogan(slogan);
@@ -67,9 +68,9 @@ public class SignUpController {
         return "your register was successful";
     }
 
-    private String whenPasswordIsRandom(Scanner scanner, String password) {
-        String newPass=generateRandomString(9);
-        password=newPass;
+    public String whenPasswordIsRandom(Scanner scanner, String password) {
+        String newPass = generateRandomString(9);
+        password = newPass;
         System.out.println("Your random password is: " + password + "\n" + "Please re-enter your password here:");
         if (scanner.nextLine().equals(password)) {
             System.out.println("nice job! remember your password for next time!");
@@ -82,9 +83,10 @@ public class SignUpController {
     public static ArrayList<User> readFromJson() {
         File file = new File("users.json");
         ObjectMapper objectMapper = new ObjectMapper();
-        if(file.length()!=0) {
+        if (file.length() != 0) {
             try {
-                return objectMapper.readValue(file, new TypeReference<ArrayList<User>>(){});
+                return objectMapper.readValue(file, new TypeReference<ArrayList<User>>() {
+                });
             } catch (IOException e) {
                 e.printStackTrace();
                 return new ArrayList<User>();
@@ -107,7 +109,7 @@ public class SignUpController {
         return false;
     }
 
-    private boolean isPasswordStrong(String password) {
+    public static boolean isPasswordStrong(String password) {
         //System.out.println(password);
         String regex1 = "\\d";
         Pattern pattern1 = Pattern.compile(regex1);
@@ -191,12 +193,12 @@ public class SignUpController {
         while (true) {
             System.out.println("Pick your security question: 1. What is my fathers name? 2. What\n" + "was my first pets name? 3. What is my mothers last name?");
             String input = scanner.nextLine().trim();
-            Matcher matcher= SignUpRegexes.PICK_QUESTION.getMatcher(input);
+            Matcher matcher = SignUpRegexes.PICK_QUESTION.getMatcher(input);
             if (matcher.matches()) {
-                Matcher confirmMatcher= SignUpRegexes.QUESTION_CONFIRMATION.getMatcher(input);
-                Matcher answerMatcher= SignUpRegexes.QUESTION_ANSWER.getMatcher(input);
-                Matcher numberMatcher= SignUpRegexes.QUESTION_NUMBER.getMatcher(input);
-                if(confirmMatcher.find()&&answerMatcher.find()&&numberMatcher.find()) {
+                Matcher confirmMatcher = SignUpRegexes.QUESTION_CONFIRMATION.getMatcher(input);
+                Matcher answerMatcher = SignUpRegexes.QUESTION_ANSWER.getMatcher(input);
+                Matcher numberMatcher = SignUpRegexes.QUESTION_NUMBER.getMatcher(input);
+                if (confirmMatcher.find() && answerMatcher.find() && numberMatcher.find()) {
                     if (!withoutQuotation(answerMatcher.group("answer")).equals(withoutQuotation(confirmMatcher.group("confirm")))) {
                         System.out.println("you did not confirm your answer correctly");
                     } else {
@@ -204,30 +206,31 @@ public class SignUpController {
                         user.setAnswer(withoutQuotation(answerMatcher.group("answer")));
                         return "successful";
                     }
-                }
-                else System.out.println("invalid command!");
+                } else System.out.println("invalid command!");
             } else System.out.println("invalid command");
         }
     }
 
     public static String checkingCaptcha(Scanner scanner) {
-        while (true){
+        while (true) {
             Captcha.generateCaptcha();
-            String input=scanner.nextLine().trim();
-            if(Captcha.checkCaptcha(input))  return"correct!";
+            String input = scanner.nextLine().trim();
+            if (Captcha.checkCaptcha(input)) return "correct!";
             else System.out.println("incorrect! try again!");
         }
     }
-    public static void writeToJson(ArrayList<User> users){
-        ObjectMapper objectMapper=new ObjectMapper();
+
+    public static void writeToJson(ArrayList<User> users) {
+        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            objectMapper.writeValue(new File("users.json"),users);
+            objectMapper.writeValue(new File("users.json"), users);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-    public String withoutQuotation(String string){
-        if(string.charAt(0)=='"') return string.substring(1,string.length()-1);
+
+    public String withoutQuotation(String string) {
+        if (string.charAt(0) == '"') return string.substring(1, string.length() - 1);
         return string;
     }
 }

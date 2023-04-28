@@ -8,7 +8,7 @@ public enum LoginRegexes {
     PASSWORD("\\-p\\s+(?<password>\"[^\"]+\"|\\S+)"),
     STAY_LOGGED_IN("\\-\\-stay\\-logged\\-in"),
     USER_LOGIN("user\\s+login\\s+.+"),
-    FORGOT_PASSWORD("forgot\\s+my\\s+password\\s+\\-u(?<username>(\"(.+)\")|\\S+)");
+    FORGOT_PASSWORD("forgot\\s+my\\s+password\\s+\\-u\\s+(?<username>(\"(.+)\")|\\S+)");
     private String regex;
 
     private LoginRegexes(String regex) {

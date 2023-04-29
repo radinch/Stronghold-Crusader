@@ -1,6 +1,9 @@
 package Model.gameandbattle;
 
+import Controller.DataBank;
+import Model.gameandbattle.battle.Person;
 import Model.gameandbattle.battle.Troop;
+import Model.gameandbattle.battle.Weapon;
 import Model.gameandbattle.map.Building;
 import Model.gameandbattle.shop.Request;
 import Model.gameandbattle.stockpile.Food;
@@ -22,6 +25,7 @@ public class Government {
     private int fearRate;
     private Stockpile stockpile;
     private Granary granary;
+    private ArrayList<Person> people;
     private int population;
     private int maxPopulation;
     private ArrayList<Building> buildings;
@@ -261,5 +265,47 @@ public class Government {
             if (foods[i] < 0.1 && foods[i] > -0.1) counter++;
         }
         return counter;
+    }
+
+    public ArrayList<Person> getPeople() {
+        return people;
+    }
+
+    public void addPerson() {
+        people.add(new Person("unemployed",1,this,false,null));
+    }
+
+    public void addUnit(Troop troop) {
+        for (Person person : people) {
+            if(!person.isBusy()) {
+                people.remove(person);
+                break;
+            }
+        }
+        people.add(troop);
+    }
+
+    public int getCountOfWeapon (String name) {
+        for (int i = 0; i < weapons.length; i++) {
+            if(Weapon.getAllWeapons()[i].getName().equals(name))
+                return weapons[i];
+        }
+        return 0;
+    }
+
+    public void setCountOfWeapon(int count, String name) {
+        for (int i = 0; i < weapons.length; i++) {
+            if(Weapon.getAllWeapons()[i].getName().equals(name))
+                weapons[i]-=count;
+        }
+    }
+
+    public int getUnEmployedUnit() {
+        int count = 0;
+        for (Person person : people) {
+            if(!person.isBusy())
+                count++;
+        }
+        return count;
     }
 }

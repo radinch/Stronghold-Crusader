@@ -20,9 +20,9 @@ public class CastleBuilding extends Building {
     private Integer amountOfDecreaseInSpeed;
     private Integer damage;
     private Integer rate;
-    public CastleBuilding(Government government, int gold, String name, int hitpoint, Resource resourceRequired, int amountOfResource, int amountOfWorkers, ArrayList<Texture> textures, ArrayList<Cell> occupiedCells, Integer capacity,
+    public CastleBuilding(Government government, double gold, String name, int hitpoint, Resource resourceRequired, int amountOfResource, int amountOfWorkers, ArrayList<Texture> textures, Cell occupiedCell, Integer capacity,
                           Integer fireRange, Integer defendRange, HashMap<String, Integer> cost, Integer amountOfDecreaseInSpeed, Integer damage, Integer rate) {
-        super(government, gold, name, hitpoint, resourceRequired,amountOfResource, amountOfWorkers,textures,occupiedCells);
+        super(government, gold, name, hitpoint, resourceRequired,amountOfResource, amountOfWorkers,textures,occupiedCell);
         this.capacity = capacity;
         this.fireRange = fireRange;
         this.defendRange = defendRange;
@@ -47,5 +47,61 @@ public class CastleBuilding extends Building {
     }
     public void freeDogs(int x,int y){
 
+    }
+
+    public void setCapacity(Integer capacity) {
+        this.capacity = capacity;
+    }
+
+    public Integer getFireRange() {
+        return fireRange;
+    }
+
+    public void setFireRange(Integer fireRange) {
+        this.fireRange = fireRange;
+    }
+
+    public Integer getDefendRange() {
+        return defendRange;
+    }
+
+    public void setDefendRange(Integer defendRange) {
+        this.defendRange = defendRange;
+    }
+
+    public HashMap<String, Integer> getCost() {
+        return cost;
+    }
+
+    public void setCost(HashMap<String, Integer> cost) {
+        this.cost = cost;
+    }
+
+    public Integer getAmountOfDecreaseInSpeed() {
+        return amountOfDecreaseInSpeed;
+    }
+
+    public void setAmountOfDecreaseInSpeed(Integer amountOfDecreaseInSpeed) {
+        this.amountOfDecreaseInSpeed = amountOfDecreaseInSpeed;
+    }
+
+    public Integer getDamage() {
+        return damage;
+    }
+
+    public void setDamage(Integer damage) {
+        this.damage = damage;
+    }
+
+    public Integer getRate() {
+        return rate;
+    }
+
+    public void setRate(Integer rate) {
+        this.rate = rate;
+    }
+
+    public Integer getCapacity() {
+        return capacity;
     }
 }

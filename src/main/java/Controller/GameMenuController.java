@@ -24,6 +24,7 @@ public class GameMenuController {
         currentGovernment=governments.get(0);
         this.currentMap=currentMap;
         amountOfAllPlayers=governments.size();
+        DataBank.initializeBuildingName();
     }
     public void run(Scanner scanner) {
         gameMenu.run(scanner);

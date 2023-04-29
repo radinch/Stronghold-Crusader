@@ -1,6 +1,7 @@
 package Model.gameandbattle.map;
 
 import Model.gameandbattle.battle.Person;
+import Model.gameandbattle.battle.Troop;
 
 import java.util.ArrayList;
 
@@ -97,5 +98,9 @@ public class Cell {
     }
     public void fillHole(){
 
+    }
+
+    public void addUnit(Troop troop) {
+        people.add(troop);
     }
 }

@@ -10,22 +10,26 @@ public class Troop extends Person{
     private String state;
     private int attackRange;
     private int attackStrength;
+    private final ArrayList<Weapon> weapons;
     private int speed;
     private int defenseStrength;
     private ArrayList<Texture> notAllowedTextures;
+    private int cost;
     private boolean isVisible;
     private boolean canClimb;
     private boolean canThrowLadder;
     private boolean canDigDitch;
 
-    public Troop(String name, int hp, Government government, boolean isBusy, Building building, int attackStrength, int speed, int defenseStrength, ArrayList<Texture> textures, int attackRange) {
+    public Troop(String name, int hp, Government government, boolean isBusy, Building building, int attackStrength, int speed, int defenseStrength, int attackRange,int cost,ArrayList<Weapon> weapons) {
         super(name,hp, government, isBusy, building);
         this.attackStrength = attackStrength;
         this.speed = speed;
         this.defenseStrength = defenseStrength;
-        notAllowedTextures=textures;
         this.attackRange=attackRange;
+        this.cost = cost;
+        this.weapons= weapons;
     }
+
 
     public int getAttackStrength() {
         return attackStrength;
@@ -81,5 +85,11 @@ public class Troop extends Person{
 
     }
 
+    public int getCost() {
+        return cost;
+    }
 
+    public ArrayList<Weapon> getWeapons() {
+        return weapons;
+    }
 }

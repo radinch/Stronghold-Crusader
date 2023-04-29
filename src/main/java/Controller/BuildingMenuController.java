@@ -1,10 +1,15 @@
 package Controller;
 
+import Model.buildings.CastleBuilding;
+import Model.buildings.OtherBuilding;
+import Model.buildings.WeaponBuilding;
 import Model.gameandbattle.Government;
 import Model.gameandbattle.map.Building;
 import Model.gameandbattle.map.Map;
 import Model.gameandbattle.map.Texture;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 
@@ -15,7 +20,7 @@ public class BuildingMenuController {
         int x = Integer.parseInt(matcher.group("y"));
         int y = Integer.parseInt(matcher.group("x"));
         String type = matcher.group("type");
-        if(!doIHaveAKingPlace()) return "you have to place a small stone gatehouse first";
+        if(!doIHaveAKingPlace() && !type.equals("Small stone gatehouse")) return "you have to place a small stone gatehouse first";
         else if(isCoordinateValid(x,y) != null)
             return isCoordinateValid(x,y);
         else if(!DataBank.getBuildingName().containsKey(type))
@@ -30,8 +35,7 @@ public class BuildingMenuController {
             return "gold is not enough";
         else {
             Building tempBuilding = DataBank.getBuildingName().get(type);
-            tempBuilding.setGovernment(government);
-            map.getACell(x,y).setBuilding(tempBuilding);
+            map.getACell(x,y).setBuilding(getNewBuilding(tempBuilding,x,y));
             map.getACell(x,y).setDetail('B');
             government.getStockpile().increaseByName(tempBuilding.getResourceRequired().getName(),(-1)*tempBuilding.getAmountOfResource());
             government.setCoin(government.getCoin() - tempBuilding.getGold());
@@ -48,9 +52,6 @@ public class BuildingMenuController {
             return "this building is not for you";
         map.getACell(x,y).getBuilding().whenBuildingIsSelected(x,y,map,scanner);
         return  null;
-    }
-    public String createUnit(Matcher matcher){
-        return null;
     }
     public boolean isStockPilePlaceOK(int x ,int y){
         return false;
@@ -89,9 +90,6 @@ public class BuildingMenuController {
     private boolean isGoldEnough(Building building, Government government) {
         return building.getGold() <= government.getCoin();
     }
-    private boolean isResourcesEnough(int x,int y){
-        return false;
-    }
     private boolean isThereEnoughPeople(int number){
         return false;
     }
@@ -104,5 +102,21 @@ public class BuildingMenuController {
     public BuildingMenuController(Map map, Government government) {
         this.map = map;
         this.government = government;
+    }
+    private Building getNewBuilding(Building tempBuilding,int x,int y) {
+        if(tempBuilding instanceof CastleBuilding)
+            return new CastleBuilding(government,tempBuilding.getGold(), tempBuilding.getName(), tempBuilding.getHitpoint(),
+                    tempBuilding.getResourceRequired(),tempBuilding.getAmountOfResource(),tempBuilding.getAmountOfWorkers(),tempBuilding.getAllowedTextures(),
+                    map.getACell(x,y),((CastleBuilding) tempBuilding).getCapacity(), ((CastleBuilding) tempBuilding).getFireRange(),
+                    ((CastleBuilding) tempBuilding).getDefendRange(), ((CastleBuilding) tempBuilding).getCost(), ((CastleBuilding) tempBuilding).getAmountOfDecreaseInSpeed(),
+                    ((CastleBuilding) tempBuilding).getDamage(), ((CastleBuilding) tempBuilding).getRate());
+        else if (tempBuilding instanceof WeaponBuilding)
+            return new WeaponBuilding(government,tempBuilding.getGold(), tempBuilding.getName(), tempBuilding.getHitpoint(),
+                    tempBuilding.getResourceRequired(),tempBuilding.getAmountOfResource(),tempBuilding.getAmountOfWorkers(),tempBuilding.getAllowedTextures(),
+                    map.getACell(x,y),((WeaponBuilding) tempBuilding).getConsumableResources(), ((WeaponBuilding) tempBuilding).getProductionRate());
+        else
+            return new OtherBuilding(government,tempBuilding.getGold(), tempBuilding.getName(), tempBuilding.getHitpoint(),
+                    tempBuilding.getResourceRequired(),tempBuilding.getAmountOfResource(),tempBuilding.getAmountOfWorkers(),tempBuilding.getAllowedTextures(),
+                    map.getACell(x,y),((OtherBuilding) tempBuilding).getRate(), ((OtherBuilding) tempBuilding).getCapacity());
     }
 }

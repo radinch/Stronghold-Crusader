@@ -4,6 +4,9 @@ import Model.buildings.CastleBuilding;
 import Model.buildings.OtherBuilding;
 import Model.buildings.WeaponBuilding;
 import Model.gameandbattle.Government;
+import Model.gameandbattle.battle.Person;
+import Model.gameandbattle.battle.Troop;
+import Model.gameandbattle.battle.Weapon;
 import Model.gameandbattle.map.Building;
 import Model.gameandbattle.map.Cell;
 import Model.gameandbattle.map.Map;
@@ -18,6 +21,7 @@ import java.util.List;
 
 public class DataBank {
 
+    private static final ArrayList<Person> allUnits = new ArrayList<>();
     private static final HashMap<String, Building> buildingName = new HashMap<>(); // name to building
     private static ArrayList<User> allUsers = new ArrayList<>();
     private static User currentUser;
@@ -114,7 +118,7 @@ public class DataBank {
         DataBank.requests = requests;
     }
 
-    public void initializeBuildingName() {
+    public static void initializeBuildingName() {
         //todo 1.textures 2.production rate for weapon buildings
         //damage of Siege tent is not correct
         //rate of apple garden is not correct
@@ -250,5 +254,37 @@ public class DataBank {
 
     public static HashMap<String, Building> getBuildingName() {
         return buildingName;
+    }
+
+    public static void initializeAllUnits()
+    {
+        //horse?
+        allUnits.add(new Troop("Archer",1000,null,true,null,100,300,100,5,12,new ArrayList<Weapon>(List.of(Weapon.BOW))));
+        allUnits.add(new Troop("Crossbowmen",1000,null,true,null,100,100,200,5,20,new ArrayList<Weapon>(List.of(Weapon.CROSSBOW,Weapon.LEATHER_ARMOR))));
+        allUnits.add(new Troop("Spearmen",1000,null,true,null,200,200,50,5,8,new ArrayList<Weapon>(List.of(Weapon.SPEAR))));
+        allUnits.add(new Troop("Pikemen",1000,null,true,null,200,100,300,5,20,new ArrayList<Weapon>(List.of(Weapon.METAL_ARMOR))));
+        allUnits.add(new Troop("Macemen",1000,null,true,null,300,200,200,5,20,new ArrayList<Weapon>(List.of(Weapon.LEATHER_ARMOR,Weapon.MACE))));
+        allUnits.add(new Troop("Swordsmen",1000,null,true,null,300,100,100,5,40,new ArrayList<Weapon>(List.of(Weapon.SWORDS,Weapon.METAL_ARMOR))));
+        allUnits.add(new Troop("Knight",1000,null,true,null,600,600,300,5,40,new ArrayList<Weapon>(List.of(Weapon.METAL_ARMOR,Weapon.SWORDS))));
+        allUnits.add(new Troop("Tunneler",1000,null,true,null,200,300,50,5,30,null));
+        allUnits.add(new Troop("Black Monk",1000,null,true,null,200,100,200,5,10,null));
+        allUnits.add(new Troop("Archer Bow",1000,null,true,null,100,300,100,5,75,null));
+        allUnits.add(new Troop("Slaves",1000,null,true,null,50,300,100,5,5,null));
+        allUnits.add(new Troop("Slingers",1000,null,true,null,100,300,50,5,12,null));
+        allUnits.add(new Troop("Assassins",1000,null,true,null,200,200,200,5,60,null));
+        allUnits.add(new Troop("Horse Archers",1000,null,true,null,100,600,200,5,60,null));
+        allUnits.add(new Troop("Arabian Swordsmen",1000,null,true,null,300,600,300,5,80,null));
+        allUnits.add(new Troop("Fire Throwers",1000,null,true,null,300,600,100,5,100,null));
+        allUnits.add(new Troop("Laddermen",1000,null,true,null,0,300,50,0,3,null));
+        allUnits.add(new Troop("Engineer",1000,null,true,null,0,200,50,0,30,null));
+
+    }
+
+    public static Person getUnitByName(String name) {
+        for (Person unit : allUnits) {
+            if(unit.getName().equals(name))
+                return unit;
+        }
+        return null;
     }
 }

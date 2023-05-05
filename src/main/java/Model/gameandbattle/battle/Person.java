@@ -10,7 +10,6 @@ public class Person {
     private Government government;
     private boolean isBusy;
     private Building building;
-    private Patrol patrol;
 
     public Person(String name, int hp, Government government, boolean isBusy, Building building) {
         this.name=name;
@@ -49,13 +48,5 @@ public class Person {
 
     public void setBuilding(Building building) {
         this.building = building;
-    }
-
-    public Patrol getPatrol() {
-        return patrol;
-    }
-
-    public void setPatrol(Patrol patrol) {
-        this.patrol = patrol;
     }
 }

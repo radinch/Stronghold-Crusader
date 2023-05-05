@@ -4,10 +4,13 @@ import Model.buildings.CastleBuilding;
 import Model.buildings.OtherBuilding;
 import Model.buildings.WeaponBuilding;
 import Model.gameandbattle.Government;
+import Model.gameandbattle.battle.Person;
 import Model.gameandbattle.map.Building;
 import Model.gameandbattle.map.Map;
 import Model.gameandbattle.map.Texture;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 
@@ -29,14 +32,21 @@ public class BuildingMenuController {
             return "can't put building on this texture";
         else if(!isResourceEnough(DataBank.getBuildingName().get(type),government))
             return "resource is not enough";
-        else if(isGoldEnough(DataBank.getBuildingName().get(type),government ))
+        else if(!isGoldEnough(DataBank.getBuildingName().get(type),government ))
             return "gold is not enough";
+        else if(!isWorkerEnough(DataBank.getBuildingName().get(type).getAmountOfWorkers()))
+            return "Workers are not enough";
+
         else {
             Building tempBuilding = DataBank.getBuildingName().get(type);
-            map.getACell(x,y).setBuilding(getNewBuilding(tempBuilding));
+            Building newBuilding = getNewBuilding(tempBuilding,x,y);
+            map.getACell(x,y).setBuilding(newBuilding);
             map.getACell(x,y).setDetail('B');
+            government.getBuildings().add(newBuilding);
             government.getStockpile().increaseByName(tempBuilding.getResourceRequired().getName(),(-1)*tempBuilding.getAmountOfResource());
             government.setCoin(government.getCoin() - tempBuilding.getGold());
+            if(!newBuilding.getName().equals("Small stone gatehouse"))
+                government.addWorker(newBuilding,newBuilding.getAmountOfWorkers());
             if(tempBuilding.getName().equals("Hovel"))government.setMaxPopulation(government.getMaxPopulation()+8);
             return "success";
         }
@@ -50,9 +60,6 @@ public class BuildingMenuController {
             return "this building is not for you";
         map.getACell(x,y).getBuilding().whenBuildingIsSelected(x,y,map,scanner);
         return  null;
-    }
-    public String createUnit(Matcher matcher){
-        return null;
     }
     public boolean isStockPilePlaceOK(int x ,int y){
         return false;
@@ -79,8 +86,7 @@ public class BuildingMenuController {
         return map.getACell(x,y).getBuilding().getGovernment().equals(government);
     }
     private boolean doIHaveAKingPlace(){
-        if(government.getBuildingByName("Small stone gatehouse")!=null) return true;
-        return false;
+        return government.getBuildingByName("Small stone gatehouse") != null;
     }
 
     private boolean isResourceEnough(Building building, Government government) {
@@ -90,9 +96,6 @@ public class BuildingMenuController {
 
     private boolean isGoldEnough(Building building, Government government) {
         return building.getGold() <= government.getCoin();
-    }
-    private boolean isResourcesEnough(int x,int y){
-        return false;
     }
     private boolean isThereEnoughPeople(int number){
         return false;
@@ -107,20 +110,31 @@ public class BuildingMenuController {
         this.map = map;
         this.government = government;
     }
-    private Building getNewBuilding(Building tempBuilding) {
+    private Building getNewBuilding(Building tempBuilding,int x,int y) {
         if(tempBuilding instanceof CastleBuilding)
             return new CastleBuilding(government,tempBuilding.getGold(), tempBuilding.getName(), tempBuilding.getHitpoint(),
                     tempBuilding.getResourceRequired(),tempBuilding.getAmountOfResource(),tempBuilding.getAmountOfWorkers(),tempBuilding.getAllowedTextures(),
-                    tempBuilding.getOccupiedCells(),((CastleBuilding) tempBuilding).getCapacity(), ((CastleBuilding) tempBuilding).getFireRange(),
+                    map.getACell(x,y),((CastleBuilding) tempBuilding).getCapacity(), ((CastleBuilding) tempBuilding).getFireRange(),
                     ((CastleBuilding) tempBuilding).getDefendRange(), ((CastleBuilding) tempBuilding).getCost(), ((CastleBuilding) tempBuilding).getAmountOfDecreaseInSpeed(),
                     ((CastleBuilding) tempBuilding).getDamage(), ((CastleBuilding) tempBuilding).getRate());
         else if (tempBuilding instanceof WeaponBuilding)
             return new WeaponBuilding(government,tempBuilding.getGold(), tempBuilding.getName(), tempBuilding.getHitpoint(),
                     tempBuilding.getResourceRequired(),tempBuilding.getAmountOfResource(),tempBuilding.getAmountOfWorkers(),tempBuilding.getAllowedTextures(),
-                    tempBuilding.getOccupiedCells(),((WeaponBuilding) tempBuilding).getConsumableResources(), ((WeaponBuilding) tempBuilding).getProductionRate());
+                    map.getACell(x,y),((WeaponBuilding) tempBuilding).getConsumableResources(), ((WeaponBuilding) tempBuilding).getProductionRate());
         else
             return new OtherBuilding(government,tempBuilding.getGold(), tempBuilding.getName(), tempBuilding.getHitpoint(),
                     tempBuilding.getResourceRequired(),tempBuilding.getAmountOfResource(),tempBuilding.getAmountOfWorkers(),tempBuilding.getAllowedTextures(),
-                    tempBuilding.getOccupiedCells(),((OtherBuilding) tempBuilding).getRate(), ((OtherBuilding) tempBuilding).getCapacity());
+                    map.getACell(x,y),((OtherBuilding) tempBuilding).getRate(), ((OtherBuilding) tempBuilding).getCapacity());
     }
+
+    private boolean isWorkerEnough(int amountNeeded)
+    {
+        int count = 0;
+        for (Person person : government.getPeople()) {
+            if(!person.isBusy())
+                count++;
+        }
+        return count >= amountNeeded;
+    }
+
 }

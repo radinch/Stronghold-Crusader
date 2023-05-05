@@ -4,10 +4,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum UnitMenuRegexes {
-    SELECT_UNIT("select unit -x (?<x>\\d+) -y (?<y>\\d+)"),
-    MOVE_UNIT("move unit -x (?<x>\\d+) -y (?<y>\\d+)"),
-    PATROL_UNIT("patrol unit -x (?<x>\\d+) -y (?<y>\\d+)"),
-    SET_CONDITION("set -x (?<x>\\d+) -y (?<y>\\d+) -s (?<condition>.+)"),
+    SELECT_UNIT(""),
+    MOVE_UNIT(""),
+    SET_CONDITION(""),
     ATTACK(""),
     SKY_ATTACK(""),
     POUR_OIL(""),

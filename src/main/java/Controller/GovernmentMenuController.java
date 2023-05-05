@@ -8,16 +8,16 @@ public class GovernmentMenuController {
     public String showPopularityFactors(Government government) {
         String output = "";
         if (government.getTaxRate() != 0) {
-            output += "Tax\\n";
+            output += "Tax\n";
         }
         if (government.getFoodRate() != 0) {
-            output += "Food\\n";
+            output += "Food\n";
         }
         if (government.getFearRate() != 0) {
-            output += "Fear\\n";
+            output += "Fear\n";
         }
         if (government.getBuildingByName("Church") != null || government.getBuildingByName("Cathedral") != null) {
-            output += "Religion\\n";
+            output += "Religion\n";
         }
         return output;
     }
@@ -29,7 +29,9 @@ public class GovernmentMenuController {
     public void changeFoodRate(Matcher matcher, Government government) {
         int rate = Integer.parseInt(matcher.group("rate"));
         government.setFoodRate(rate);
-        government.setPopularity(government.getPopularity() + 4 * rate);
+        if(government.getGranary().getTotalFood() <= 0)
+            government.setFoodRate(-2);
+        //government.setPopularity(government.getPopularity() + 4 * rate);
     }
 
     public String showFoodList(Government government) {
@@ -48,10 +50,12 @@ public class GovernmentMenuController {
     public void changeTaxRate(Government government, Matcher matcher) {
         int rateNumber = Integer.parseInt(matcher.group("rate"));
         government.setTaxRate(rateNumber);
-        if (rateNumber <= 0)
+        if(government.getCoin() <= 0)
+            government.setTaxRate(0);
+        /*if (rateNumber <= 0)
             government.setPopularity(government.getPopularity() + -2 * rateNumber + 1);
         else
-            government.setPopularity(government.getPopularity() + -2 * rateNumber);
+            government.setPopularity(government.getPopularity() + -2 * rateNumber);*/
     }
 
     public int showTaxRate(Government government) {
@@ -61,7 +65,7 @@ public class GovernmentMenuController {
     public void changeFearRate(Government government, Matcher matcher) {
         int rateNumber = Integer.parseInt(matcher.group("rate"));
         government.setFearRate(rateNumber);
-        government.setPopularity(government.getPopularity() + rateNumber);
+        //government.setPopularity(government.getPopularity() + rateNumber);
         government.setWorkersEfficiency(100 + 5 * rateNumber);
     }
 }

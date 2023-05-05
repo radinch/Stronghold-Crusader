@@ -18,7 +18,6 @@ public class Cell {
     public Cell(Texture texture, Building building, ArrayList<Person> people) {
         this.texture = texture;
         this.building = building;
-        this.people = people;
         isDitch=false;
         detail='#';
         toPrint = "##" + detail + "##";

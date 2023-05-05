@@ -12,18 +12,16 @@ public class Troop extends Person{
     private int attackStrength;
     private int speed;
     private int defenseStrength;
-    private ArrayList<Texture> notAllowedTextures;
     private boolean isVisible;
     private boolean canClimb;
     private boolean canThrowLadder;
     private boolean canDigDitch;
 
-    public Troop(String name, int hp, Government government, boolean isBusy, Building building, int attackStrength, int speed, int defenseStrength, ArrayList<Texture> textures, int attackRange) {
+    public Troop(String name, int hp, Government government, boolean isBusy, Building building, int attackStrength, int speed, int defenseStrength, int attackRange) {
         super(name,hp, government, isBusy, building);
         this.attackStrength = attackStrength;
         this.speed = speed;
         this.defenseStrength = defenseStrength;
-        notAllowedTextures=textures;
         this.attackRange=attackRange;
     }
 
@@ -65,16 +63,6 @@ public class Troop extends Person{
 
     public void setAttackRange(int attackRange) {
         this.attackRange = attackRange;
-    }
-
-
-
-    public ArrayList<Texture> getNotAllowedTextures() {
-        return notAllowedTextures;
-    }
-
-    public void setNotAllowedTextures(ArrayList<Texture> notAllowedTextures) {
-        this.notAllowedTextures = notAllowedTextures;
     }
 
     public void move(int x, int y) {

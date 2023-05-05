@@ -15,7 +15,7 @@ public class SiegeTower extends Troop{
     private ArrayList<Cell> occupiedCells;
     public SiegeTower(String name, int hp, Government government, boolean isBusy, Building building, int attackStrength
             , int speed, int defenseStrength, ArrayList<Texture> textures, int attackRange) {
-        super(name, hp, government, isBusy, building, attackStrength, speed, defenseStrength, textures, attackRange);
+        super(name, hp, government, isBusy, building, attackStrength, speed, defenseStrength, attackRange);
     }
 
     @Override

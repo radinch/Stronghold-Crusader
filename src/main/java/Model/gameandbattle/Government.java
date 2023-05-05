@@ -1,5 +1,6 @@
 package Model.gameandbattle;
 
+import Model.gameandbattle.battle.Person;
 import Model.gameandbattle.battle.Troop;
 import Model.gameandbattle.map.Building;
 import Model.gameandbattle.shop.Request;
@@ -35,6 +36,7 @@ public class Government {
     private ArrayList<Request> requestsAcceptedByMe;
     private ArrayList<Request> unseenRequests;
     private boolean isAlive;
+    private ArrayList<Person> people;
     public Government(int popularity, int foodRate, User ruler, int taxRate, int coin, int fearRate, int population) {
         this.popularity = popularity;
         //initialize food here
@@ -55,6 +57,8 @@ public class Government {
         requestsMadeByMe=new ArrayList<>();
         unseenRequests=new ArrayList<>();
         isAlive=true;
+        people=new ArrayList<>();
+        addPeopleByAmount(8);
     }
     ////////////////////setters and getters////////////////////
 
@@ -261,5 +265,14 @@ public class Government {
             if (foods[i] < 0.1 && foods[i] > -0.1) counter++;
         }
         return counter;
+    }
+
+    public void addPeople(Person person) {
+        people.add(person);
+    }
+    public void addPeopleByAmount(int amount) {
+        for (int i=0;i<amount;i++){
+            people.add(new Person("roostaii",100,this,false,null));
+        }
     }
 }

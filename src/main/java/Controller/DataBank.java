@@ -114,7 +114,7 @@ public class DataBank {
         DataBank.requests = requests;
     }
 
-    public void initializeBuildingName() {
+    public static void initializeBuildingName() {
         //todo 1.textures 2.production rate for weapon buildings
         //damage of Siege tent is not correct
         //rate of apple garden is not correct

@@ -106,4 +106,9 @@ public class Stockpile {
         if(name.equals("hops")) hops+=amount;
         if(name.equals("ale")) ale+=amount;
     }
+
+    public int getTotalResource()
+    {
+        return ale+hops+wood+pitch+stone+metal+wheat+floor;
+    }
 }

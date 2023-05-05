@@ -12,10 +12,10 @@ public class SiegeTower extends Troop{
     private int EngineerNeeded;
     private Wall attachWall;
     private boolean isStair;
-    private ArrayList<Cell> occupiedCells;
+    private Cell occupiedCell;
     public SiegeTower(String name, int hp, Government government, boolean isBusy, Building building, int attackStrength
-            , int speed, int defenseStrength, ArrayList<Texture> textures, int attackRange) {
-        super(name, hp, government, isBusy, building, attackStrength, speed, defenseStrength, attackRange);
+            , int speed, int defenseStrength, ArrayList<Texture> textures, int attackRange,int cost,ArrayList<Weapon> weapons) {
+        super(name, hp, government, isBusy, building, attackStrength, speed, defenseStrength, attackRange,cost,weapons);
     }
 
     @Override
@@ -47,11 +47,11 @@ public class SiegeTower extends Troop{
         isStair = stair;
     }
 
-    public ArrayList<Cell> getOccupiedCells() {
-        return occupiedCells;
+    public Cell getOccupiedCell() {
+        return occupiedCell;
     }
 
-    public void setOccupiedCells(ArrayList<Cell> occupiedCells) {
-        this.occupiedCells = occupiedCells;
+    public void setOccupiedCell(Cell occupiedCell) {
+        this.occupiedCell = occupiedCell;
     }
 }

@@ -1,5 +1,6 @@
 package Model.buildings;
 
+import Model.gameandbattle.battle.Person;
 import Model.gameandbattle.map.Building;
 import Model.gameandbattle.Government;
 import Model.gameandbattle.map.Cell;
@@ -20,9 +21,9 @@ public class CastleBuilding extends Building {
     private Integer amountOfDecreaseInSpeed;
     private Integer damage;
     private Integer rate;
-    public CastleBuilding(Government government, double gold, String name, int hitpoint, Resource resourceRequired, int amountOfResource, int amountOfWorkers, ArrayList<Texture> textures, ArrayList<Cell> occupiedCells, Integer capacity,
+    public CastleBuilding(Government government, double gold, String name, int hitpoint, Resource resourceRequired, int amountOfResource, int amountOfWorkers, ArrayList<Texture> textures, Cell occupiedCell, Integer capacity,
                           Integer fireRange, Integer defendRange, HashMap<String, Integer> cost, Integer amountOfDecreaseInSpeed, Integer damage, Integer rate) {
-        super(government, gold, name, hitpoint, resourceRequired,amountOfResource, amountOfWorkers,textures,occupiedCells);
+        super(government, gold, name, hitpoint, resourceRequired,amountOfResource, amountOfWorkers,textures,occupiedCell);
         this.capacity = capacity;
         this.fireRange = fireRange;
         this.defendRange = defendRange;
@@ -35,6 +36,15 @@ public class CastleBuilding extends Building {
     @Override
     public void makeAffect(int x, int y, Map map) {
         super.makeAffect(x, y, map);
+        switch (getName()) {
+            case "Killing pit":
+                damagePeople(x,y,map);
+            case "Pitch ditch":
+                if(isFiery())
+                    damagePeople(x,y,map);
+            case "stable":
+                freeHorse();
+        }
     }
 
     @Override
@@ -42,8 +52,8 @@ public class CastleBuilding extends Building {
         super.whenBuildingIsSelected(x, y, map,scanner);
     }
 
-    private void freeHorse(int x, int y){
-
+    private void freeHorse(){
+        getGovernment().setCountOfWeapon(4,"horse");
     }
     public void freeDogs(int x,int y){
 
@@ -103,5 +113,11 @@ public class CastleBuilding extends Building {
 
     public Integer getCapacity() {
         return capacity;
+    }
+
+    private void damagePeople(int x,int y,Map map) {
+        for (Person person : map.getACell(x, y).getPeople()) {
+            person.setHp(person.getHp() - damage);
+        }
     }
 }

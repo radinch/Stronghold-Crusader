@@ -27,8 +27,10 @@ public class BuildingMenu {
                 System.out.println(buildingMenuController.dropBuilding(matcher));
             }
             else if((matcher = BuildingMenuRegexes.getMatcher(command,BuildingMenuRegexes.SELECT_BUILDING)) != null) {
-                System.out.println(buildingMenuController.selectBuilding(matcher,scanner));
-            }
+                if(buildingMenuController.selectBuilding(matcher,scanner) != null)
+                    System.out.println(buildingMenuController.selectBuilding(matcher,scanner));
+            } else if(command.equals("exit"))
+                return;
             else
                 System.out.println("invalid command");
         }

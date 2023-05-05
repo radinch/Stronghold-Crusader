@@ -1,6 +1,7 @@
 package Model.gameandbattle.map;
 
 import Model.gameandbattle.battle.Person;
+import Model.gameandbattle.battle.Troop;
 
 import java.util.ArrayList;
 
@@ -21,6 +22,7 @@ public class Cell {
         isDitch=false;
         detail='#';
         toPrint = "##" + detail + "##";
+        this.people = new ArrayList<>();
     }
 
     public boolean isDitch() {
@@ -80,8 +82,10 @@ public class Cell {
     }
 
     public void setDetail(char detail) {
+        /*String ANSI_PURPLE = "\033[4;35m";
+        String ANSI_RESET = "\u001B[0m";*/
         this.detail = detail;
-        toPrint="#" + detail + "#";
+        toPrint="##" + detail + "##";
     }
 
     public String getToPrint() {
@@ -96,5 +100,9 @@ public class Cell {
     }
     public void fillHole(){
 
+    }
+
+    public void addUnit(Troop troop) {
+        people.add(troop);
     }
 }

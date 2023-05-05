@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.gameandbattle.Government;
+import Model.gameandbattle.map.Map;
 import Model.gameandbattle.battle.Patrol;
 import Model.gameandbattle.battle.Person;
 import Model.gameandbattle.battle.Troop;
@@ -29,6 +30,7 @@ public class GameMenuController {
         this.currentMap=currentMap;
         amountOfAllPlayers=governments.size();
         DataBank.initializeBuildingName();
+        DataBank.initializeAllUnits();
     }
     public void run(Scanner scanner) {
         gameMenu.run(scanner);
@@ -106,6 +108,13 @@ public class GameMenuController {
             else amount=-1*(0.6+(Math.abs(government.getTaxRate())-1)*0.2);
             government.setCoin(government.getCoin()+government.getPopulation()*amount);
             government.setPopularity(government.nonZeroFoods()-1+government.getPopularity());
+            government.setPopularity(government.getPopularity() + 4 * government.getFoodRate());
+            if (government.getTaxRate() <= 0)
+                government.setPopularity(government.getPopularity() + (-2) * government.getTaxRate() + 1);
+            else
+                government.setPopularity(government.getPopularity() + (-2) * government.getTaxRate());
+            government.setPopularity(government.getPopularity() + government.getFearRate());
+            government.setPopularity( Math.min(100, government.getPopularity()));
             government.getGranary().setApple((government.getGranary().getApple() - (1 + government.getFoodRate()*0.5))*government.getPopulation());
             government.getGranary().setCheese((government.getGranary().getCheese() - (1 + government.getFoodRate()*0.5))*government.getPopulation());
             government.getGranary().setBread((government.getGranary().getBread() - (1 + government.getFoodRate()*0.5))*government.getPopulation());

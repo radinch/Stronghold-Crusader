@@ -30,6 +30,7 @@ public class MainMenu {
         System.out.println("you can type show available maps to see game maps");
         System.out.println("or you can type new game for starting a new adventure");
         while (true) {
+            mainMenuController.addPlayer(DataBank.getCurrentUser().getUsername());
             command = scanner.nextLine();
             if(command.matches("show available maps"))
                 showAvailableMaps();

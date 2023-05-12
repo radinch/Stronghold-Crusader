@@ -51,4 +51,8 @@ public class Granary {
         if(name.equals("cheese")) cheese=finalAmount;
         if(name.equals("meat")) meat=finalAmount;
     }
+
+    public double getTotalFood() {
+        return (meat + apple + bread + cheese);
+    }
 }

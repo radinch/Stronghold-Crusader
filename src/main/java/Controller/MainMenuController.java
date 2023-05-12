@@ -28,7 +28,7 @@ public class MainMenuController {
 
     public ArrayList<Government> createGovernments() {
         for (User player : players) {
-            governments.add(new Government(100,0,player,0,0,0,8));
+            governments.add(new Government(100,0,player,0,100000,0,8));
         }
         return governments;
     }

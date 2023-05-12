@@ -32,7 +32,7 @@ public class ShopMenuController {
         Matcher nameMather= ShopMenuRegexes.NAME.getMatcher(input); Matcher amountMather= ShopMenuRegexes.AMOUNT.getMatcher(input);
         String name = null; int amount = 0;
         if(nameMather.find()) name=nameMather.group("name");
-        if(amountMather.find()) amount=Integer.parseInt(nameMather.group("amount"));
+        if(amountMather.find()) amount=Integer.parseInt(amountMather.group("amount"));
         int gold=getNeededGold(name);
         if(gold*amount>government.getCoin()) return "not enough gold";
         if(government.amountOfAllResources()+amount>Government.getLimitOfResources()) return "you will pass your limit";
@@ -44,7 +44,7 @@ public class ShopMenuController {
         Matcher nameMather= ShopMenuRegexes.NAME.getMatcher(input); Matcher amountMather= ShopMenuRegexes.AMOUNT.getMatcher(input);
         String name = null; int amount = 0;
         if(nameMather.find()) name=nameMather.group("name");
-        if(amountMather.find()) amount=Integer.parseInt(nameMather.group("amount"));
+        if(amountMather.find()) amount=Integer.parseInt(amountMather.group("amount"));
         if(!isThereEnoughItems(name,amount,government)) return "you don't have that many items";
         int increaseGold=getSellGold(name);
         government.setCoin(government.getCoin()+increaseGold*amount);

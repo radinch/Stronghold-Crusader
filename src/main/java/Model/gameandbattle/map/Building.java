@@ -22,8 +22,9 @@ public class Building {
     private ArrayList<Person> workers;
     private ArrayList<Texture> allowedTextures;
     private int popularityIncreaseRate;
-    private Cell occupiedCell;
-    private int amountOfWorkers;
+    private final Cell occupiedCell;
+    private final int amountOfWorkers;
+    private boolean isFiery;
 
     public Building(Government government, double gold, String name, int hitpoint, Resource resourceRequired,int amountOfResource, int amountOfWorkers, ArrayList<Texture> textures, Cell occupiedCell) {
         this.government = government;
@@ -37,6 +38,7 @@ public class Building {
         this.amountOfResource=amountOfResource;
         selectBuildingMenu= new SelectBuildingMenu();
         this.amountOfWorkers = amountOfWorkers;
+        isFiery=false;
     }
 
     public Building getBuildingByName(String name){
@@ -135,5 +137,13 @@ public class Building {
 
     public void addUnit(Troop troop) {
         workers.add(troop);
+    }
+
+    public boolean isFiery() {
+        return isFiery;
+    }
+
+    public void setFiery(boolean fiery) {
+        isFiery = fiery;
     }
 }

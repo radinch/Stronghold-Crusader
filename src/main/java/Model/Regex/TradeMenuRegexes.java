@@ -4,10 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum TradeMenuRegexes {
-    TRADE(""),
-    TRADE_LIST(""),
-    ACCEPT_TRADE(""),
-    TRADE_HISTORY("");
+    TRADE("trade\\s+\\-t\\s+(?<type>.+)\\s+\\-a\\s+(?<amount>.+)\\s+\\-p\\s+(?<price>.+)\\s+\\-m\\s+(?<message>.+)"),
+    ACCEPT_TRADE("trade accept\\s+\\-i\\s+(?<id>\\d+)\\s+\\-m\\s+(?<message>.+)");
     private String regex;
 
     private TradeMenuRegexes(String regex) {

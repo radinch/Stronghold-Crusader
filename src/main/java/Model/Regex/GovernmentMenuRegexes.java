@@ -4,9 +4,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum GovernmentMenuRegexes {
-    CHANGE_FOOD_RATE("food\\s+rate\\s+-r\\s+(?<rate>-)"),
-    CHANGE_TAX_RATE("tax\\s+rate\\s+-r\\s+(?<rate>-)"),
-    CHANGE_FEAR_RATE("fear\\s+rate\\s+-r\\s+(?<rate>-)");
+    CHANGE_FOOD_RATE("food\\s+rate\\s+\\-r\\s+(?<rate>\\-?\\d+)"),
+    CHANGE_TAX_RATE("tax\\s+rate\\s+\\-r\\s+(?<rate>\\-?\\d+)"),
+    CHANGE_FEAR_RATE("fear\\s+rate\\s+\\-r\\s+(?<rate>\\-?\\d+)");
     private String regex;
 
     GovernmentMenuRegexes(String regex) {

@@ -1,6 +1,9 @@
 package Model.gameandbattle;
 
 import Controller.DataBank;
+import Model.buildings.CastleBuilding;
+import Model.buildings.OtherBuilding;
+import Model.buildings.WeaponBuilding;
 import Model.gameandbattle.battle.Person;
 import Model.gameandbattle.battle.Troop;
 import Model.gameandbattle.battle.Weapon;
@@ -16,7 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Government {
-    private static final int limitOfResources = 300;
+    private static final int limitOfResources = 600000;
     private int popularity;
     private int foodRate;
     private User ruler;
@@ -39,6 +42,7 @@ public class Government {
     private ArrayList<Request> requestsAcceptedByMe;
     private ArrayList<Request> unseenRequests;
     private boolean isAlive;
+
     public Government(int popularity, int foodRate, User ruler, int taxRate, int coin, int fearRate, int population) {
         this.popularity = popularity;
         //initialize food here
@@ -49,16 +53,22 @@ public class Government {
         this.fearRate = fearRate;
         this.population = population;
         buildings = new ArrayList<>();
-        stockpile=new Stockpile(0,0,0,0,0,0,0,0);
-        granary=new Granary(0,0,0,0);
-        workersEfficiency=100;
-        foods= new double[]{0, 0, 0, 0};
-        weapons= new int[]{0, 0, 0, 0, 0, 0, 0, 0};
-        requestsAcceptedByMe=new ArrayList<>();
-        requestsToMe=new ArrayList<>();
-        requestsMadeByMe=new ArrayList<>();
-        unseenRequests=new ArrayList<>();
-        isAlive=true;
+        stockpile = new Stockpile(100, 0, 50, 100, 0, 0, 0, 0,0);
+        granary = new Granary(50, 50, 50, 50);
+        workersEfficiency = 100;
+        foods = new double[]{50, 50, 50, 50};
+        weapons = new int[]{0, 0, 0, 0, 0, 0, 0, 0,0};
+        requestsAcceptedByMe = new ArrayList<>();
+        requestsToMe = new ArrayList<>();
+        requestsMadeByMe = new ArrayList<>();
+        unseenRequests = new ArrayList<>();
+        isAlive = true;
+        people = new ArrayList<>();
+        for (int i = 0; i < 8; i++) {
+            addPerson();
+        }
+        System.out.println(this.people.size());
+        this.king = new Troop("King",1000,this,true,this.getBuildingByName("Small stone gatehouse"),1000,300,1000,5,0,null);
     }
     ////////////////////setters and getters////////////////////
 
@@ -80,6 +90,7 @@ public class Government {
     }
 
     public void setPopularity(int popularity) {
+
         this.popularity = popularity;
     }
 
@@ -155,10 +166,9 @@ public class Government {
         return 0;
     }
 
-    public Building getBuildingByName(String name)
-    {
+    public Building getBuildingByName(String name) {
         for (Building building : buildings) {
-            if(building.getName().equals(name))
+            if (building.getName().equals(name))
                 return building;
         }
         return null;
@@ -207,10 +217,12 @@ public class Government {
     public void setFoods(double[] foods) {
         this.foods = foods;
     }
-    public int amountOfAllResources(){
-        return stockpile.getAle()+stockpile.getWood()+ stockpile.getFloor()+stockpile.getMetal()+ stockpile.getHops()+ stockpile.getPitch()+ stockpile.getStone()+ stockpile.getWheat();
+
+    public int amountOfAllResources() {
+        return stockpile.getAle() + stockpile.getWood() + stockpile.getFloor() + stockpile.getMetal() + stockpile.getHops() + stockpile.getPitch() + stockpile.getStone() + stockpile.getWheat();
     }
-    public static int getLimitOfResources(){
+
+    public static int getLimitOfResources() {
         return limitOfResources;
     }
 
@@ -237,9 +249,10 @@ public class Government {
     public void setRequestsAcceptedByMe(ArrayList<Request> requestsAcceptedByMe) {
         this.requestsAcceptedByMe = requestsAcceptedByMe;
     }
-    public Request getRequestById(int id){
-        for(Request request:requestsToMe){
-            if(request.getId()==id) return request;
+
+    public Request getRequestById(int id) {
+        for (Request request : requestsToMe) {
+            if (request.getId() == id) return request;
         }
         return null;
     }
@@ -259,10 +272,11 @@ public class Government {
     public void setAlive(boolean alive) {
         isAlive = alive;
     }
-    public int nonZeroFoods(){
-        int counter=0;
-        for(int i=0;i<4;i++) {
-            if (foods[i] < 0.1 && foods[i] > -0.1) counter++;
+
+    public int nonZeroFoods() {
+        int counter = 0;
+        for (int i = 0; i < 4; i++) {
+            if (!(foods[i] < 0.1 && foods[i] > -0.1)) counter++;
         }
         return counter;
     }
@@ -272,12 +286,12 @@ public class Government {
     }
 
     public void addPerson() {
-        people.add(new Person("unemployed",1,this,false,null));
+        people.add(new Person("unemployed", 1, this, false, null));
     }
 
     public void addUnit(Troop troop) {
         for (Person person : people) {
-            if(!person.isBusy()) {
+            if (!person.isBusy()) {
                 people.remove(person);
                 break;
             }
@@ -285,9 +299,9 @@ public class Government {
         people.add(troop);
     }
 
-    public int getCountOfWeapon (String name) {
+    public int getCountOfWeapon(String name) {
         for (int i = 0; i < weapons.length; i++) {
-            if(Weapon.getAllWeapons()[i].getName().equals(name))
+            if (Weapon.getAllWeapons()[i].getName().equals(name))
                 return weapons[i];
         }
         return 0;
@@ -295,17 +309,70 @@ public class Government {
 
     public void setCountOfWeapon(int count, String name) {
         for (int i = 0; i < weapons.length; i++) {
-            if(Weapon.getAllWeapons()[i].getName().equals(name))
-                weapons[i]-=count;
+            if (Weapon.getAllWeapons()[i].getName().equals(name)) {
+                weapons[i] += count;
+                if(getTotalWeapon() > getMaxWeaponCapacity())
+                    weapons[i]-=getTotalWeapon() - getMaxWeaponCapacity();
+            }
         }
     }
 
     public int getUnEmployedUnit() {
         int count = 0;
         for (Person person : people) {
-            if(!person.isBusy())
+            if (!person.isBusy())
                 count++;
         }
         return count;
+    }
+
+    public int getMaxFoodCapacity() {
+        int maxFoodCapacity = 0;
+        for (Building building : buildings) {
+            if (building.getName().equals("Food StockPile"))
+                maxFoodCapacity += ((OtherBuilding) building).getCapacity();
+        }
+        return maxFoodCapacity;
+    }
+
+    public int getMaxResourceCapacity()
+    {
+        int maxResource = 0;
+        for (Building building : buildings) {
+            if(building.getName().equals("Stockpile"))
+                maxResource += ((OtherBuilding)building).getCapacity();
+        }
+        return maxResource;
+    }
+
+    public int getTotalWeapon() {
+        int total=0;
+        for (int i = 0; i < weapons.length; i++) {
+            total+=weapons[i];
+        }
+        return total;
+    }
+
+    public int getMaxWeaponCapacity() {
+        int maxWeapon =0;
+        for (Building building : buildings) {
+            if(building.getName().equals("armoury"))
+                maxWeapon +=((CastleBuilding)building).getCapacity();
+        }
+        return maxWeapon;
+    }
+
+    public void addWorker(Building building,int count)
+    {
+        int number = 0;
+        for (Person person : people) {
+            if(number == count)
+                break;
+            if(!person.isBusy()) {
+                person.setBusy(true);
+                building.getWorkers().add(person);
+                number++;
+            }
+        }
     }
 }

@@ -1,6 +1,5 @@
 package Controller;
 
-import Model.buildings.OtherBuilding;
 import Model.buildings.OtherBuildingsMethods;
 import Model.gameandbattle.Government;
 import Model.gameandbattle.battle.Troop;
@@ -29,14 +28,17 @@ public class SelectBuildingController {
             return "invalid amount";
         else if(government.getCoin() < count * ((Troop)DataBank.getUnitByName(type)).getCost())
             return "not enough coin";
-        else if(!isWeaponEnough(government,((Troop)DataBank.getUnitByName(type)),count))
+        else if(!isWeaponEnough(government,((Troop)DataBank.getUnitByName(type)),count, building.getName()))
             return "not enough weapon";
-        else if(government.getUnEmployedUnit() < count)
+        else if(government.getUnEmployedUnit() < count) {
+            System.out.println(count);
+            System.out.println(government.getUnEmployedUnit());
             return "not enough people";
+        }
         else if ((building.getName().equals("Mercenary Post") || building.getName().equals("engineer guild")) &&
-                ((Troop) DataBank.getUnitByName(type)).getWeapons() != null)
+                ((Troop) DataBank.getUnitByName(type)).getWeapons().size() != 0)
             return "you can't create this unit in this building";
-        else if (building.getName().equals("barrack") && ((Troop) DataBank.getUnitByName(type)).getWeapons() == null)
+        else if (building.getName().equals("barrack") && ((Troop) DataBank.getUnitByName(type)).getWeapons().size() == 0)
             return "you can't create this unit in this building";
         else if((type.equals("Ladderman") || type.equals("Engineer")) && !building.getName().equals("engineer guild"))
             return "you can't create this unit in this building";
@@ -44,7 +46,7 @@ public class SelectBuildingController {
             Troop troop = ((Troop)DataBank.getUnitByName(type));
             government.setCoin(government.getCoin() - count * ((Troop)DataBank.getUnitByName(type)).getCost());
             for (Weapon weapon : ((Troop) DataBank.getUnitByName(type)).getWeapons()) {
-                government.setCountOfWeapon(count,weapon.getName());
+                government.setCountOfWeapon((-1)*count,weapon.getName());
             }
             for (int i = 0; i <count ; i++) {
                 government.addUnit(new Troop(troop.getName(), troop.getHp(), government, troop.isBusy(), building,
@@ -59,11 +61,11 @@ public class SelectBuildingController {
             }
             return "successful";
         }
-
-
     }
 
-    public boolean isWeaponEnough (Government government,Troop troop,int count) {
+    public boolean isWeaponEnough (Government government,Troop troop,int count,String name) {
+        if(!name.equals("barrack"))
+            return true;
         for (Weapon weapon : troop.getWeapons()) {
             if(government.getCountOfWeapon(weapon.getName()) < count)
                 return false;

@@ -54,7 +54,9 @@ public class GameMenu {
                 shopMenu.run(scanner);
             }
             else if(command.equals("unit menu"))
-                unitMenu.run(scanner);
+                unitMenu.run(scanner,gameMenuController.getCurrentMap(),gameMenuController.getCurrentGovernment());
+            else if(command.equals("trade menu"))
+                tradeMenu.run(scanner,gameMenuController.getGovernments());
             else if(command.equals("next turn"))
                 gameMenuController.nextTurn(buildingMenu,shopMenu,tradeMenu,unitMenu,dropElementMenu,this);
             //else if(command.equals("exit")) return;

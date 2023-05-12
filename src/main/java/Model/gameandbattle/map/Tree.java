@@ -10,9 +10,11 @@ public enum Tree {
     COCONUT_TREE("coconut tree"),
     CHERRY_PALM("cherry palm");
     private String name;
-    private static ArrayList<Texture> notAllowedTexture = new ArrayList<>(List.of(Texture.METAL,Texture.ROCK,Texture.PETROLEUM,Texture.PLAIN,Texture.SHALLOW_WATER,
-            Texture.RIVER,Texture.SMALL_POUND,Texture.LARGE_POUND,Texture.BEACH,Texture.SEE));
-    private static ArrayList<Tree> trees = new ArrayList<>(List.of(DESERT_SHRUB,OLIVE_TREE,PALM_TREE,COCONUT_TREE,CHERRY_PALM));
+    private static final ArrayList<Texture> notAllowedTexture = new ArrayList<>(List.of(Texture.METAL, Texture.ROCK,
+            Texture.PETROLEUM, Texture.PLAIN, Texture.SHALLOW_WATER, Texture.RIVER,
+            Texture.SMALL_POUND, Texture.LARGE_POUND, Texture.BEACH, Texture.SEE));
+    private static final ArrayList<Tree> trees = new ArrayList<>(List.of(DESERT_SHRUB,
+            OLIVE_TREE, PALM_TREE, COCONUT_TREE, CHERRY_PALM));
 
     Tree(String name) {
         this.name = name;
@@ -28,7 +30,7 @@ public enum Tree {
 
     public static Tree getTreeByName(String name) {
         for (Tree tree : trees) {
-            if(tree.getName().equals(name))
+            if (tree.getName().equals(name))
                 return tree;
         }
         return null;

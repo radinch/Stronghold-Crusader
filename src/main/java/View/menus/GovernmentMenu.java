@@ -38,7 +38,8 @@ public class GovernmentMenu {
             else if ((matcher = GovernmentMenuRegexes.getMatcher(command, GovernmentMenuRegexes.CHANGE_FEAR_RATE)) != null) {
                 System.out.println("successful");
                 governmentMenuController.changeFearRate(government, matcher);
-            }
+            } else if(command.equals("show gold"))
+                System.out.println(government.getCoin());
             else if(command.equals("exit")) return;
             else System.out.println("invalid command");
         }

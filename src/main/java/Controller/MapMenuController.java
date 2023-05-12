@@ -156,8 +156,9 @@ public class MapMenuController {
         if (cell.hasWall()) {
             result.append("wall\n").append("hp: ").append(cell.getWall().getHitpoint());
             result.append(" length: ").append(cell.getWall().getLength()).append("\n");
+            result.append("accessibility: ").append(cell.getWall().isAccessible()).append("\n");
         }
-        if (cell.getBuilding() != null) {
+        if (cell.getBuilding() != null) { //todo check government for killing pit
             result.append("building: ").append(cell.getBuilding().getName());
             result.append(" hp: ").append(cell.getBuilding().getHitpoint());
             result.append(" color: ").append(cell.getBuilding().getGovernment().getColor()).append("\n");

@@ -4,15 +4,15 @@ import Model.gameandbattle.stockpile.Resource;
 import Model.gameandbattle.stockpile.Stockpile;
 
 public enum Weapon {
-    BOW("bow",100,new Stockpile(2,0,0,0,0,0,0,0),100,50),
-    CROSSBOW("crossbow",100,new Stockpile(3,0,0,0,0,0,0,0),100,50),
-    SPEAR("spear",100,new Stockpile(1,0,0,0,0,0,0,0),100,50),
-    PIKE("pike",100,new Stockpile(2,0,0,0,0,0,0,0),100,50),
-    MACE("mace",100,new Stockpile(0,0,1,0,0,0,0,0),100,50),
-    SWORDS("swords",100,new Stockpile(0,0,1,0,0,0,0,0),100,50),
-    LEATHER_ARMOR("leather armor",100,new Stockpile(2,0,0,0,0,0,0,0),100,50),
-    METAL_ARMOR("metal armor",100,new Stockpile(0,0,1,0,0,0,0,0),100,50),
-    HORSE("horse",10,new Stockpile(0,0,0,0,0,0,0,0),0,0);
+    BOW("bow",100,new Stockpile(2,0,0,0,0,0,0,0,0),100,50),
+    CROSSBOW("crossbow",100,new Stockpile(3,0,0,0,0,0,0,0,0),100,50),
+    SPEAR("spear",100,new Stockpile(1,0,0,0,0,0,0,0,0),100,50),
+    PIKE("pike",100,new Stockpile(2,0,0,0,0,0,0,0,0),100,50),
+    MACE("mace",100,new Stockpile(0,0,1,0,0,0,0,0,0),100,50),
+    SWORDS("swords",100,new Stockpile(0,0,1,0,0,0,0,0,0),100,50),
+    LEATHER_ARMOR("leather armor",100,new Stockpile(2,0,0,0,0,0,0,0,0),100,50),
+    METAL_ARMOR("metal armor",100,new Stockpile(0,0,1,0,0,0,0,0,0),100,50),
+    HORSE("horse",10,new Stockpile(0,0,0,0,0,0,0,0,0),0,0);
     private String name;
     private int damage;
     private Stockpile stockpile;

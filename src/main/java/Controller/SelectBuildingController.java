@@ -1,6 +1,5 @@
 package Controller;
 
-import Model.buildings.OtherBuilding;
 import Model.buildings.OtherBuildingsMethods;
 import Model.gameandbattle.Government;
 import Model.gameandbattle.battle.Troop;
@@ -31,8 +30,11 @@ public class SelectBuildingController {
             return "not enough coin";
         else if(!isWeaponEnough(government,((Troop)DataBank.getUnitByName(type)),count, building.getName()))
             return "not enough weapon";
-        else if(government.getUnEmployedUnit() < count)
+        else if(government.getUnEmployedUnit() < count) {
+            System.out.println(count);
+            System.out.println(government.getUnEmployedUnit());
             return "not enough people";
+        }
         else if ((building.getName().equals("Mercenary Post") || building.getName().equals("engineer guild")) &&
                 ((Troop) DataBank.getUnitByName(type)).getWeapons().size() != 0)
             return "you can't create this unit in this building";
@@ -59,8 +61,6 @@ public class SelectBuildingController {
             }
             return "successful";
         }
-
-
     }
 
     public boolean isWeaponEnough (Government government,Troop troop,int count,String name) {

@@ -22,8 +22,8 @@ public class Building {
     private ArrayList<Person> workers;
     private ArrayList<Texture> allowedTextures;
     private int popularityIncreaseRate;
-    private Cell occupiedCell;
-    private int amountOfWorkers;
+    private final Cell occupiedCell;
+    private final int amountOfWorkers;
     private boolean isFiery;
 
     public Building(Government government, double gold, String name, int hitpoint, Resource resourceRequired,int amountOfResource, int amountOfWorkers, ArrayList<Texture> textures, Cell occupiedCell) {

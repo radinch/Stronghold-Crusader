@@ -9,8 +9,9 @@ public class Stockpile {
     private int floor;
     private int hops;
     private int ale;
+    private int oil;
 
-    public Stockpile(int wood, int pitch, int metal, int stone, int wheat, int floor, int hops, int ale) {
+    public Stockpile(int wood, int pitch, int metal, int stone, int wheat, int floor, int hops, int ale,int oil) {
         this.wood = wood;
         this.pitch = pitch;
         this.metal = metal;
@@ -19,6 +20,7 @@ public class Stockpile {
         this.floor = floor;
         this.hops = hops;
         this.ale = ale;
+        this.oil = oil;
     }
     /////////////////////setters and getters
 
@@ -85,6 +87,15 @@ public class Stockpile {
     public void setAle(int ale) {
         this.ale = ale;
     }
+
+    public int getOil() {
+        return oil;
+    }
+
+    public void setOil(int oil) {
+        this.oil = oil;
+    }
+
     public int getByName(String name){
         if(name.equals("wood")) return wood;
         if(name.equals("pitch")) return pitch;

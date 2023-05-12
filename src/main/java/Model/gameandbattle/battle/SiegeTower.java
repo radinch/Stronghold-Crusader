@@ -14,7 +14,7 @@ public class SiegeTower extends Troop{
     private boolean isStair;
     private Cell occupiedCell;
     public SiegeTower(String name, int hp, Government government, boolean isBusy, Building building, int attackStrength
-            , int speed, int defenseStrength, ArrayList<Texture> textures, int attackRange,int cost,ArrayList<Weapon> weapons) {
+            , int speed, int defenseStrength, int attackRange,int cost,ArrayList<Weapon> weapons) {
         super(name, hp, government, isBusy, building, attackStrength, speed, defenseStrength, attackRange,cost,weapons);
     }
 

@@ -7,12 +7,15 @@ public enum UnitMenuRegexes {
     SELECT_UNIT(""),
     MOVE_UNIT(""),
     SET_CONDITION(""),
-    ATTACK(""),
-    SKY_ATTACK(""),
-    POUR_OIL(""),
+    ATTACK("attack\\s+\\-e\\s+(?<x>\\-?\\d+)\\s+(?<y>\\-?\\d+)"),
+    AIR_ATTACK("attack\\s+\\-x\\s+(?<x>\\-?\\d+)\\-y\\s+(?<y>\\-?\\d+)"),
+    EQUIP_WITT_OIL("Equip with oil"),
+    POUR_OIL("pour oil\\s+\\-d\\s+(?<direction>.+)"),
+    DIG_DITCH("dig ditch\\s+\\-x\\s+(?<x>\\-?\\d+)\\-y\\s+(?<y>\\-?\\d+)"),
+    CANCEL_DITCH("cancel ditch\\s+\\-x\\s+(?<x>\\-?\\d+)\\-y\\s+(?<y>\\-?\\d+)"),
+    REMOVE_DITCH("remove ditch\\s+\\-x\\s+(?<x>\\-?\\d+)\\-y\\s+(?<y>\\-?\\d+)"),
     DIG_TUNNEL(""),
-    BUILD_SURROUNDINGS(""),
-    DISBAND_UNIT("");
+    BUILD_SURROUNDINGS("");
     private String regex;
 
     private UnitMenuRegexes(String regex) {

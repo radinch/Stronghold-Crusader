@@ -9,11 +9,13 @@ import java.util.ArrayList;
 
 public class Catapult extends Troop{
     private boolean isFiery;
-    private int EngineerNeeded;
-    private boolean hasBalanceWeight;
     private Cell occupiedCell;
-    public Catapult(String name, int hp, Government government, boolean isBusy, Building building, int attackStrength, int speed, int defenseStrength, ArrayList<Texture> textures, int attackRange,int cost,ArrayList<Weapon> weapons) {
+    private boolean canMove;
+    public Catapult(String name, int hp, Government government, boolean isBusy, Building building, int attackStrength, int speed,
+                    int defenseStrength, int attackRange,int cost,ArrayList<Weapon> weapons) {
         super(name, hp, government, isBusy, building, attackStrength, speed, defenseStrength, attackRange,cost,weapons);
+        isFiery = false;
+        canMove = true;
     }
 
 
@@ -21,17 +23,18 @@ public class Catapult extends Troop{
         return isFiery;
     }
 
-    public int getEngineerNeeded() {
-        return EngineerNeeded;
+    public void setFiery(boolean fiery) {
+        isFiery = fiery;
     }
 
-    public boolean isHasBalanceWeight() {
-        return hasBalanceWeight;
+    public void setCanMove(boolean canMove) {
+        this.canMove = canMove;
     }
 
-    public void setHasBalanceWeight(boolean hasBalanceWeight) {
-        this.hasBalanceWeight = hasBalanceWeight;
+    public boolean canMove () {
+        return canMove;
     }
+
 
     public Cell getOccupiedCell() {
         return occupiedCell;

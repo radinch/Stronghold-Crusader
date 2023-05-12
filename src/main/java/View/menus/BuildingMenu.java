@@ -26,10 +26,19 @@ public class BuildingMenu {
             {
                 System.out.println(buildingMenuController.dropBuilding(matcher));
             }
+            else if((matcher = BuildingMenuRegexes.getMatcher(command,BuildingMenuRegexes.DROP_WALL)) != null)
+                System.out.println(buildingMenuController.dropWall(matcher));
+            else if((matcher = BuildingMenuRegexes.getMatcher(command,BuildingMenuRegexes.DROP_GATE)) != null)
+                System.out.println(buildingMenuController.dropGate(matcher));
             else if((matcher = BuildingMenuRegexes.getMatcher(command,BuildingMenuRegexes.SELECT_BUILDING)) != null) {
                 if(buildingMenuController.selectBuilding(matcher,scanner) != null)
                     System.out.println(buildingMenuController.selectBuilding(matcher,scanner));
-            } else if(command.equals("exit"))
+            }
+            else if((matcher = BuildingMenuRegexes.getMatcher(command,BuildingMenuRegexes.DROP_STAIR)) != null)
+            {
+                System.out.println(buildingMenuController.dropStair(matcher));
+            }
+            else if(command.equals("exit"))
                 return;
             else
                 System.out.println("invalid command");

@@ -4,6 +4,7 @@ import Model.gameandbattle.Government;
 import Model.gameandbattle.shop.Request;
 import Model.gameandbattle.stockpile.Resource;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 
 public class TradeMenuController {
@@ -31,7 +32,7 @@ public class TradeMenuController {
     public String showTradeList() {
         for(Request request:government.getRequestsToMe()){
             System.out.println("type: "+request.getResource().getName()+"\namount: "+request.getAmount()+"\nprice: "+request.getPrice()+"\n" +
-                    "made by: "+request.getSender().getRuler()+"\nthe message: "+request.getSenderMessage());
+                    "made by: "+request.getSender().getRuler().getUsername()+"\nthe message: "+request.getSenderMessage());
         }
         return "that's all of your trades!";
     }
@@ -69,12 +70,12 @@ public class TradeMenuController {
         System.out.println("made by you: ");
         for(Request request:government.getRequestsMadeByMe()){
             System.out.println("type: "+request.getResource().getName()+"\namount: "+request.getAmount()+"\nprice: "+request.getPrice()+"\n" +
-                    "made by: "+request.getSender().getRuler()+"\nthe message: "+request.getSenderMessage());
+                    "made by: "+request.getSender().getRuler().getUsername()+"\nthe message: "+request.getSenderMessage());
         }
         System.out.println("accepted by you:");
-        for(Request request:government.getRequestsMadeByMe()){
+        for(Request request:government.getRequestsAcceptedByMe()){
             System.out.println("type: "+request.getResource().getName()+"\namount: "+request.getAmount()+"\nprice: "+request.getPrice()+"\n" +
-                    "made by: "+request.getSender().getRuler()+"\nthe message: "+request.getSenderMessage());
+                    "made by: "+request.getSender().getRuler().getUsername()+"\nthe message: "+request.getSenderMessage());
         }
         return "done!";
     }

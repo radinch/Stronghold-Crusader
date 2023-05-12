@@ -1,24 +1,32 @@
 package Model.gameandbattle.map;
 
+import Model.buildings.CastleBuilding;
+import Model.buildings.OtherBuildingsMethods;
 import Model.gameandbattle.Government;
+import Model.gameandbattle.battle.Troop;
 import Model.gameandbattle.stockpile.Resource;
 import Model.gameandbattle.battle.Person;
+import View.menus.SelectBuildingMenu;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Building {
+    private final SelectBuildingMenu selectBuildingMenu;
     private Government government;
-    private int gold;
+    private double gold;
     private String name;
     private int hitpoint;
     private Resource resourceRequired;
-    private int amountOfResource;
+    private final int amountOfResource;
     private ArrayList<Person> workers;
     private ArrayList<Texture> allowedTextures;
     private int popularityIncreaseRate;
-    private ArrayList<Cell> occupiedCells;
+    private final Cell occupiedCell;
+    private final int amountOfWorkers;
+    private boolean isFiery;
 
-    public Building(Government government, int gold, String name, int hitpoint, Resource resourceRequired,int amountOfResource, int amountOfWorkers, ArrayList<Texture> textures, ArrayList<Cell> occupiedCells) {
+    public Building(Government government, double gold, String name, int hitpoint, Resource resourceRequired,int amountOfResource, int amountOfWorkers, ArrayList<Texture> textures, Cell occupiedCell) {
         this.government = government;
         this.gold = gold;
         this.name = name;
@@ -26,17 +34,21 @@ public class Building {
         this.resourceRequired = resourceRequired;
         workers=new ArrayList<>();
         allowedTextures=textures;
-        this.occupiedCells=occupiedCells;
+        this.occupiedCell=occupiedCell;
         this.amountOfResource=amountOfResource;
+        selectBuildingMenu= new SelectBuildingMenu();
+        this.amountOfWorkers = amountOfWorkers;
+        isFiery=false;
     }
 
     public Building getBuildingByName(String name){
         return null;
     }
     public void makeAffect(int x, int y, Map map){
-
+        increasePopularity();
     }
-    public void whenBuildingIsSelected(int x, int y, Map map){
+    public void whenBuildingIsSelected(int x, int y, Map map,Scanner scanner){
+        selectBuildingMenu.run(scanner,this,x,y,map);
         //population
     }
     ////////setters and getters
@@ -49,11 +61,11 @@ public class Building {
         this.government = government;
     }
 
-    public int getGold() {
+    public double getGold() {
         return gold;
     }
 
-    public void setGold(int gold) {
+    public void setGold(double gold) {
         this.gold = gold;
     }
 
@@ -105,11 +117,33 @@ public class Building {
         this.allowedTextures = allowedTextures;
     }
 
-    public ArrayList<Cell> getOccupiedCells() {
-        return occupiedCells;
+    public Cell getOccupiedCell() {
+        return occupiedCell;
     }
 
-    public void setOccupiedCells(ArrayList<Cell> occupiedCells) {
-        this.occupiedCells = occupiedCells;
+
+    public void increasePopularity()
+    {
+        government.setPopularity(government.getPopularity()+popularityIncreaseRate);
+    }
+
+    public int getAmountOfResource() {
+        return amountOfResource;
+    }
+
+    public int getAmountOfWorkers() {
+        return amountOfWorkers;
+    }
+
+    public void addUnit(Troop troop) {
+        workers.add(troop);
+    }
+
+    public boolean isFiery() {
+        return isFiery;
+    }
+
+    public void setFiery(boolean fiery) {
+        isFiery = fiery;
     }
 }

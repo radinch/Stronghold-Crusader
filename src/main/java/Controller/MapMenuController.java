@@ -29,16 +29,18 @@ public class MapMenuController {
         if (!isCoordinateValid(x, y, currentMap.getSize()))
             return "invalid coordinate";
         for (int i = x - 2; i <= x + 2; i++) {
-            for (int j = 0; j < 43; j++) {
-                result.append("-");
-            }
-            result.append("\n");
             if (i >= 0 && i < currentMap.getSize()) {
+                for (int j = 0; j < 43; j++) {
+                    result.append("-");
+                }
+                result.append("\n");
                 for (int j = y - 3; j <= y + 3; j++) {
                     if (j >= 0 && j < currentMap.getSize()) {
                         colorCode = getColorCode(currentMap.getMapCells()[i][j]);
                         result.append("|").append(colorCode).append("#####").append(ANSI_RESET);
                     }
+                    else if(j < 0)
+                        y++;
                 }
                 result.append("|\n");
                 for (int j = y - 3; j <= y + 3; j++) {
@@ -46,6 +48,8 @@ public class MapMenuController {
                         colorCode = getColorCode(currentMap.getMapCells()[i][j]);
                         result.append("|").append(colorCode).append(currentMap.getMapCells()[i][j].getToPrint()).append(ANSI_RESET);
                     }
+                    else if(j < 0)
+                        y++;
                 }
                 result.append("|\n");
                 for (int j = y - 3; j <= y + 3; j++) {
@@ -53,9 +57,14 @@ public class MapMenuController {
                         colorCode = getColorCode(currentMap.getMapCells()[i][j]);
                         result.append("|").append(colorCode).append("#####").append(ANSI_RESET);
                     }
+                    else if(j < 0)
+                        y++;
                 }
                 result.append("|\n");
+
             }
+            else if(i < 0)
+                x++;
         }
         for (int j = 0; j < 43; j++) {
             result.append("-");
@@ -102,6 +111,10 @@ public class MapMenuController {
         int deltaY = 0, deltaX = 0;
         deltaX = getCoordinateChanges(matcherUp, matcherDown, deltaX);
         deltaY = getCoordinateChanges(matcherRight, matcherLeft, deltaY);
+        if(!isCoordinateValid(currentX+deltaX,currentY+deltaY,currentMap.getSize()))
+        {
+            return "invalid coordinate";
+        }
         currentX += deltaX;
         currentY += deltaY;
         return showMapWithXY(currentMap, currentX, currentY);
@@ -109,14 +122,17 @@ public class MapMenuController {
 
     private int getCoordinateChanges(Matcher matcherRight, Matcher matcherLeft, int delta) {
         if (matcherRight != null) {
-            if (matcherRight.group("number") != null)
+            if (matcherRight.group("number") != null) {
                 delta += Integer.parseInt(matcherRight.group("number"));
-            else
+            }
+            else{
                 delta += 1;
+            }
         }
         if (matcherLeft != null) {
-            if (matcherLeft.group("number") != null)
+            if (matcherLeft.group("number") != null) {
                 delta -= Integer.parseInt(matcherLeft.group("number"));
+            }
             else
                 delta -= 1;
         }
@@ -140,8 +156,9 @@ public class MapMenuController {
         if (cell.hasWall()) {
             result.append("wall\n").append("hp: ").append(cell.getWall().getHitpoint());
             result.append(" length: ").append(cell.getWall().getLength()).append("\n");
+            result.append("accessibility: ").append(cell.getWall().isAccessible()).append("\n");
         }
-        if (cell.getBuilding() != null) {
+        if (cell.getBuilding() != null) { //todo check government for killing pit
             result.append("building: ").append(cell.getBuilding().getName());
             result.append(" hp: ").append(cell.getBuilding().getHitpoint());
             result.append(" color: ").append(cell.getBuilding().getGovernment().getColor()).append("\n");

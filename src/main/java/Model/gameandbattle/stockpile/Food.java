@@ -27,13 +27,13 @@ public enum Food {
         return name;
     }
     public static Food[] getAllFoods(){
-        Food[] foods={Food.MEAT,Food.CHEESE,Food.BREAD,Food.APPLE};
+        Food[] foods={Food.MEAT,Food.CHEESE,Food.APPLE,Food.BREAD};
         return foods;
     }
     public static Food getFoodByNumber(int a){
         if(a==1) return MEAT;
         if(a==2) return CHEESE;
-        if(a==3) return BREAD;
-        return APPLE;
+        if(a==3) return APPLE;
+        return BREAD;
     }
 }

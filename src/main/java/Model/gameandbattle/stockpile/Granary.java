@@ -1,47 +1,58 @@
 package Model.gameandbattle.stockpile;
 
 public class Granary {
-    private int meat;
-    private int cheese;
-    private int apple;
-    private int bread;
+    private double meat;
+    private double cheese;
+    private double apple;
+    private double bread;
 
-    public Granary(int meat, int cheese, int apple, int bread) {
+    public Granary(double meat, double cheese, double apple, double bread) {
         this.meat = meat;
         this.cheese = cheese;
         this.apple = apple;
         this.bread = bread;
     }
-    /////////////////getters and setters/////////////////
-    public int getMeat() {
+
+    public double getMeat() {
         return meat;
     }
 
-    public void setMeat(int meat) {
+    public void setMeat(double meat) {
         this.meat = meat;
     }
 
-    public int getCheese() {
+    public double getCheese() {
         return cheese;
     }
 
-    public void setCheese(int cheese) {
+    public void setCheese(double cheese) {
         this.cheese = cheese;
     }
 
-    public int getApple() {
+    public double getApple() {
         return apple;
     }
 
-    public void setApple(int apple) {
+    public void setApple(double apple) {
         this.apple = apple;
     }
 
-    public int getBread() {
+    public double getBread() {
         return bread;
     }
 
-    public void setBread(int bread) {
+    public void setBread(double bread) {
         this.bread = bread;
+    }
+
+    public void setGranaryByName(String name, double finalAmount){
+        if(name.equals("apple")) apple=finalAmount;
+        if(name.equals("bread")) bread=finalAmount;
+        if(name.equals("cheese")) cheese=finalAmount;
+        if(name.equals("meat")) meat=finalAmount;
+    }
+
+    public double getTotalFood() {
+        return (meat + apple + bread + cheese);
     }
 }

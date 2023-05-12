@@ -32,7 +32,7 @@ public class ShopMenuController {
         Matcher nameMather= ShopMenuRegexes.NAME.getMatcher(input); Matcher amountMather= ShopMenuRegexes.AMOUNT.getMatcher(input);
         String name = null; int amount = 0;
         if(nameMather.find()) name=nameMather.group("name");
-        if(amountMather.find()) amount=Integer.parseInt(nameMather.group("amount"));
+        if(amountMather.find()) amount=Integer.parseInt(amountMather.group("amount"));
         int gold=getNeededGold(name);
         if(gold*amount>government.getCoin()) return "not enough gold";
         if(government.amountOfAllResources()+amount>Government.getLimitOfResources()) return "you will pass your limit";
@@ -44,7 +44,7 @@ public class ShopMenuController {
         Matcher nameMather= ShopMenuRegexes.NAME.getMatcher(input); Matcher amountMather= ShopMenuRegexes.AMOUNT.getMatcher(input);
         String name = null; int amount = 0;
         if(nameMather.find()) name=nameMather.group("name");
-        if(amountMather.find()) amount=Integer.parseInt(nameMather.group("amount"));
+        if(amountMather.find()) amount=Integer.parseInt(amountMather.group("amount"));
         if(!isThereEnoughItems(name,amount,government)) return "you don't have that many items";
         int increaseGold=getSellGold(name);
         government.setCoin(government.getCoin()+increaseGold*amount);
@@ -67,7 +67,10 @@ public class ShopMenuController {
     public static void addItem(String name,Government government,int amount){
         Shop shop=Shop.getShop();
         for(int i=0;i<shop.getFoods().length;i++){
-            if(shop.getFoods()[i].getName().equals(name)) government.getFoods()[i]=government.getFoods()[i]+amount;
+            if(shop.getFoods()[i].getName().equals(name)) {
+                government.getFoods()[i]=government.getFoods()[i]+amount;
+                government.getGranary().setGranaryByName(name,  government.getFoods()[i]);
+            }
         }
         for(int i=0;i<shop.getWeapons().length;i++){
             if(shop.getWeapons()[i].getName().equals(name)) government.getWeapons()[i]=government.getWeapons()[i]+amount;

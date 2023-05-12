@@ -7,25 +7,32 @@ import Model.gameandbattle.map.Texture;
 import java.util.ArrayList;
 
 public class Troop extends Person{
-    private String state;
+    private int state; //1 for defensive 2 for standing 3 for offensive
     private int attackRange;
     private int attackStrength;
+    private final ArrayList<Weapon> weapons;
     private int speed;
     private int defenseStrength;
     private ArrayList<Texture> notAllowedTextures;
+    private final int cost;
     private boolean isVisible;
     private boolean canClimb;
     private boolean canThrowLadder;
     private boolean canDigDitch;
+    private boolean hasOil;
 
-    public Troop(String name, int hp, Government government, boolean isBusy, Building building, int attackStrength, int speed, int defenseStrength, ArrayList<Texture> textures, int attackRange) {
+
+    public Troop(String name, int hp, Government government, boolean isBusy, Building building, int attackStrength, int speed, int defenseStrength, int attackRange,int cost,ArrayList<Weapon> weapons) {
         super(name,hp, government, isBusy, building);
         this.attackStrength = attackStrength;
         this.speed = speed;
         this.defenseStrength = defenseStrength;
-        notAllowedTextures=textures;
         this.attackRange=attackRange;
+        this.cost = cost;
+        this.weapons= weapons;
+        hasOil = false;
     }
+
 
     public int getAttackStrength() {
         return attackStrength;
@@ -55,11 +62,11 @@ public class Troop extends Person{
         return attackRange;
     }
 
-    public String getState() {
+    public int getState() {
         return state;
     }
 
-    public void setState(String state) {
+    public void setState(int state) {
         this.state = state;
     }
 
@@ -81,5 +88,19 @@ public class Troop extends Person{
 
     }
 
+    public int getCost() {
+        return cost;
+    }
 
+    public ArrayList<Weapon> getWeapons() {
+        return weapons;
+    }
+
+    public boolean hasOil() {
+        return hasOil;
+    }
+
+    public void equipWithOil() {
+        hasOil = true;
+    }
 }

@@ -30,6 +30,14 @@ public class Cell {
         turnCounterForDitch =0;
     }
 
+    public Tunnel getTunnel() {
+        return tunnel;
+    }
+
+    public void setTunnel(Tunnel tunnel) {
+        this.tunnel = tunnel;
+    }
+
     public boolean isDitch() {
         return isDitch;
     }

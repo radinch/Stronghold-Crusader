@@ -21,6 +21,10 @@ public class Catapult extends Troop{
         return isFiery;
     }
 
+    public void setFiery(boolean fiery) {
+        isFiery = fiery;
+    }
+
     public int getEngineerNeeded() {
         return EngineerNeeded;
     }

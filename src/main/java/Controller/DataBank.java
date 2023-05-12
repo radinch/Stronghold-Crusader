@@ -7,10 +7,7 @@ import Model.gameandbattle.Government;
 import Model.gameandbattle.battle.Person;
 import Model.gameandbattle.battle.Troop;
 import Model.gameandbattle.battle.Weapon;
-import Model.gameandbattle.map.Building;
-import Model.gameandbattle.map.Cell;
-import Model.gameandbattle.map.Map;
-import Model.gameandbattle.map.Texture;
+import Model.gameandbattle.map.*;
 import Model.gameandbattle.shop.Request;
 import Model.gameandbattle.stockpile.Resource;
 import Model.signup_login_profile.User;
@@ -23,6 +20,7 @@ public class DataBank {
 
     private static final ArrayList<Person> allUnits = new ArrayList<>();
     private static final HashMap<String, Building> buildingName = new HashMap<>(); // name to building
+    private static final ArrayList<Wall> walls = new ArrayList<>();
     private static ArrayList<User> allUsers = new ArrayList<>();
     private static User currentUser;
     public static ArrayList<Map> allMaps = new ArrayList<>();
@@ -139,16 +137,19 @@ public class DataBank {
                 75, Resource.WOOD, 10, 0, castleBuildingTextures,
                 null, null, null, null, null, 5, null, null));
         buildingName.put("lookout tower", new CastleBuilding(null, 0, "lookout tower",
-                75, Resource.STONE, 10, 0, castleBuildingTextures,
+                189, Resource.STONE, 10, 0, castleBuildingTextures,
+                null, null, 10, 10, null, null, 50, null));
+        buildingName.put("perimeter tower", new CastleBuilding(null, 0, "lookout tower",
+                189, Resource.STONE, 10, 0, castleBuildingTextures,
                 null, null, 10, 10, null, null, 50, null));
         buildingName.put("defensive tower", new CastleBuilding(null, 0, "defensive tower",
-                100, Resource.STONE, 15, 0, castleBuildingTextures,
+                189, Resource.STONE, 15, 0, castleBuildingTextures,
                 null, null, 10, 10, null, null, 50, null));
         buildingName.put("square tower", new CastleBuilding(null, 0, "square tower",
-                100, Resource.STONE, 35, 0, castleBuildingTextures,
+                189, Resource.STONE, 35, 0, castleBuildingTextures,
                 null, null, 10, 10, null, null, 50, null));
         buildingName.put("circle tower", new CastleBuilding(null, 0, "circle tower",
-                100, Resource.STONE, 40, 0, castleBuildingTextures,
+                189, Resource.STONE, 40, 0, castleBuildingTextures,
                 null, null, 10, 10, null, null, 50, null));
         buildingName.put("armoury", new CastleBuilding(null, 0, "armoury",
                 75, Resource.WOOD, 5, 0, castleBuildingTextures,
@@ -289,5 +290,24 @@ public class DataBank {
                 return unit;
         }
         return null;
+    }
+
+    public static void initializeWalls() {
+        walls.add(new Wall("low wall",63,10,1));
+        walls.add(new Wall("normal wall",72,15,2));
+        walls.add(new Wall("crenelation",84,20,3));
+        walls.add(new Wall("gate",63,10,1));
+    }
+
+    public static Wall getWallByName(String name) {
+        for (Wall wall : walls) {
+            if(wall.getName().equals(name))
+                return wall;
+        }
+        return null;
+    }
+
+    public static ArrayList<Texture> getCastleBuildingTextures() {
+        return castleBuildingTextures;
     }
 }

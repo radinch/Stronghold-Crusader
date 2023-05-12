@@ -78,6 +78,9 @@ public class OtherBuilding extends Building {
             case "Pitch rig" -> {
                 this.getGovernment().getStockpile().setPitch(getGovernment().getStockpile().getPitch() + getStockpileRate(getRate()));
             }
+            case "oil smelter" -> {
+                this.getGovernment().getStockpile().setOil(getGovernment().getStockpile().getOil() + getStockpileRate(getRate()));
+            }
         }
     }
 

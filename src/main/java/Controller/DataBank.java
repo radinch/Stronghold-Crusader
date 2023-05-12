@@ -241,7 +241,7 @@ public class DataBank {
                 5, 1, new ArrayList<Texture>(List.of(Texture.GROUND)),
                 null, 2, null));
         buildingName.put("Wheat garden", new OtherBuilding(null, 0, "Wheat garden", 39, Resource.WOOD,
-                15, 1, castleBuildingTextures,
+                15, 1, gardensAllowedTextures,
                 null, 2, null));
         buildingName.put("Bakery", new OtherBuilding(null, 0, "Bakery", 39, Resource.WOOD,
                 10, 1, foodAndIndustryTextures,

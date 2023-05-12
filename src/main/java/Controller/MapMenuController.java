@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 
 import Model.Regex.MapMenuRegexes;
 import Model.gameandbattle.battle.Person;
+import Model.gameandbattle.battle.Troop;
 import Model.gameandbattle.map.Cell;
 import Model.gameandbattle.map.Map;
 
@@ -20,6 +21,7 @@ public class MapMenuController {
     }
 
     public String showMapWithXY(Map currentMap, int x, int y) {
+        updateCells(currentMap);
         String ANSI_RESET = "\u001B[0m";
         String colorCode;
         /*String ANSI_RED = "\u001b[31m";
@@ -176,6 +178,19 @@ public class MapMenuController {
                 result.append("tree: ").append(cell.getTree().getName()).append("\n");
         }
         return result.toString();
+    }
+    private void updateCells(Map map){
+        for (int i=0;i<map.getSize();i++){
+            for (int j=0;j< map.getSize();j++){
+                if(map.getACell(i,j).getTree()!=null) map.getACell(i,j).setDetail('T');
+                if(map.getACell(i,j).getBuilding()!=null) map.getACell(i,j).setDetail('B');
+                for (Person person : map.getACell(i, j).getPeople()) {
+                    if(person instanceof Troop){
+                        map.getACell(i,j).setDetail('S');
+                    }
+                }
+            }
+        }
     }
 
     private boolean isCoordinateValid(int x, int y, int mapSize) {

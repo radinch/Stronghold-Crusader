@@ -67,7 +67,6 @@ public class Government {
         for (int i = 0; i < 8; i++) {
             addPerson();
         }
-        System.out.println(this.people.size());
         this.king = new Troop("King",1000,this,true,this.getBuildingByName("Small stone gatehouse"),1000,300,1000,5,0,null);
     }
     ////////////////////setters and getters////////////////////

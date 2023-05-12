@@ -62,7 +62,6 @@ public class UnitMenuController {
         }
         return "troop moved successfully";
     }
-    /*private static void findPath(boolean[][] table, int startX, int startY, int endX, int endY,
 
     public String setCondition(Matcher matcher) {
         int x = Integer.parseInt(matcher.group("x"));
@@ -94,7 +93,7 @@ public class UnitMenuController {
             pathX.clear();
             pathY.clear();
         }
-    }*/
+    }
     private static boolean findPathHelper(boolean[][] table, int currX, int currY, int endX, int endY,
                                           boolean[][] visited, ArrayList<Integer> pathX, ArrayList<Integer> pathY) {
         //System.out.println("x: " + currX + " y: " + currY+" end x :"+endX+" end y: "+endY);

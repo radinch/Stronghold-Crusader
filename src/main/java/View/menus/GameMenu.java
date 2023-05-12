@@ -38,6 +38,10 @@ public class GameMenu {
         Matcher matcher;
         while (true)
         {
+            if(gameMenuController.getCurrentGovernment().getColor()==null) {
+                System.out.println("pick a color first, type it in:");
+                gameMenuController.getCurrentGovernment().setColor(scanner.nextLine());
+            }
             if(isGameOver) {
                 System.out.println("game is over the winner is :"+ Objects.requireNonNull(winner()).getRuler().getUsername());
                 break;
@@ -59,6 +63,7 @@ public class GameMenu {
                 tradeMenu.run(scanner,gameMenuController.getGovernments());
             else if(command.equals("next turn"))
                 gameMenuController.nextTurn(buildingMenu,shopMenu,tradeMenu,unitMenu,dropElementMenu,this);
+            else System.out.println("invalid command");
             //else if(command.equals("exit")) return;
         }
     }

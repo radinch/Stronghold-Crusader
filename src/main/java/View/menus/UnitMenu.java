@@ -47,7 +47,7 @@ public class UnitMenu {
             Matcher matcher10=UnitMenuRegexes.SET_CONDITION.getMatcher(input);
             Matcher matcher11=UnitMenuRegexes.DIG_TUNNEL.getMatcher(input);
             if(matcher1.matches()) System.out.println(unitMenuController.moveUnit(matcher1,map));
-            else if(matcher2.matches()) System.out.println(unitMenuController.patrolUnit(matcher2));
+            else if(matcher2.matches()) System.out.println(unitMenuController.patrolUnit(matcher2,map));
             else if(input.equals("stop patrol")) unitMenuController.stopPatrol();
             else if(matcher3.matches()) System.out.println(unitMenuController.buildSurroundings(matcher3));
             else if(matcher4.matches()) System.out.println(unitMenuController.pourOil(matcher4));
@@ -59,7 +59,7 @@ public class UnitMenu {
             else if(matcher8.matches()) System.out.println(unitMenuController.cancelDitch(matcher8));
             else if(matcher9.matches()) System.out.println(unitMenuController.removeDitch(matcher9));
             else if(matcher10.matches()) System.out.println(unitMenuController.setCondition(matcher10));
-            if(matcher11.matches()) System.out.println(unitMenuController.digTunnel(matcher11));
+            else if(matcher11.matches()) System.out.println(unitMenuController.digTunnel(matcher11));
             else System.out.println("invalid command");
         }
     }

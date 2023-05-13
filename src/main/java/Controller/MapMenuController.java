@@ -178,6 +178,7 @@ public class MapMenuController {
                 personCounter++;
                 result.append(personCounter).append(") ").append(person.getName());
                 result.append(" color: ").append(person.getGovernment().getColor());
+                if(person.getHp()> 0)
                 result.append(" hp: ").append(person.getHp()).append("\n");
             }
         }

@@ -140,7 +140,7 @@ public class UnitMenuController {
         }
     }
 
-    public String patrolUnit(Matcher matcher) {
+    public String patrolUnit(Matcher matcher,Map map) {
         int x1 = Integer.parseInt(matcher.group("y"));
         int y1 = Integer.parseInt(matcher.group("x"));
         ArrayList<Integer> pathX = new ArrayList<>();
@@ -148,6 +148,7 @@ public class UnitMenuController {
         boolean[][] help = new boolean[map.getSize()][map.getSize()];
         //findPath(help,x,y,x1,y1,pathX,pathY);
         aStarSearch(help, x, y, x1, y1, pathX, pathY, map.getSize(), map.getSize());
+        System.out.println("start x : "+x+"start y : "+y+"finish x : "+x1+"finish y : "+y1);
         Patrol patrol = new Patrol(x, y, x1, y1);
         if (pathX == null) return "there is no path between these points";
         for (Person person : currentUnit) {
@@ -626,34 +627,35 @@ public class UnitMenuController {
      * if eny error occurs the pathX and pathY will be null
      * so you should check for errors before calling this method
      **/
-    private Pair make_pair(int x,int y)
+    private static Pair make_pair(int x, int y)
     {
         return new Pair(x,y);
     }
-    private pPair make_pair(double x,Pair y)
+    private static pPair make_pair(double x, Pair y)
     {
         return new pPair(x,y);
     }
 
-    private boolean isValid(int row, int col,int ROW,int COL)
+    private static boolean isValid(int row, int col, int ROW, int COL)
     {
         return (row >= 0) && (row < ROW) && (col >= 0)
                 && (col < COL);
     }
-    private boolean isUnBlocked(boolean[][] grid, int row, int col)
+    private static boolean isUnBlocked(boolean[][] grid, int row, int col)
     {
         return grid[row][col];
     }
-    private boolean isDestination(int row, int col, int destX,int destY)
+    private static boolean isDestination(int row, int col, int destX, int destY)
     {
         return row == destX && col == destY;
     }
-    private double calculateHValue(int row, int col, int destX,int destY)
+    private static double calculateHValue(int row, int col, int destX, int destY)
     {
         return (Math.abs(row - destX) + Math.abs(col - destY));
     }
-    private void tracePath(cellForPath[][] cellDetails, int destX, int destY,ArrayList<Integer> PathX,ArrayList<Integer> PathY)
+    private static void tracePath(cellForPath[][] cellDetails, int destX, int destY, ArrayList<Integer> PathX, ArrayList<Integer> PathY)
     {
+        System.out.println(PathX);
         int row = destX;
         int col = destY;
 
@@ -676,7 +678,7 @@ public class UnitMenuController {
             PathY.add(p.second);
         }
     }
-    public void aStarSearch(boolean[][] grid, int srcX, int srcY, int destX, int destY, ArrayList<Integer> PathX,ArrayList<Integer> PathY,int ROW,int COL)
+    public static void aStarSearch(boolean[][] grid, int srcX, int srcY, int destX, int destY, ArrayList<Integer> PathX,ArrayList<Integer> PathY,int ROW,int COL)
     {
         if (!isValid(srcX, srcY,ROW,COL)) {
             return;

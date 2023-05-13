@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import static Model.gameandbattle.map.Texture.RIVER;
+import static Model.gameandbattle.map.Texture.SHALLOW_WATER;
+
 public class GameMenuController {
 
     private Map currentMap;
@@ -95,8 +98,8 @@ public class GameMenuController {
                     if (currentMap.getACell(i, j).getTurnCounterForDitch() == 2)
                         currentMap.getACell(i, j).setDitch();
                 }
-                int counter = 0;
-                for (Person person : currentMap.getACell(i, j).getPeople()) {
+                for (int m=currentMap.getACell(i,j).getPeople().size()-1;m>=0;m--) {
+                    Person person=currentMap.getACell(i,j).getPeople().get(m);
                     ArrayList<String> airAttackers = new ArrayList<>(List.of("Crossbowmen", "Archer Bow", "Horse Archers", "Slingers", "Archer", "Fire Throwers"));
                     boolean flagAir = false;
                     for (String string : airAttackers) {
@@ -122,8 +125,9 @@ public class GameMenuController {
                         ArrayList<Integer> pathY = new ArrayList<>();
                         boolean[][] help = new boolean[currentMap.getSize()][currentMap.getSize()];
                         prepareHelp(help);
-                        currentMap.getACell(i, j).getPeople().remove(counter);
-                        findPath(help, x, y, x1, y1, pathX, pathY);
+                        currentMap.getACell(i, j).getPeople().remove(m);
+                        System.out.println("start x : "+x+"start y : "+y+"finish x : "+x1+"finish y : "+y1);
+                        UnitMenuController.aStarSearch(help,x,y,x1,y1,pathX,pathY,currentMap.getSize(),currentMap.getSize());
                         int speed = 100;
                         if ((person instanceof Troop)) speed = ((Troop) person).getSpeed();
                         x = pathX.get(Math.min(pathX.size() - 1, speed / 25));
@@ -132,7 +136,6 @@ public class GameMenuController {
                             patrol.setCondition(1 - patrol.getCondition());
                         currentMap.getACell(x, y).getPeople().add(person);
                     }
-                    counter++;
                     if (currentMap.getACell(i, j).getTexture().equals(Texture.PETROLEUM))
                         currentMap.getACell(i, j).setTexture(Texture.GROUND);
                     if (person instanceof Troop&&((Troop) person).getState() == 2) {
@@ -164,7 +167,7 @@ public class GameMenuController {
                                         boolean[][] help = new boolean[currentMap.getSize()][currentMap.getSize()];
                                         prepareHelp(help);
                                         currentMap.getACell(i, j).getPeople().remove(counter1);
-                                        findPath(help, i, j, k, q, pathX, pathY);
+                                        UnitMenuController.aStarSearch(help,i,j,k,q,pathX,pathY,currentMap.getSize(),currentMap.getSize());
                                         int speed = 100;
                                         speed = ((Troop) person).getSpeed(); int x;int y;
                                         x = pathX.get(Math.min(pathX.size() - 1, speed / 25));
@@ -299,13 +302,29 @@ public class GameMenuController {
     public void prepareHelp(boolean[][] help){
         for(int i=0;i<currentMap.getSize();i++){
             for(int j=0;j<currentMap.getSize();j++){
-                if(currentMap.getACell(i,j).getTexture()== Texture.SEE||currentMap.getACell(i,j).getTexture()== Texture.SHALLOW_WATER||
-                        currentMap.getACell(i,j).getTexture()== Texture.ROCK||currentMap.getACell(i,j).getTexture()== Texture.RIVER||
+                if(currentMap.getACell(i,j).getTexture()== Texture.SEE||currentMap.getACell(i,j).getTexture()== SHALLOW_WATER||
+                        currentMap.getACell(i,j).getTexture()== Texture.ROCK||currentMap.getACell(i,j).getTexture()== RIVER||
                         currentMap.getACell(i,j).getTexture()== Texture.SMALL_POUND||
                         currentMap.getACell(i,j).getTexture()== Texture.LARGE_POUND){
                     help[i][j]=false;
                 }
-                else help[i][j]=true;
+                else
+                {
+                    help[i][j]=true;
+                    if(currentMap.getACell(i,j).hasWall())
+                    {
+                        if(!currentMap.getACell(i,j).getWall().isAccessible())
+                        {
+                            help[i][j] = false;
+                        }
+                        else {
+                            help[i][j] = true;
+                        }
+                    }
+
+                    if(currentMap.getACell(i,j).isDitch())
+                        help[i][j] = false;
+                }
             }
         }
     }

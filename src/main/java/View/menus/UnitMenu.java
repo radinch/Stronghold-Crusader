@@ -48,7 +48,7 @@ public class UnitMenu {
             Matcher matcher11=UnitMenuRegexes.DIG_TUNNEL.getMatcher(input);
             Matcher matcher12=UnitMenuRegexes.PUT_LADDER.getMatcher(input);
             if(matcher1.matches()) System.out.println(unitMenuController.moveUnit(matcher1,map));
-            else if(matcher2.matches()) System.out.println(unitMenuController.patrolUnit(matcher2));
+            else if(matcher2.matches()) System.out.println(unitMenuController.patrolUnit(matcher2,map));
             else if(input.equals("stop patrol")) unitMenuController.stopPatrol();
             else if(matcher3.matches()) System.out.println(unitMenuController.buildSurroundings(matcher3));
             else if(matcher4.matches()) System.out.println(unitMenuController.pourOil(matcher4));

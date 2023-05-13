@@ -168,7 +168,10 @@ public class MapMenuController {
         }
         if (cell.getBuilding() != null) { //todo check government for killing pit
             result.append("building: ").append(cell.getBuilding().getName());
-            result.append(" hp: ").append(cell.getBuilding().getHitpoint());
+            if (cell.getBuilding().getHitpoint() > 0)
+                result.append(" hp: ").append(cell.getBuilding().getHitpoint());
+            else
+                result.append(" destroyed");
             result.append(" color: ").append(cell.getBuilding().getGovernment().getColor()).append("\n");
         }
         if (cell.getPeople().size() != 0) {
@@ -179,7 +182,9 @@ public class MapMenuController {
                 result.append(personCounter).append(") ").append(person.getName());
                 result.append(" color: ").append(person.getGovernment().getColor());
                 if(person.getHp()> 0)
-                result.append(" hp: ").append(person.getHp()).append("\n");
+                    result.append(" hp: ").append(person.getHp()).append("\n");
+                else
+                    result.append(" dead").append("\n");
             }
         }
         if (cell.getTree() != null)
@@ -189,13 +194,20 @@ public class MapMenuController {
     private void updateCells(Map map){
         for (int i=0;i<map.getSize();i++){
             for (int j=0;j< map.getSize();j++){
-                if(map.getACell(i,j).getTree()!=null) map.getACell(i,j).setDetail('T');
-                if(map.getACell(i,j).getBuilding()!=null) map.getACell(i,j).setDetail('B');
-                for (Person person : map.getACell(i, j).getPeople()) {
-                    if(person instanceof Troop){
-                        map.getACell(i,j).setDetail('S');
+                if(map.getACell(i,j).getPeople().size() !=0 ) {
+                    for (Person person : map.getACell(i, j).getPeople()) {
+                        if(person instanceof Troop){
+                            map.getACell(i,j).setDetail('S');
+                        }
                     }
                 }
+                else if(map.getACell(i,j).getBuilding()!=null) {
+                    map.getACell(i, j).setDetail('B');
+                }
+                else if(map.getACell(i,j).getTree()!=null) map.getACell(i,j).setDetail('T');
+                else
+                    map.getACell(i,j).setDetail('#');
+
             }
         }
     }

@@ -164,13 +164,11 @@ public class GameMenuController {
                                 Person toBeAdded = null;
                                 int counter1=0;
                                 for(Person person1:currentMap.getACell(k,q).getPeople()){
-                                    System.out.println(person1.getGovernment().getRuler().getUsername()+"======"+person.getGovernment().getRuler().getUsername());
                                     if(!person1.getGovernment().getRuler().getUsername().equals(person.getGovernment().getRuler().getUsername())){
                                         ArrayList<Integer> pathX = new ArrayList<>();
                                         ArrayList<Integer> pathY = new ArrayList<>();
                                         boolean[][] help = new boolean[currentMap.getSize()][currentMap.getSize()];
                                         prepareHelp(help);
-                                        System.out.println("i: "+i+" j: "+j+" k : "+ k+" q: "+q);
                                         UnitMenuController.aStarSearch(help,i,j,k,q,pathX,pathY,currentMap.getSize(),currentMap.getSize());
                                         if(pathX.size()!=0) {
                                             int speed = 100;
@@ -216,7 +214,6 @@ public class GameMenuController {
                 government.getFoods()[i]=government.getFoods()[i]-(1 + government.getFoodRate()*0.5)*government.getPopulation();
             }
             government.setPopulation(government.getMaxPopulation()*government.getPopularity()/100);
-            System.out.println(government.getPopulation());
         }
         buildingMenu.setGovernment(currentGovernment); shopMenu.setGovernment(currentGovernment); tradeMenu.setGovernment(currentGovernment);
         unitMenu.setGovernment(currentGovernment); tradeMenu.setGovernment(currentGovernment);
@@ -251,21 +248,6 @@ public class GameMenuController {
 
     public GameMenu getGameMenu() {
         return gameMenu;
-    }
-    private static void findPath(boolean[][] table, int startX, int startY, int endX, int endY,
-                                 ArrayList<Integer> pathX, ArrayList<Integer> pathY) {
-        if (startX < 0 || startX >= table.length || startY < 0 || startY >= table[0].length
-                || endX < 0 || endX >= table.length || endY < 0 || endY >= table[0].length) {
-            throw new IllegalArgumentException("Start or end coordinates are out of bounds!");
-        }
-        boolean[][] visited = new boolean[table.length][table[0].length];
-        if (findPathHelper(table, startX, startY, endX, endY, visited, pathX, pathY)) {
-            reverseList(pathX);
-            reverseList(pathY);
-        } else {
-            pathX.clear();
-            pathY.clear();
-        }
     }
     private static boolean findPathHelper(boolean[][] table, int currX, int currY, int endX, int endY,
                                           boolean[][] visited, ArrayList<Integer> pathX, ArrayList<Integer> pathY) {

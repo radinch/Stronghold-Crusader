@@ -152,6 +152,8 @@ public class GameMenuController {
                             }
                         }
                     }
+                    int x=0;
+                    int y = 0;
                     if (person instanceof Troop&&((Troop) person).getState() != 2) {
                         int amountOfMove;
                         if(((Troop) person).getState()==1) amountOfMove=5;
@@ -159,23 +161,31 @@ public class GameMenuController {
                         outer:
                         for (int k = Math.max(i-amountOfMove,0); k < Math.min(i+amountOfMove,currentMap.getSize()-1); k++) {
                             for (int q =Math.max(j-amountOfMove,0); q <Math.min(j+amountOfMove,currentMap.getSize()-1) ; q++) {
+                                Person toBeAdded = null;
                                 int counter1=0;
                                 for(Person person1:currentMap.getACell(k,q).getPeople()){
+                                    System.out.println(person1.getGovernment().getRuler().getUsername()+"======"+person.getGovernment().getRuler().getUsername());
                                     if(!person1.getGovernment().getRuler().getUsername().equals(person.getGovernment().getRuler().getUsername())){
                                         ArrayList<Integer> pathX = new ArrayList<>();
                                         ArrayList<Integer> pathY = new ArrayList<>();
                                         boolean[][] help = new boolean[currentMap.getSize()][currentMap.getSize()];
                                         prepareHelp(help);
-                                        currentMap.getACell(i, j).getPeople().remove(counter1);
+                                        System.out.println("i: "+i+" j: "+j+" k : "+ k+" q: "+q);
                                         UnitMenuController.aStarSearch(help,i,j,k,q,pathX,pathY,currentMap.getSize(),currentMap.getSize());
-                                        int speed = 100;
-                                        speed = ((Troop) person).getSpeed(); int x;int y;
-                                        x = pathX.get(Math.min(pathX.size() - 1, speed / 25));
-                                        y = pathY.get(Math.min(pathY.size() - 1, speed / 25));
-                                        currentMap.getACell(x, y).getPeople().add(person);
-                                        break outer;
+                                        if(pathX.size()!=0) {
+                                            int speed = 100;
+                                            speed = ((Troop) person).getSpeed();
+                                            x = pathX.get(Math.min(pathX.size() - 1, speed / 25));
+                                            y = pathY.get(Math.min(pathY.size() - 1, speed / 25));
+                                            toBeAdded=person;
+                                        }
                                     }
                                     counter1++;
+                                }
+                                if(toBeAdded!=null){
+                                    currentMap.getACell(x,y).getPeople().add(toBeAdded);
+                                    currentMap.getACell(i, j).getPeople().remove(person);
+                                    break outer;
                                 }
                             }
                         }

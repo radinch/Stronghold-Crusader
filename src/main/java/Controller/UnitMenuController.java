@@ -52,7 +52,6 @@ public class UnitMenuController {
                 if(currentUnit.get(i).getGovernment().getRuler().getUsername().equals(government.getRuler().getUsername())) {
                     int speed = 100;
                     if ((currentUnit.get(i) instanceof Troop)) speed = ((Troop) currentUnit.get(i)).getSpeed();
-                    System.out.println(pathX.size());
                     x = pathX.get(Math.min(pathX.size() - 1, speed/25));
                     y = pathY.get(Math.min(pathY.size() - 1, speed/25));
                     map.getACell(x, y).getPeople().add(currentUnit.get(i));
@@ -148,7 +147,6 @@ public class UnitMenuController {
         boolean[][] help = new boolean[map.getSize()][map.getSize()];
         //findPath(help,x,y,x1,y1,pathX,pathY);
         aStarSearch(help, x, y, x1, y1, pathX, pathY, map.getSize(), map.getSize());
-        System.out.println("start x : "+x+"start y : "+y+"finish x : "+x1+"finish y : "+y1);
         Patrol patrol = new Patrol(x, y, x1, y1);
         if (pathX == null) return "there is no path between these points";
         for (Person person : currentUnit) {
@@ -320,6 +318,10 @@ public class UnitMenuController {
         return "success";
     }
 
+    public void setMap(Map map) {
+        this.map = map;
+    }
+
     public String removeDitch(Matcher matcher) {
         int ditchX = Integer.parseInt(matcher.group("y"));
         int ditchY = Integer.parseInt(matcher.group("x"));
@@ -403,7 +405,7 @@ public class UnitMenuController {
                     if ((person instanceof Troop)) speed = ((Troop) person).getSpeed();
                     finalX = pathX.get(Math.min(pathX.size() - 1, speed * 100));
                     finalY = pathY.get(Math.min(pathY.size() - 1, speed * 100));
-                    map.getACell(x, y).getPeople().add(person);
+                    map.getACell(x1,y1).getPeople().add(person);
                     return "done";
                 }
                 counter++;
@@ -627,6 +629,7 @@ public class UnitMenuController {
      * if eny error occurs the pathX and pathY will be null
      * so you should check for errors before calling this method
      **/
+
     private static Pair make_pair(int x, int y)
     {
         return new Pair(x,y);
@@ -655,7 +658,6 @@ public class UnitMenuController {
     }
     private static void tracePath(cellForPath[][] cellDetails, int destX, int destY, ArrayList<Integer> PathX, ArrayList<Integer> PathY)
     {
-        System.out.println(PathX);
         int row = destX;
         int col = destY;
 

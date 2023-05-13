@@ -80,6 +80,7 @@ public class UnitMenu {
                         selectedTroop.add(person);
                 }
                 unitMenuController=new UnitMenuController(selectedTroop,x,y,government);
+                unitMenuController.setMap(map);
                 return unitMenuController;
             }
             else if(input.equals("exit"))

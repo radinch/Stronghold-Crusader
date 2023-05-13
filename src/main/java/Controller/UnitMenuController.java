@@ -376,6 +376,9 @@ public class UnitMenuController {
                             help[i][j] = true;
                         }
                     }
+                    if(map.getACell(i,j).isDitch()) {
+                        help[i][j] =false;
+                    }
                 }
             }
         }
@@ -484,6 +487,8 @@ public class UnitMenuController {
             return "this engineer had equipped with oil before";
         moveUnitWithOnePerson(engineer,government.getBuildingByName("oil smelter").getOccupiedCell().getCellCoordinate(map).get(0),
                 government.getBuildingByName("oil smelter").getOccupiedCell().getCellCoordinate(map).get(1));
+        if(government.getStockpile().getOil() < 2)
+            return "not enough oil";
         ((Troop) engineer).equipWithOil();
         return "success";
     }
@@ -829,6 +834,65 @@ public class UnitMenuController {
                         cellDetails[i][j - 1].parent_i = i;
                         cellDetails[i][j - 1].parent_j = j;
                     }
+                }
+            }
+        }
+    }
+
+    public String putLadder(Matcher matcher) {
+        boolean flag = false;
+        int x = Integer.parseInt(matcher.group("y"));
+        int y = Integer.parseInt(matcher.group("x"));
+        for (Person person : currentUnit) {
+            if (person.getName().equals("Ladderman")) {
+                flag = true;
+                break;
+            }
+        }
+        if(!flag)
+            return "you dont have ladderman in this cell";
+        if (!isCoordinateValid(x,y, map.getSize()))
+            return "invalid coordinate";
+        if(!isNearWall(x,y))
+            return "in destination cell no wall exists";
+        changeAccessibilityOfWall(x,y,x,y,new ArrayList<>(),new ArrayList<>());
+        return "success";
+    }
+
+    private boolean isNearWall(int x,int y)
+    {
+        for (int i = x-1; i <= x+1; i++) {
+            for (int j = y-1; j <= y+1; j++) {
+                if(!(i < 0 || i > map.getSize() || j < 0 || j > map.getSize()))
+                {
+                    if(!(i != x && j != y)) {
+                        if (map.getACell(i, j).hasWall())
+                            return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private void changeAccessibilityOfWall(int firstX,int firstY,int x,int y,ArrayList<Integer> visitedX,ArrayList<Integer> visitedY)
+    {
+//        System.out.println("x : "+x);
+//        System.out.println("y : "+y);
+        if(!(x < 0 || x > map.getSize() || y < 0 || y > map.getSize()))
+        {
+            if(map.getACell(x,y).hasWall() || (x == firstX && y == firstY)) {
+                if(map.getACell(x,y).hasWall()) {
+                    map.getACell(x, y).getWall().setAccessible(true);
+                }
+                if(!visitedX.contains(x) || !visitedY.contains(y))
+                {
+                    visitedX.add(x);
+                    visitedY.add(y);
+                    changeAccessibilityOfWall(firstX,firstY,x - 1, y,visitedX,visitedY);
+                    changeAccessibilityOfWall(firstX,firstY,x, y - 1,visitedX,visitedY);
+                    changeAccessibilityOfWall(firstX,firstY,x + 1, y,visitedX,visitedY);
+                    changeAccessibilityOfWall(firstX,firstY,x, y + 1,visitedX,visitedY);
                 }
             }
         }

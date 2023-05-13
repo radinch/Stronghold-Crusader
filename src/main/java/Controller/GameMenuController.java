@@ -198,15 +198,15 @@ public class GameMenuController {
                 government.setPopularity(government.getPopularity() + (-2) * government.getTaxRate());
             government.setPopularity(government.getPopularity() + government.getFearRate());
             government.setPopularity( Math.min(100, government.getPopularity()));
-            government.getGranary().setApple((government.getGranary().getApple() - (1 + government.getFoodRate()*0.5))*government.getPopulation());
-            government.getGranary().setCheese((government.getGranary().getCheese() - (1 + government.getFoodRate()*0.5))*government.getPopulation());
-            government.getGranary().setBread((government.getGranary().getBread() - (1 + government.getFoodRate()*0.5))*government.getPopulation());
-            government.getGranary().setMeat((government.getGranary().getMeat() - (1 + government.getFoodRate()*0.5))*government.getPopulation());
+            government.getGranary().setApple(government.getGranary().getApple() - (1 + government.getFoodRate()*0.5)*government.getPopulation());
+            government.getGranary().setCheese(government.getGranary().getCheese() - (1 + government.getFoodRate()*0.5)*government.getPopulation());
+            government.getGranary().setBread(government.getGranary().getBread() - (1 + government.getFoodRate()*0.5)*government.getPopulation());
+            government.getGranary().setMeat(government.getGranary().getMeat() - (1 + government.getFoodRate()*0.5)*government.getPopulation());
             for(int i=0;i<government.getFoods().length;i++){
                 government.getFoods()[i]=government.getFoods()[i]-(1 + government.getFoodRate()*0.5)*government.getPopulation();
             }
-
             government.setPopulation(government.getMaxPopulation()*government.getPopularity()/100);
+            System.out.println(government.getPopulation());
         }
         buildingMenu.setGovernment(currentGovernment); shopMenu.setGovernment(currentGovernment); tradeMenu.setGovernment(currentGovernment);
         unitMenu.setGovernment(currentGovernment); tradeMenu.setGovernment(currentGovernment);

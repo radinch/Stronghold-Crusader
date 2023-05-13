@@ -5,6 +5,7 @@ import Model.buildings.OtherBuilding;
 import Model.buildings.WeaponBuilding;
 import Model.gameandbattle.Government;
 import Model.gameandbattle.battle.Person;
+import Model.gameandbattle.battle.Troop;
 import Model.gameandbattle.map.*;
 
 import java.awt.*;
@@ -57,6 +58,18 @@ public class BuildingMenuController {
         }
     }
 
+    static void addUnit(Building newBuilding, Troop troop, Government government) {
+        government.addUnit(new Troop(troop.getName(), troop.getHp(), government, troop.isBusy(), newBuilding,
+                troop.getAttackStrength(), troop.getSpeed(), troop.getDefenseStrength(), troop.getAttackRange(),
+                troop.getCost(), troop.getWeapons()));
+        newBuilding.addUnit(new Troop(troop.getName(), troop.getHp(), government, troop.isBusy(), newBuilding,
+                troop.getAttackStrength(), troop.getSpeed(), troop.getDefenseStrength(), troop.getAttackRange(),
+                troop.getCost(), troop.getWeapons()));
+        newBuilding.getOccupiedCell().addUnit(new Troop(troop.getName(), troop.getHp(), government, troop.isBusy(), newBuilding,
+                troop.getAttackStrength(), troop.getSpeed(), troop.getDefenseStrength(), troop.getAttackRange(),
+                troop.getCost(), troop.getWeapons()));
+    }
+
     public String dropWall(Matcher matcher) {
         int x = Integer.parseInt(matcher.group("y"));
         int y = Integer.parseInt(matcher.group("x"));
@@ -100,7 +113,7 @@ public class BuildingMenuController {
         if (isCoordinateValid(x, y) != null)
             return isCoordinateValid(x, y);
         if(!isCellProperForWall(x,y))
-            return "you cant drop wall in this cell";
+            return "you cant drop stair in this cell";
         if(isNearWall(x,y) == 0)
             return "there is no wall near here";
         if(!isStoneEnough(isNearWall(x,y)))

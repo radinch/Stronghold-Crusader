@@ -1,5 +1,7 @@
 package Controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 
 import Model.Regex.MapMenuRegexes;
@@ -98,7 +100,8 @@ public class MapMenuController {
     }
 
     public String getColorCode(Cell cell) {
-        if (cell.getTexture().getName().equals("water"))
+        ArrayList<String> waters = new ArrayList<>(List.of("see","large pound","small pound","river","shallow water"));
+        if (waters.contains(cell.getTexture().getName()))
             return "\u001B[44m";
         if (cell.getTexture().getName().matches(".*grass.*"))
             return "\u001B[42m";
@@ -146,7 +149,10 @@ public class MapMenuController {
         int y = Integer.parseInt(matcher.group("x"));
         Cell cell = currentMap.getACell(x, y);
         StringBuilder result = new StringBuilder();
-        result.append("texture: ").append(cell.getTexture().getName()).append("\n");
+        result.append("texture: ").append(cell.getTexture().getName());
+        if(cell.getTexture().getName().equals("rock"))
+            result.append(" direction: ").append(cell.getTexture().getDirection());
+        result.append("\n");
         if (cell.isDitch())
             result.append("this cell is ditch\n");
         if (cell.isPartOfTunnel())
@@ -174,9 +180,9 @@ public class MapMenuController {
                 result.append(" color: ").append(person.getGovernment().getColor());
                 result.append(" hp: ").append(person.getHp()).append("\n");
             }
-            if (cell.getTree() != null)
-                result.append("tree: ").append(cell.getTree().getName()).append("\n");
         }
+        if (cell.getTree() != null)
+            result.append("tree: ").append(cell.getTree().getName()).append("\n");
         return result.toString();
     }
     private void updateCells(Map map){

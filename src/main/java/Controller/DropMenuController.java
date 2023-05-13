@@ -41,7 +41,7 @@ public class DropMenuController {
         if(!isCoordinateValid(x1,y1) || !isCoordinateValid(x2,y2))
             return "invalid coordinate";
         if(isThereABuilding(x1,x2,y1,y2))
-            return "in this region we have building";
+            return "in this region a building exists";
         DataBank.putTexture(map.getMapCells(),x1,x2,y1,y2,texture);
         return "successful";
     }
@@ -67,6 +67,8 @@ public class DropMenuController {
         return "invalid x,y (less than zero)";
         else if(x >= map.getSize() ||  y >= map.getSize())
         return "invalid x,y (bigger that map size)";
+        else if(isThereABuilding(x,x + 1,y, y +1))
+            return "in this region a building exists";
         else {
             Texture rock = Texture.ROCK;
             if(direction.equals("r"))
@@ -88,6 +90,8 @@ public class DropMenuController {
             return "invalid coordinate";
         if(!isCellMaterialOKForTrees(x,y))
             return "cell texture is not ok for dropping tree";
+        if(isThereABuilding(x,x+1,y,y+1))
+            return "in this region a building exists";
         map.getMapCells()[x][y].setTree(Tree.getTreeByName(matcher.group("type")));
         return "successful";
     }

@@ -52,6 +52,7 @@ public class Government {
         this.coin = coin;
         this.fearRate = fearRate;
         this.population = population;
+        maxPopulation = 8;
         buildings = new ArrayList<>();
         stockpile = new Stockpile(100, 0, 50, 100, 0, 0, 0, 0,0);
         granary = new Granary(50, 50, 50, 50);
@@ -325,8 +326,8 @@ public class Government {
         return count;
     }
 
-    public int getMaxFoodCapacity() {
-        int maxFoodCapacity = 0;
+    public double getMaxFoodCapacity() {
+        double maxFoodCapacity = 0;
         for (Building building : buildings) {
             if (building.getName().equals("Food StockPile"))
                 maxFoodCapacity += ((OtherBuilding) building).getCapacity();

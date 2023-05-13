@@ -195,15 +195,15 @@ public class GameMenuController {
                 government.setPopularity(government.getPopularity() + (-2) * government.getTaxRate());
             government.setPopularity(government.getPopularity() + government.getFearRate());
             government.setPopularity( Math.min(100, government.getPopularity()));
-            government.getGranary().setApple((government.getGranary().getApple() - (1 + government.getFoodRate()*0.5))*government.getPopulation());
-            government.getGranary().setCheese((government.getGranary().getCheese() - (1 + government.getFoodRate()*0.5))*government.getPopulation());
-            government.getGranary().setBread((government.getGranary().getBread() - (1 + government.getFoodRate()*0.5))*government.getPopulation());
-            government.getGranary().setMeat((government.getGranary().getMeat() - (1 + government.getFoodRate()*0.5))*government.getPopulation());
+            government.getGranary().setApple(government.getGranary().getApple() - (1 + government.getFoodRate()*0.5)*government.getPopulation());
+            government.getGranary().setCheese(government.getGranary().getCheese() - (1 + government.getFoodRate()*0.5)*government.getPopulation());
+            government.getGranary().setBread(government.getGranary().getBread() - (1 + government.getFoodRate()*0.5)*government.getPopulation());
+            government.getGranary().setMeat(government.getGranary().getMeat() - (1 + government.getFoodRate()*0.5)*government.getPopulation());
             for(int i=0;i<government.getFoods().length;i++){
                 government.getFoods()[i]=government.getFoods()[i]-(1 + government.getFoodRate()*0.5)*government.getPopulation();
             }
-
             government.setPopulation(government.getMaxPopulation()*government.getPopularity()/100);
+            System.out.println(government.getPopulation());
         }
         buildingMenu.setGovernment(currentGovernment); shopMenu.setGovernment(currentGovernment); tradeMenu.setGovernment(currentGovernment);
         unitMenu.setGovernment(currentGovernment); tradeMenu.setGovernment(currentGovernment);
@@ -302,7 +302,7 @@ public class GameMenuController {
                 if(currentMap.getACell(i,j).getTexture()== Texture.SEE||currentMap.getACell(i,j).getTexture()== Texture.SHALLOW_WATER||
                         currentMap.getACell(i,j).getTexture()== Texture.ROCK||currentMap.getACell(i,j).getTexture()== Texture.RIVER||
                         currentMap.getACell(i,j).getTexture()== Texture.SMALL_POUND||
-                        currentMap.getACell(i,j).getTexture()== Texture.LARGE_POUND||currentMap.getACell(i,j).getBuilding()!=null){
+                        currentMap.getACell(i,j).getTexture()== Texture.LARGE_POUND){
                     help[i][j]=false;
                 }
                 else help[i][j]=true;

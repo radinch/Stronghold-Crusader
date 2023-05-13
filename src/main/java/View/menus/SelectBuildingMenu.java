@@ -41,7 +41,8 @@ public class SelectBuildingMenu {
                     (building.getName().equals("barrack") || building.getName().equals("Mercenary Post") ||
                             (building.getName().equals("engineer guild")))) {
                 System.out.println(selectBuildingController.createUnit(building.getGovernment(), matcher, building));
-            }
+            } else if (command.equals("open cage of war dogs") && building.getName().equals("Caged War Dogs"))
+               selectBuildingController.openCageOfWarDogs(building);
             else if(command.equals("exit"))
                 return;
             else

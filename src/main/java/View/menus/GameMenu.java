@@ -18,8 +18,6 @@ public class GameMenu {
         this.gameMenuController = gameMenuController;
         shopMenu=new ShopMenu(gameMenuController.getCurrentGovernment());
         tradeMenu=new TradeMenu(gameMenuController.getCurrentGovernment());
-        DropMenuController dropMenuController=new DropMenuController(gameMenuController.getCurrentMap(),gameMenuController.getCurrentGovernment());
-        dropElementMenu=new DropElementMenu(dropMenuController);
         buildingMenu.setGovernment(help); shopMenu.setGovernment(help); tradeMenu.setGovernment(help);
         unitMenu.setGovernment(help); tradeMenu.setGovernment(help);
         isGameOver=false;
@@ -33,12 +31,15 @@ public class GameMenu {
     private DropElementMenu dropElementMenu;
 
     public void run(Scanner scanner) {
+        DropMenuController dropMenuController=new DropMenuController(gameMenuController.getCurrentMap(),gameMenuController.getCurrentGovernment());
+        dropElementMenu=new DropElementMenu(dropMenuController);
         System.out.println("The battle started");
         String command;
         Matcher matcher;
         while (true)
         {
             if(gameMenuController.getCurrentGovernment().getColor()==null) {
+                //scanner.nextLine();
                 System.out.println("pick a color first, type it in:");
                 gameMenuController.getCurrentGovernment().setColor(scanner.nextLine());
             }
@@ -63,7 +64,9 @@ public class GameMenu {
                 tradeMenu.run(scanner,gameMenuController.getGovernments());
             else if(command.equals("next turn"))
                 gameMenuController.nextTurn(buildingMenu,shopMenu,tradeMenu,unitMenu,dropElementMenu,this);
-            else System.out.println("invalid command");
+            else if(command.equals("drop menu"))
+                dropElementMenu.run(scanner);
+           // else System.out.println("invalid command");
             //else if(command.equals("exit")) return;
         }
     }

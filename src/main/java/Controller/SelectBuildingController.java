@@ -31,8 +31,6 @@ public class SelectBuildingController {
         else if(!isWeaponEnough(government,((Troop)DataBank.getUnitByName(type)),count, building.getName()))
             return "not enough weapon";
         else if(government.getUnEmployedUnit() < count) {
-            System.out.println(count);
-            System.out.println(government.getUnEmployedUnit());
             return "not enough people";
         }
         else if ((building.getName().equals("Mercenary Post") || building.getName().equals("engineer guild")) &&
@@ -49,15 +47,7 @@ public class SelectBuildingController {
                 government.setCountOfWeapon((-1)*count,weapon.getName());
             }
             for (int i = 0; i <count ; i++) {
-                government.addUnit(new Troop(troop.getName(), troop.getHp(), government, troop.isBusy(), building,
-                        troop.getAttackStrength(), troop.getSpeed(), troop.getDefenseStrength(), troop.getAttackRange(),
-                        troop.getCost(), troop.getWeapons()));
-                building.addUnit(new Troop(troop.getName(), troop.getHp(), government, troop.isBusy(), building,
-                        troop.getAttackStrength(), troop.getSpeed(), troop.getDefenseStrength(), troop.getAttackRange(),
-                        troop.getCost(), troop.getWeapons()));
-                building.getOccupiedCell().addUnit(new Troop(troop.getName(), troop.getHp(), government, troop.isBusy(), building,
-                        troop.getAttackStrength(), troop.getSpeed(), troop.getDefenseStrength(), troop.getAttackRange(),
-                        troop.getCost(), troop.getWeapons()));
+                BuildingMenuController.addUnit(building, troop, government);
             }
             return "successful";
         }
@@ -71,5 +61,15 @@ public class SelectBuildingController {
                 return false;
         }
         return true;
+    }
+
+    public void openCageOfWarDogs(Building building) {
+        Troop troop = (Troop) DataBank.getUnitByName("dog");
+        for (int i = 0; i <3 ; i++) {
+            assert troop != null;
+            BuildingMenuController.addUnit(building, troop, building.getGovernment());
+        }
+        building.getGovernment().getBuildings().remove(building);
+        building.getOccupiedCell().setBuilding(null);
     }
 }

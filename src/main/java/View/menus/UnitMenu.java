@@ -44,8 +44,11 @@ public class UnitMenu {
             Matcher matcher7=UnitMenuRegexes.DIG_DITCH.getMatcher(input);
             Matcher matcher8 = UnitMenuRegexes.CANCEL_DITCH.getMatcher(input);
             Matcher matcher9 = UnitMenuRegexes.REMOVE_DITCH.getMatcher(input);
+            Matcher matcher10=UnitMenuRegexes.SET_CONDITION.getMatcher(input);
+            Matcher matcher11=UnitMenuRegexes.DIG_TUNNEL.getMatcher(input);
+            Matcher matcher12=UnitMenuRegexes.PUT_LADDER.getMatcher(input);
             if(matcher1.matches()) System.out.println(unitMenuController.moveUnit(matcher1,map));
-            else if(matcher2.matches()) System.out.println(unitMenuController.patrolUnit(matcher2));
+            else if(matcher2.matches()) System.out.println(unitMenuController.patrolUnit(matcher2,map));
             else if(input.equals("stop patrol")) unitMenuController.stopPatrol();
             else if(matcher3.matches()) System.out.println(unitMenuController.buildSurroundings(matcher3));
             else if(matcher4.matches()) System.out.println(unitMenuController.pourOil(matcher4));
@@ -56,6 +59,9 @@ public class UnitMenu {
             else if(matcher7.matches()) System.out.println(unitMenuController.digDitch(matcher7));
             else if(matcher8.matches()) System.out.println(unitMenuController.cancelDitch(matcher8));
             else if(matcher9.matches()) System.out.println(unitMenuController.removeDitch(matcher9));
+            else if(matcher10.matches()) System.out.println(unitMenuController.setCondition(matcher10));
+            else if(matcher11.matches()) System.out.println(unitMenuController.digTunnel(matcher11));
+            else if(matcher12.matches()) System.out.println(unitMenuController.putLadder(matcher12));
             else System.out.println("invalid command");
         }
     }
@@ -74,6 +80,7 @@ public class UnitMenu {
                         selectedTroop.add(person);
                 }
                 unitMenuController=new UnitMenuController(selectedTroop,x,y,government);
+                unitMenuController.setMap(map);
                 return unitMenuController;
             }
             else if(input.equals("exit"))

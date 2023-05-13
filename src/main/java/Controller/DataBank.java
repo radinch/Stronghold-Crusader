@@ -189,7 +189,7 @@ public class DataBank {
                 null, 2, 0));
         buildingName.put("Stockpile", new OtherBuilding(null, 0, "Stockpile",
                 75, Resource.WOOD, 0, 0, foodAndIndustryTextures,
-                null, 0, 100));
+                null, 0, 1000));
         buildingName.put("Woodcutter", new OtherBuilding(null, 0, "Woodcutter",
                 75, Resource.WOOD, 1, 0, foodAndIndustryTextures,
                 null, 2, 0));
@@ -241,7 +241,7 @@ public class DataBank {
                 5, 1, new ArrayList<Texture>(List.of(Texture.GROUND)),
                 null, 2, null));
         buildingName.put("Wheat garden", new OtherBuilding(null, 0, "Wheat garden", 39, Resource.WOOD,
-                15, 1, castleBuildingTextures,
+                15, 1, gardensAllowedTextures,
                 null, 2, null));
         buildingName.put("Bakery", new OtherBuilding(null, 0, "Bakery", 39, Resource.WOOD,
                 10, 1, foodAndIndustryTextures,
@@ -251,7 +251,7 @@ public class DataBank {
                 null, 2, null));
         buildingName.put("Food StockPile", new OtherBuilding(null, 0, "Food StockPile", 39, Resource.WOOD,
                 5, 0, foodAndIndustryTextures,
-                null, null, 100));
+                null, null, 1000));
 
 
     }
@@ -266,10 +266,10 @@ public class DataBank {
         allUnits.add(new Troop("Archer", 100, null, true, null, 100, 300, 100, 5, 12, new ArrayList<Weapon>(List.of(Weapon.BOW))));
         allUnits.add(new Troop("Crossbowmen", 200, null, true, null, 100, 100, 200, 5, 20, new ArrayList<Weapon>(List.of(Weapon.CROSSBOW, Weapon.LEATHER_ARMOR))));
         allUnits.add(new Troop("Spearmen", 50, null, true, null, 200, 200, 50, 5, 8, new ArrayList<Weapon>(List.of(Weapon.SPEAR))));
-        allUnits.add(new Troop("Pikemen", 300, null, true, null, 200, 100, 300, 5, 20, new ArrayList<Weapon>(List.of(Weapon.METAL_ARMOR))));
+        allUnits.add(new Troop("Pikemen", 300, null, true, null, 200, 100, 300, 5, 20, new ArrayList<Weapon>(List.of(Weapon.METAL_ARMOR,Weapon.PIKE))));
         allUnits.add(new Troop("Macemen", 200, null, true, null, 300, 200, 200, 5, 20, new ArrayList<Weapon>(List.of(Weapon.LEATHER_ARMOR, Weapon.MACE))));
         allUnits.add(new Troop("Swordsmen", 100, null, true, null, 300, 100, 100, 5, 40, new ArrayList<Weapon>(List.of(Weapon.SWORDS, Weapon.METAL_ARMOR))));
-        allUnits.add(new Troop("Knight", 300, null, true, null, 600, 600, 300, 5, 40, new ArrayList<Weapon>(List.of(Weapon.METAL_ARMOR, Weapon.SWORDS))));
+        allUnits.add(new Troop("Knight", 300, null, true, null, 600, 600, 300, 5, 40, new ArrayList<Weapon>(List.of(Weapon.METAL_ARMOR, Weapon.SWORDS,Weapon.HORSE))));
         allUnits.add(new Troop("Tunneler", 50, null, true, null, 200, 300, 50, 5, 30, new ArrayList<>()));
         allUnits.add(new Troop("Black Monk", 200, null, true, null, 200, 100, 200, 5, 10, new ArrayList<>()));
         allUnits.add(new Troop("Archer Bow", 100, null, true, null, 100, 300, 100, 5, 75, new ArrayList<>()));
@@ -284,6 +284,8 @@ public class DataBank {
         allUnits.add(new Troop("siege tower", 200, null, true, null, 0, 200, 0, 0, 10, new ArrayList<>()));
         allUnits.add(new Troop("portable shields", 200, null, true, null, 0, 200, 0, 0, 10, new ArrayList<>()));
         allUnits.add(new Troop("battering ram", 200, null, true, null, 600, 50, 0, 2, 10, new ArrayList<>()));
+        allUnits.add(new Troop("dog", 50, null, true, null, 200, 300, 50, 2, 0, new ArrayList<>()));
+
 
     }
 

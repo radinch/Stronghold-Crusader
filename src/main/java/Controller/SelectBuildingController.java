@@ -63,7 +63,7 @@ public class SelectBuildingController {
         return true;
     }
 
-    public void openCageOfWarDogs(Building building) {
+    public String openCageOfWarDogs(Building building) {
         Troop troop = (Troop) DataBank.getUnitByName("dog");
         for (int i = 0; i <3 ; i++) {
             assert troop != null;
@@ -71,5 +71,6 @@ public class SelectBuildingController {
         }
         building.getGovernment().getBuildings().remove(building);
         building.getOccupiedCell().setBuilding(null);
+        return "success";
     }
 }

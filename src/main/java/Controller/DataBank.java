@@ -128,7 +128,7 @@ public class DataBank {
         // rate of mill and Inn and Iron mine and Ox tether
         // TODO : sepehr please write the cost for barrack and Mercenary Post and engineer guild
         buildingName.put("Small stone gatehouse", new CastleBuilding(null, 0, "Small stone gatehouse",
-                75, Resource.WOOD, 0, 8, castleBuildingTextures,
+                375, Resource.WOOD, 0, 8, castleBuildingTextures,
                 null, null, null, null, null, null, null, null));
         buildingName.put("big stone gatehouse", new CastleBuilding(null, 0, "big stone gatehouse",
                 75, Resource.STONE, 20, 10, castleBuildingTextures,
@@ -215,7 +215,7 @@ public class DataBank {
                 null, new ArrayList<>(List.of(Resource.METAL)), 10));
         buildingName.put("oil smelter", new CastleBuilding(null, 100, "oil smelter", 114, Resource.METAL,
                 10, 1, castleBuildingTextures,
-                null, null, null, null, null, null, null, null));
+                null, null, null, null, null, null, null, 2));
         buildingName.put("pitch ditch", new CastleBuilding(null, 0, "pitch ditch", 1000000, Resource.PITCH,
                 2, 0, castleBuildingTextures,
                 null, null, null, null, null, null, 1000, null));
@@ -252,7 +252,6 @@ public class DataBank {
         buildingName.put("Food StockPile", new OtherBuilding(null, 0, "Food StockPile", 39, Resource.WOOD,
                 5, 0, foodAndIndustryTextures,
                 null, null, 1000));
-
 
     }
 

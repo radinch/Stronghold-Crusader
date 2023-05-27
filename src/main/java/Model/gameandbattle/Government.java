@@ -68,7 +68,7 @@ public class Government {
         for (int i = 0; i < 8; i++) {
             addPerson();
         }
-        this.king = new Troop("King",1000,this,true,this.getBuildingByName("Small stone gatehouse"),1000,300,1000,5,0,null);
+        this.king = new Troop("King",2000,this,true,this.getBuildingByName("Small stone gatehouse"),1000,300,1000,5,0,null);
     }
     ////////////////////setters and getters////////////////////
 
@@ -371,6 +371,7 @@ public class Government {
             if(!person.isBusy()) {
                 person.setBusy(true);
                 building.getWorkers().add(person);
+                person.setBuilding(building);
                 number++;
             }
         }

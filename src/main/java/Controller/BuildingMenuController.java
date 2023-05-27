@@ -51,11 +51,28 @@ public class BuildingMenuController {
             government.getBuildings().add(newBuilding);
             government.getStockpile().increaseByName(tempBuilding.getResourceRequired().getName(), (-1) * tempBuilding.getAmountOfResource());
             government.setCoin(government.getCoin() - tempBuilding.getGold());
-            if (!newBuilding.getName().equals("Small stone gatehouse"))
+            if (!newBuilding.getName().equals("Small stone gatehouse") && !newBuilding.getName().equals("oil smelter"))
                 government.addWorker(newBuilding, newBuilding.getAmountOfWorkers());
+            if(newBuilding.getName().equals("oil smelter")) {
+                if(getEngineer() == null)
+                    return "you have not engineer";
+                newBuilding.addUnit(getEngineer());
+            }
+            if (newBuilding.getName().equals("Small stone gatehouse")) {
+                map.getACell(x,y).getPeople().add(government.getKing());
+                government.getKing().setBuilding(newBuilding);
+            }
             if (tempBuilding.getName().equals("Hovel")) government.setMaxPopulation(government.getMaxPopulation() + 8);
             return "success";
         }
+    }
+
+    private Troop getEngineer() {
+        for (Person person : government.getPeople()) {
+            if (person.getName().equals("engineer"))
+                return (Troop) person;
+        }
+        return null;
     }
 
     static void addUnit(Building newBuilding, Troop troop, Government government) {

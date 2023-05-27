@@ -75,12 +75,6 @@ public class OtherBuilding extends Building {
                 this.getGovernment().getGranary().setMeat(getGovernment().getGranary().getMeat() + getGranaryRate(rate));
                 getGovernment().getFoods()[0] += getGranaryRate(rate);
             }
-            case "Pitch rig" -> {
-                this.getGovernment().getStockpile().setPitch(getGovernment().getStockpile().getPitch() + getStockpileRate(getRate()));
-            }
-            case "oil smelter" -> {
-                this.getGovernment().getStockpile().setOil(getGovernment().getStockpile().getOil() + getStockpileRate(getRate()));
-            }
         }
     }
 

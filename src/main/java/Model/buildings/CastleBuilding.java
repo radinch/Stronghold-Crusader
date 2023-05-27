@@ -37,14 +37,29 @@ public class CastleBuilding extends Building {
     public void makeAffect(int x, int y, Map map) {
         super.makeAffect(x, y, map);
         switch (getName()) {
-            case "Killing pit":
-                damagePeople(x,y,map);
-            case "Pitch ditch":
-                if(isFiery())
-                    damagePeople(x,y,map);
-            case "stable":
-                freeHorse();
+            case "Killing pit" -> damagePeople(x, y, map);
+            case "Pitch ditch" -> {
+                if (isFiery())
+                    damagePeople(x, y, map);
+            }
+            case "stable" -> freeHorse();
+            case "Pitch rig" -> {
+                this.getGovernment().getStockpile().setPitch(getGovernment().getStockpile().getPitch() + getStockpileRate(getRate()));
+            }
+            case "oil smelter" -> {
+                this.getGovernment().getStockpile().setOil(getGovernment().getStockpile().getOil() + getStockpileRate(getRate()));
+            }
         }
+    }
+
+    public int getStockpileRate(int rate)
+    {
+        if(getGovernment().getStockpile().getTotalResource() + rate >= getGovernment().getMaxResourceCapacity())
+            return Math.max(0,getGovernment().getMaxResourceCapacity() - getGovernment().getStockpile().getTotalResource());
+        else
+            return rate;
+        // + -> more than allowed
+        // - -> OK
     }
 
     @Override

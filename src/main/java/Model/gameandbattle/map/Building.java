@@ -136,6 +136,7 @@ public class Building {
     }
 
     public void addUnit(Troop troop) {
+        troop.setBuilding(this);
         workers.add(troop);
     }
 

@@ -36,7 +36,8 @@ public class SelectBuildingController {
         else if ((building.getName().equals("Mercenary Post") || building.getName().equals("engineer guild")) &&
                 ((Troop) DataBank.getUnitByName(type)).getWeapons().size() != 0)
             return "you can't create this unit in this building";
-        else if (building.getName().equals("barrack") && ((Troop) DataBank.getUnitByName(type)).getWeapons().size() == 0)
+        else if (building.getName().equals("barrack") &&
+                (((Troop) DataBank.getUnitByName(type)).getWeapons().size() == 0 && !type.equals("Tunneler") &&!type.equals("Black Monk")))
             return "you can't create this unit in this building";
         else if((type.equals("Ladderman") || type.equals("Engineer")) && !building.getName().equals("engineer guild"))
             return "you can't create this unit in this building";

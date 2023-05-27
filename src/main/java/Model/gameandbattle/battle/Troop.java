@@ -31,6 +31,7 @@ public class Troop extends Person{
         this.cost = cost;
         this.weapons= weapons;
         hasOil = false;
+        state = 2;
     }
 
 
@@ -102,5 +103,9 @@ public class Troop extends Person{
 
     public void equipWithOil() {
         hasOil = true;
+    }
+
+    public void pourOil() {
+        hasOil = false;
     }
 }

@@ -18,13 +18,12 @@ import static Model.gameandbattle.map.Texture.SHALLOW_WATER;
 
 public class GameMenuController {
 
-    private Map currentMap;
-    private ArrayList<Government> governments;
-
+    private final Map currentMap;
+    private final ArrayList<Government> governments;
     private Government currentGovernment;
     private int turnCounter;
-    private GameMenu gameMenu;
-    private int amountOfAllPlayers;
+    private final GameMenu gameMenu;
+    private final int amountOfAllPlayers;
     public GameMenuController(ArrayList<Government> governments, Map currentMap) {
         turnCounter=0;
         gameMenu=new GameMenu(this);
@@ -68,7 +67,8 @@ public class GameMenuController {
             if(governments.get(i).getKing().getHp()<=0) {
                 governments.get(i).setAlive(false);
                 counterLosers++;
-                if(governments.get(i).getRuler().getHighScore()<turnCounter) governments.get(i).getRuler().setHighScore(turnCounter);
+                if(governments.get(i).getRuler().getHighScore()<turnCounter)
+                    governments.get(i).getRuler().setHighScore(turnCounter);
                 governments.remove(i);
             }
         }
@@ -84,28 +84,18 @@ public class GameMenuController {
         for (int i=0;i<currentMap.getSize();i++) {
             for (int j = 0; j < currentMap.getSize(); j++) {
                 tunnelAbility(currentMap.getACell(i,j));
-                if (currentMap.getACell(i, j).getBuilding() != null) {
-                    if (currentMap.getACell(i, j).getBuilding().getHitpoint() <= 0)
-                        removeBuilding(currentMap.getACell(i, j));
-                }
-                if (currentMap.getACell(i, j).getBuilding() != null) {
-                    currentMap.getACell(i, j).getBuilding().makeAffect(i, j, currentMap);
-                    if (currentMap.getACell(i, j).getBuilding().isFiery())
-                        removeBuilding(currentMap.getACell(i, j));
-                }
-                if (currentMap.getACell(i, j).isDitchUnderConstruction()) {
-                    currentMap.getACell(i, j).setTurnCounterForDitch(currentMap.getACell(i, j).getTurnCounterForDitch() + 1);
-                    if (currentMap.getACell(i, j).getTurnCounterForDitch() == 2)
-                        currentMap.getACell(i, j).setDitch();
-                }
+                affectElementsOfGame(i,j);
                 for (int m=currentMap.getACell(i,j).getPeople().size()-1;m>=0;m--) {
                     Person person=currentMap.getACell(i,j).getPeople().get(m);
-                    ArrayList<String> airAttackers = new ArrayList<>(List.of("Crossbowmen", "Archer Bow", "Horse Archers", "Slingers", "Archer", "Fire Throwers"));
+                    ArrayList<String> airAttackers = new ArrayList<>(List.of("Crossbowmen", "Archer Bow", "Horse Archers",
+                            "Slingers", "Archer", "Fire Throwers"));
                     boolean flagAir = false;
                     for (String string : airAttackers) {
-                        if (person.getName().equals(string)) flagAir = true;
+                        if (person.getName().equals(string)) {
+                            flagAir = true;
+                            break;
+                        }
                     }
-                    removePeople(currentMap.getACell(i, j), person);
                     if (person.getPatrol() != null) {
                         Patrol patrol = person.getPatrol();
                         int condition = patrol.getCondition();
@@ -126,7 +116,6 @@ public class GameMenuController {
                         boolean[][] help = new boolean[currentMap.getSize()][currentMap.getSize()];
                         prepareHelp(help);
                         currentMap.getACell(i, j).getPeople().remove(m);
-                        System.out.println("start x : "+x+"start y : "+y+"finish x : "+x1+"finish y : "+y1);
                         UnitMenuController.aStarSearch(help,x,y,x1,y1,pathX,pathY,currentMap.getSize(),currentMap.getSize());
                         int speed = 100;
                         if ((person instanceof Troop)) speed = ((Troop) person).getSpeed();
@@ -136,9 +125,7 @@ public class GameMenuController {
                             patrol.setCondition(1 - patrol.getCondition());
                         currentMap.getACell(x, y).getPeople().add(person);
                     }
-                    if (currentMap.getACell(i, j).getTexture().equals(Texture.PETROLEUM))
-                        currentMap.getACell(i, j).setTexture(Texture.GROUND);
-                    if (person instanceof Troop&&((Troop) person).getState() == 2) {
+                    if (person instanceof Troop&&((Troop) person).getState() == 2 && flagAir) {
                         for (int k = Math.max(i-5,0); k < Math.min(i+5,currentMap.getSize()-1); k++) {
                             for (int q =Math.max(j-5,0); q <Math.min(j+5,currentMap.getSize()-1) ; q++) {
                                 for(Person person1:currentMap.getACell(k,q).getPeople()){
@@ -146,7 +133,8 @@ public class GameMenuController {
                                        person1.setHp(person1.getHp()-((Troop)person).getAttackStrength());
                                     }
                                 }
-                                if(currentMap.getACell(k,q).getBuilding()!=null&&!currentMap.getACell(k,q).getBuilding().getGovernment().getRuler().getUsername().equals(person.getGovernment().getRuler().getUsername())){
+                                if(currentMap.getACell(k,q).getBuilding()!=null &&
+                                        !currentMap.getACell(k,q).getBuilding().getGovernment().getRuler().getUsername().equals(person.getGovernment().getRuler().getUsername())){
                                     currentMap.getACell(k,q).getBuilding().setHitpoint(currentMap.getACell(k,q).getBuilding().getHitpoint()-((Troop) person).getAttackStrength());
                                 }
                             }
@@ -182,7 +170,7 @@ public class GameMenuController {
                                 }
                                 if(toBeAdded!=null){
                                     currentMap.getACell(x,y).getPeople().add(toBeAdded);
-                                    currentMap.getACell(i, j).getPeople().remove(person);
+                                    currentMap.getACell(i, j).getPeople().remove(toBeAdded);
                                     break outer;
                                 }
                             }
@@ -192,6 +180,24 @@ public class GameMenuController {
                 }
             }
         }
+        affectGovernments();
+        buildingMenu.setGovernment(currentGovernment); shopMenu.setGovernment(currentGovernment);
+        tradeMenu.setGovernment(currentGovernment);
+        unitMenu.setGovernment(currentGovernment);
+        tradeMenu.setGovernment(currentGovernment);
+        System.out.println("it's your turn "+currentGovernment.getRuler().getNickname());
+    }
+    private void tunnelAbility(Cell cell){
+        if(cell.getTunnel()==null) return;
+        cell.getTunnel().setLength(cell.getTunnel().getLength()+1);
+        if(cell.getTunnel().getLength()==Tunnel.limitLength) {
+            if (cell.getBuilding() != null) removeBuilding(cell);
+            removePeople(cell,true);
+            cell.setTunnel(null);
+        }
+    }
+
+    private void affectGovernments() {
         for(Government government:governments){
             double amount=0;
             if (government.getTaxRate()>0) amount=0.6+(government.getTaxRate()-1)*0.2;
@@ -206,40 +212,67 @@ public class GameMenuController {
                 government.setPopularity(government.getPopularity() + (-2) * government.getTaxRate());
             government.setPopularity(government.getPopularity() + government.getFearRate());
             government.setPopularity( Math.min(100, government.getPopularity()));
-            government.getGranary().setApple(government.getGranary().getApple() - (1 + government.getFoodRate()*0.5)*government.getPopulation());
-            government.getGranary().setCheese(government.getGranary().getCheese() - (1 + government.getFoodRate()*0.5)*government.getPopulation());
-            government.getGranary().setBread(government.getGranary().getBread() - (1 + government.getFoodRate()*0.5)*government.getPopulation());
-            government.getGranary().setMeat(government.getGranary().getMeat() - (1 + government.getFoodRate()*0.5)*government.getPopulation());
+            government.getGranary().setApple(government.getGranary().getApple() -
+                    (1 + government.getFoodRate()*0.5)*government.getPopulation());
+            government.getGranary().setCheese(government.getGranary().getCheese() -
+                    (1 + government.getFoodRate()*0.5)*government.getPopulation());
+            government.getGranary().setBread(government.getGranary().getBread() -
+                    (1 + government.getFoodRate()*0.5)*government.getPopulation());
+            government.getGranary().setMeat(government.getGranary().getMeat() -
+                    (1 + government.getFoodRate()*0.5)*government.getPopulation());
             for(int i=0;i<government.getFoods().length;i++){
                 government.getFoods()[i]=government.getFoods()[i]-(1 + government.getFoodRate()*0.5)*government.getPopulation();
             }
-            government.setPopulation(government.getMaxPopulation()*government.getPopularity()/100);
+            changePopulation(government);
         }
-        buildingMenu.setGovernment(currentGovernment); shopMenu.setGovernment(currentGovernment); tradeMenu.setGovernment(currentGovernment);
-        unitMenu.setGovernment(currentGovernment); tradeMenu.setGovernment(currentGovernment);
+    }
 
-        System.out.println("it's your turn "+currentGovernment.getRuler().getNickname());
-    }
-    private void tunnelAbility(Cell cell){
-        if(cell.getTunnel()==null) return;
-        cell.getTunnel().setLength(cell.getTunnel().getLength()+1);
-        if(cell.getTunnel().getLength()==Tunnel.limitLength){
-            if(cell.getBuilding()!=null) removeBuilding(cell);
+    private void changePopulation(Government government) {
+        int previousPopulation = government.getPopulation();
+        government.setPopulation(government.getMaxPopulation()*government.getPopularity()/100);
+        for (int i = 0; i <government.getPopulation() - previousPopulation ; i++) {
+            government.addPerson();
         }
-        for(Person person:cell.getPeople()) removePeople(cell,person);
-        cell.setTunnel(null);
     }
+
     private void removeBuilding(Cell cell) {
-        currentGovernment.getBuildings().remove(cell.getBuilding());
+        cell.getBuilding().getGovernment().getBuildings().remove(cell.getBuilding());
         cell.setBuilding(null);
     }
 
-    private void removePeople(Cell cell, Person person) {
-        if(person.getHp()<=0 || cell.getTexture().equals(Texture.PETROLEUM)) {
-            person.getBuilding().getWorkers().remove(person);
-            currentGovernment.getPeople().remove(person);
+    private void removePeople(Cell cell, boolean isTunnelDestroyed) {
+        ArrayList<Person> people = new ArrayList<>();
+        for (Person person : cell.getPeople()) {
+            if(person.getHp()<=0 || cell.getTexture().equals(Texture.PETROLEUM) || isTunnelDestroyed) {
+                person.getBuilding().getWorkers().remove(person);
+                person.getGovernment().getPeople().remove(person);
+                people.add(person);
+                person.getGovernment().setPopulation(person.getGovernment().getPopulation() - 1);
+            }
+        }
+        for (Person person : people) {
             cell.getPeople().remove(person);
         }
+    }
+
+    private void affectElementsOfGame(int i,int j) {
+        removePeople(currentMap.getACell(i, j),false);
+        if (currentMap.getACell(i, j).getBuilding() != null) {
+            if (currentMap.getACell(i, j).getBuilding().getHitpoint() <= 0)
+                removeBuilding(currentMap.getACell(i, j));
+        }
+        if (currentMap.getACell(i, j).getBuilding() != null) {
+            currentMap.getACell(i, j).getBuilding().makeAffect(i, j, currentMap);
+            if (currentMap.getACell(i, j).getBuilding().isFiery())
+                removeBuilding(currentMap.getACell(i, j));
+        }
+        if (currentMap.getACell(i, j).isDitchUnderConstruction()) {
+            currentMap.getACell(i, j).setTurnCounterForDitch(currentMap.getACell(i, j).getTurnCounterForDitch() + 1);
+            if (currentMap.getACell(i, j).getTurnCounterForDitch() == 2)
+                currentMap.getACell(i, j).setDitch();
+        }
+        if (currentMap.getACell(i, j).getTexture().equals(Texture.PETROLEUM))
+            currentMap.getACell(i, j).setTexture(Texture.GROUND);
     }
 
     public ArrayList<Government> getGovernments() {
@@ -305,13 +338,7 @@ public class GameMenuController {
                     help[i][j]=true;
                     if(currentMap.getACell(i,j).hasWall())
                     {
-                        if(!currentMap.getACell(i,j).getWall().isAccessible())
-                        {
-                            help[i][j] = false;
-                        }
-                        else {
-                            help[i][j] = true;
-                        }
+                        help[i][j] = currentMap.getACell(i, j).getWall().isAccessible();
                     }
 
                     if(currentMap.getACell(i,j).isDitch())

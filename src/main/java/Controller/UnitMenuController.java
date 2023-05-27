@@ -71,7 +71,8 @@ public class UnitMenuController {
         if (condition.equals("standing")) con = 2;
         if (condition.equals("offensive")) con = 3;
         for (Person person : map.getACell(y, x).getPeople()) {
-            if (person.getGovernment().getRuler().getUsername().equals(government.getRuler().getUsername()) && person instanceof Troop) {
+            if (person.getGovernment().getRuler().getUsername().equals(government.getRuler().getUsername())
+                    && person instanceof Troop) {
                 ((Troop) person).setState(con);
             }
         }
@@ -226,7 +227,7 @@ public class UnitMenuController {
     public void shotBuildingAndWall(int enemyX, int enemyY) {
         int attackStrength;
         for (Person unit : currentUnit) {
-            attackStrength = ((Troop) unit).getAttackStrength();
+            attackStrength = ((Troop) unit).getAttackStrength()/10;
             if (map.getACell(x, y).hasTower(government)&&isAirAttacker(unit))
                 attackStrength *= 2;
             if (map.getACell(enemyX, enemyY).getBuilding() != null) {
@@ -470,6 +471,7 @@ public class UnitMenuController {
                 return "invalid direction";
             }
         }
+        ((Troop) engineer).pourOil();
         return "success";
     }
 

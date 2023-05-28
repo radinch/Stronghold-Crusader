@@ -11,6 +11,7 @@ import Model.gameandbattle.map.*;
 import Model.gameandbattle.shop.Request;
 import Model.gameandbattle.stockpile.Resource;
 import Model.signup_login_profile.User;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import java.util.List;
 
 public class DataBank {
 
+    private static Stage stage;
     private static final ArrayList<Person> allUnits = new ArrayList<>();
     private static final HashMap<String, Building> buildingName = new HashMap<>(); // name to building
     private static final ArrayList<Wall> walls = new ArrayList<>();
@@ -313,5 +315,13 @@ public class DataBank {
 
     public static ArrayList<Texture> getCastleBuildingTextures() {
         return castleBuildingTextures;
+    }
+
+    public static Stage getStage() {
+        return stage;
+    }
+
+    public static void setStage(Stage stage) {
+        DataBank.stage = stage;
     }
 }

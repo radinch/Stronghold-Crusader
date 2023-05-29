@@ -1,20 +1,25 @@
 package View.graphic;
 
+import Controller.DataBank;
+import Controller.LoginController;
 import Controller.SignUpController;
 import Model.signup_login_profile.Slogan;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.util.Objects;
 
 public class SignupMenu extends Application {
     public SignUpController signUpController = new SignUpController();
@@ -33,16 +38,23 @@ public class SignupMenu extends Application {
     public Button RandomSlogan;
     public Button Submit;
 
+    private static int random_int = (int) Math.floor(Math.random() * (DataBank.captcha.size() - 1) + 1);
+    public javafx.scene.image.ImageView captcha;
+    public TextField captchaText;
+
     @Override
     public void start(Stage stage) throws Exception {
         BorderPane signupPane = FXMLLoader.load(
-                new URL(SignupMenu.class.getResource("/FXML/SignupMenu.fxml").toExternalForm()));
+                new URL(Objects.requireNonNull(SignupMenu.class.getResource("/FXML/SignupMenu.fxml")).toExternalForm()));
         Scene scene = new Scene(signupPane);
         stage.setScene(scene);
         stage.show();
     }
     @FXML
     public void initialize() {
+        captcha.setImage(new Image(
+                Objects.requireNonNull(SignupMenu.class.getResource("/IMAGE/Captcha/" + DataBank.captcha.get(random_int) +
+                        ".png" )).toString(), 160 ,60, false, false));
         Username.textProperty().addListener((observable, oldText, newText)->{
             usernameLabel.setText(usernameValidation());
         });
@@ -79,6 +91,7 @@ public class SignupMenu extends Application {
                 pass.setHeaderText("your random pass word is\nplease re-enter it in the Password Field");
                 pass.setContentText(newPass);
                 pass.showAndWait();
+                Password.setText(newPass);
             }
         });
         sloganBox.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -94,48 +107,112 @@ public class SignupMenu extends Application {
                 slogan.setText(signUpController.randomSlogan());
             }
         });
-        Submit.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                if(Username.getText().isEmpty())
-                    usernameLabel.setText("Username is null");
-                else if(Password.getText().isEmpty())
-                    passwordLabel.setText("Password is null");
-                else if(Email.getText().isEmpty())
-                    usernameLabel.setText("Email is null");
-                else if(NickName.getText().isEmpty())
-                    usernameLabel.setText("NickName is null");
-            }
-        });
     }
     public String usernameValidation() {
 
-        if(!signUpController.isUsernameValid(Username.getText()))
+        if(!signUpController.isUsernameValid(Username.getText())) {
+            usernameLabel.getStyleClass().add("error-text");
             return ("Username Not Valid");
-        else
+        }
+        else {
+            usernameLabel.getStyleClass().add("success-text");
             return ("Username IS Valid");
+        }
     }
     public String emailValidation() {
-        if(!signUpController.isEmailFormatOk(Email.getText()))
+        if(!signUpController.isEmailFormatOk(Email.getText())) {
+            EmailLabel.getStyleClass().add("error-text");
             return ("Email Not Valid");
-        else
+        }
+        else {
+            EmailLabel.getStyleClass().add("success-text");
             return ("Email IS Valid");
+        }
     }
     public String passwordValidation() {
         if(Password.isVisible()) {
-            if (!SignUpController.isPasswordStrong(Password.getText()))
+            if (!SignUpController.isPasswordStrong(Password.getText())) {
+                passwordLabel.getStyleClass().add("error-text");
                 return ("Password is Weak");
-            else
+            }
+            else {
+                passwordLabel.getStyleClass().add("success-text");
                 return ("Password is Strong");
+            }
         }
         else {
-            if (!SignUpController.isPasswordStrong(VisiblePass.getText()))
+            if (!SignUpController.isPasswordStrong(VisiblePass.getText())) {
+                passwordLabel.getStyleClass().add("error-text");
                 return ("Password is Weak");
-            else
+            }
+            else {
+                passwordLabel.getStyleClass().add("success-text");
                 return ("Password is Strong");
+            }
         }
     }
 
     public void submit(MouseEvent mouseEvent) {
+        String capText = captchaText.getText();
+        String username = Username.getText();
+        String password = Password.getText();
+        String email = Email.getText();
+        String nickname = NickName.getText();
+        String sloganText = null;
+        if(slogan != null) {
+            sloganText = slogan.getText();
+        }
+        if(!signUpController.isUsernameValid(username)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("submit error");
+            alert.setContentText("username is not valid");
+            alert.showAndWait();
+        }
+        else if(DataBank.getUserByUsername(username) != null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("submit error");
+            alert.setContentText("username already exists");
+            alert.showAndWait();
+        }
+        else if(!SignUpController.isPasswordStrong(password)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("submit error");
+            alert.setContentText("password is weak");
+            alert.showAndWait();
+        }
+        else if(!signUpController.isEmailFormatOk(email)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("submit error");
+            alert.setContentText("email is not valid");
+            alert.showAndWait();
+        }
+        else if(signUpController.isEmailUsed(email)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("submit error");
+            alert.setContentText("email is already used");
+            alert.showAndWait();
+        }
+        else if(!capText.equals(String.valueOf(DataBank.captcha.get(random_int)))) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("submit error");
+            alert.setContentText("captcha is not correct");
+            alert.showAndWait();
+        }
+        else if(nickname == null || username == null || password == null || email == null || capText == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("submit error");
+            alert.setContentText("empty field");
+            alert.showAndWait();
+        }
+        else {
+            signUpController.graphicSignUp(username, password, email, nickname, sloganText);
+        }
     }
 }

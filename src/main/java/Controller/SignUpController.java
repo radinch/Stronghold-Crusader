@@ -6,6 +6,7 @@ import Model.signup_login_profile.Captcha;
 import Model.signup_login_profile.Slogan;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.scene.control.TextField;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,7 +55,7 @@ public class SignUpController {
             if (password.equals("false")) return "so please try registering again!";
         }
         if (isEmailUsed(email)) return "this email is already used";
-        if (!isEmailFormatOk(email)) return "email format is not corroct";
+        if (!isEmailFormatOk(email)) return "email format is not correct";
         if (slogan.equals("random")) {
             slogan = randomSlogan();
             System.out.println("your random slogan is: " + slogan);
@@ -115,7 +116,6 @@ public class SignUpController {
         Pattern pattern1 = Pattern.compile(regex1);
         Matcher matcher1 = pattern1.matcher(password);
         if (!matcher1.find()) {
-            System.out.println("make sure you have digit in there!");
             return false;
         }
         String regex2 = "[a-z]";
@@ -166,7 +166,7 @@ public class SignUpController {
         return randomChars.toString();
     }
 
-    private boolean isEmailUsed(String email) {
+    public boolean isEmailUsed(String email) {
         for (User user : DataBank.getAllUsers()) {
             if (user.getEmail().equalsIgnoreCase(email)) return true;
         }
@@ -228,6 +228,14 @@ public class SignUpController {
     public String withoutQuotation(String string) {
         if (string.charAt(0) == '"') return string.substring(1, string.length() - 1);
         return string;
+    }
+
+    public void graphicSignUp(String username, String password, String email
+            , String nickname, String slogan) {
+        User newUser = new User(username, password, nickname, email);
+        if (slogan != null) newUser.setSlogan(slogan);
+        DataBank.getAllUsers().add(newUser);
+        writeToJson(DataBank.getAllUsers());
     }
 }
 

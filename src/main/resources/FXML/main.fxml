@@ -15,9 +15,12 @@
             prefHeight="525.0" prefWidth="675.0">
     <center>
         <VBox alignment="CENTER" spacing="35">
+            <Label text="Welcome" styleClass="main-label"/>
             <Button text="Sign Up" onMouseClicked="#signup" styleClass="submit-button"/>
             <Button text="Login" onMouseClicked="#login" styleClass="submit-button"/>
             <Button text="Exit" onMouseClicked="#exit" styleClass="submit-button"/>
+            <Label/>
+            <Label/>
         </VBox>
     </center>
 </BorderPane>

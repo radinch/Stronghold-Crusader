@@ -95,7 +95,7 @@ public class SignUpController {
         return new ArrayList<>();
     }
 
-    private boolean isUsernameValid(String username) {
+    public boolean isUsernameValid(String username) {
         String regex = "\\w+";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(username);
@@ -122,24 +122,20 @@ public class SignUpController {
         Pattern pattern2 = Pattern.compile(regex2);
         Matcher matcher2 = pattern2.matcher(password);
         if (!matcher2.find()) {
-            System.out.println("make sure you have a lowercase letter in there!");
             return false;
         }
         String regex3 = "[A-Z]";
         Pattern pattern3 = Pattern.compile(regex3);
         Matcher matcher3 = pattern3.matcher(password);
         if (!matcher3.find()) {
-            System.out.println("make sure you have a uppercase letter in there!");
             return false;
         }
         String regex4 = "[^a-zA-Z0-9]";
         Matcher matcher4 = Pattern.compile(regex4).matcher(password);
         if (!matcher4.find()) {
-            System.out.println("make sure you have a non-digit-letter character in there!");
             return false;
         }
         if (password.length() < 6) {
-            System.out.println("your password should be at least 6 character long!");
             return false;
         }
         return true;
@@ -177,13 +173,13 @@ public class SignUpController {
         return false;
     }
 
-    private boolean isEmailFormatOk(String email) {
+    public boolean isEmailFormatOk(String email) {
         String regex = "[a-zA-Z0-9_.]+@[a-zA-Z0-9_.]+\\.[a-zA-Z0-9_.]+";
         if (Pattern.compile(regex).matcher(email).matches()) return true;
         return false;
     }
 
-    private String randomSlogan() {
+    public String randomSlogan() {
         Random random = new Random();
         int rand = random.nextInt(4);
         return Slogan.randomSlogan(rand);

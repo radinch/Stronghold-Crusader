@@ -74,7 +74,8 @@ public class Main extends Application {
         stage.show();
     }
 
-    public void signup(MouseEvent mouseEvent) {
+    public void signup(MouseEvent mouseEvent) throws Exception {
+        new SignupMenu().start(DataBank.getStage());
     }
 
     public void login(MouseEvent mouseEvent) throws Exception {
@@ -85,10 +86,5 @@ public class Main extends Application {
         System.exit(0);
     }
 
-    /*@FXML
-    public void initialize() {
-        username.textProperty().addListener((observable, oldText, newText)->{
-            System.out.println(username.getText());;
-        });
-    }*/
+
 }

@@ -83,7 +83,7 @@ PasswordField{
     -fx-font-size: 35px;
     -fx-font-family: "Calibri";
     -fx-text-fill: white;
-    fx-font-weight: bold;
+    -fx-font-weight: bold;
 }
 .BackGround{
     -fx-background-image: url(../IMAGE/06.jpg);
@@ -147,4 +147,12 @@ PasswordField{
     -fx-font-size: 25;
     -fx-font-weight: bold;
 }
+
+.main-label{
+    -fx-font-size: 45px;
+    -fx-font-family: "Calibri";
+    -fx-text-fill: black;
+
+}
+
 

@@ -52,6 +52,7 @@ public class Government {
         this.coin = coin;
         this.fearRate = fearRate;
         this.population = population;
+        maxPopulation = 8;
         buildings = new ArrayList<>();
         stockpile = new Stockpile(100, 0, 50, 100, 0, 0, 0, 0,0);
         granary = new Granary(50, 50, 50, 50);
@@ -67,8 +68,7 @@ public class Government {
         for (int i = 0; i < 8; i++) {
             addPerson();
         }
-        System.out.println(this.people.size());
-        this.king = new Troop("King",1000,this,true,this.getBuildingByName("Small stone gatehouse"),1000,300,1000,5,0,null);
+        this.king = new Troop("King",2000,this,true,this.getBuildingByName("Small stone gatehouse"),1000,300,1000,5,0,null);
     }
     ////////////////////setters and getters////////////////////
 
@@ -326,8 +326,8 @@ public class Government {
         return count;
     }
 
-    public int getMaxFoodCapacity() {
-        int maxFoodCapacity = 0;
+    public double getMaxFoodCapacity() {
+        double maxFoodCapacity = 0;
         for (Building building : buildings) {
             if (building.getName().equals("Food StockPile"))
                 maxFoodCapacity += ((OtherBuilding) building).getCapacity();
@@ -371,6 +371,7 @@ public class Government {
             if(!person.isBusy()) {
                 person.setBusy(true);
                 building.getWorkers().add(person);
+                person.setBuilding(building);
                 number++;
             }
         }

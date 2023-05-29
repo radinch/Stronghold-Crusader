@@ -36,28 +36,28 @@ public class MainMenu {
                 showAvailableMaps();
             else if (command.equals("new game")) {
                 System.out.println("how many players do you want to play with? [choose a number from 1,3,5,7]");
-                numberOfPlayers = scanner.nextInt();
+                numberOfPlayers = Integer.parseInt(scanner.nextLine());
                 while (numberOfPlayers != 1 && numberOfPlayers != 3 && numberOfPlayers != 5 && numberOfPlayers != 7) {
                     System.out.println("please choose correct number");
-                    numberOfPlayers = scanner.nextInt();
+                    numberOfPlayers = Integer.parseInt(scanner.nextLine());
                 }
                 int playerCounter = 0;
                 System.out.println("please type username of players that you want to play with");
                 while (playerCounter != numberOfPlayers) {
                     System.out.println("enter username of player number " + (playerCounter+1));
-                    command = scanner.next();
+                    command = scanner.nextLine();
                     if (!mainMenuController.isUserNameValid(command))
                         System.out.println("user: " + command + " does not exists");
                     mainMenuController.addPlayer(command);
                     playerCounter++;
                 }
-                System.out.println("now please select a map for this battle. [choose a number between 1,2,3]");
-                int mapNumber = scanner.nextInt();
-                while (mapNumber != 1 && mapNumber != 2 && mapNumber != 3)
+                //System.out.println("now please select a map for this battle. [choose a number between 1,2,3]");
+                //int mapNumber = scanner.nextInt();
+                /*while (mapNumber != 1 && mapNumber != 2 && mapNumber != 3)
                 {
                     System.out.println("please choose correct number");
                     mapNumber = scanner.nextInt();
-                }
+                }*/
                 GameMenuController gameMenuController = new GameMenuController(mainMenuController.createGovernments(),Map.MAP_NUMBER_ONE);
                 gameMenuController.run(scanner);
             }

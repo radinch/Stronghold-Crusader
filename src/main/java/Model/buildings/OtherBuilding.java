@@ -75,25 +75,20 @@ public class OtherBuilding extends Building {
                 this.getGovernment().getGranary().setMeat(getGovernment().getGranary().getMeat() + getGranaryRate(rate));
                 getGovernment().getFoods()[0] += getGranaryRate(rate);
             }
-            case "Pitch rig" -> {
-                this.getGovernment().getStockpile().setPitch(getGovernment().getStockpile().getPitch() + getStockpileRate(getRate()));
-            }
-            case "oil smelter" -> {
-                this.getGovernment().getStockpile().setOil(getGovernment().getStockpile().getOil() + getStockpileRate(getRate()));
-            }
         }
     }
 
     public double getGranaryRate(int rate) {
-        if(getGovernment().getGranary().getTotalFood() + rate > getGovernment().getMaxFoodCapacity())
-            return getGovernment().getGranary().getTotalFood() - getGovernment().getMaxFoodCapacity();
+        if(getGovernment().getGranary().getTotalFood() + rate > getGovernment().getMaxFoodCapacity()) {
+            return Math.max(0, getGovernment().getMaxFoodCapacity() - getGovernment().getGranary().getTotalFood());
+        }
         return rate;
     }
 
     public int getStockpileRate(int rate)
     {
         if(getGovernment().getStockpile().getTotalResource() + rate >= getGovernment().getMaxResourceCapacity())
-            return getGovernment().getStockpile().getTotalResource() - getGovernment().getMaxResourceCapacity();
+            return Math.max(0,getGovernment().getMaxResourceCapacity() - getGovernment().getStockpile().getTotalResource());
         else
             return rate;
         // + -> more than allowed

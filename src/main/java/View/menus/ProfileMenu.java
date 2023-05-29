@@ -9,7 +9,7 @@ import Model.Regex.ProfileMenuRegexes;
 import Model.signup_login_profile.User;
 import View.enums.Validations;
 
-public class ProfileMenu {
+public class ProfileMenu{
 
     private final ProfileMenuController profileMenuController;
     public ProfileMenu(ProfileMenuController profileMenuController) {

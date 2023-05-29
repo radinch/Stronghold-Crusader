@@ -25,7 +25,7 @@ public enum Texture {
 
     private String name;
     private String direction;
-    private static final ArrayList<Texture> textures = new ArrayList<>(List.of(GROUND,GRAVEL_GROUND,ROCK,ROCKY_GROUND,METAL,HIGH_DENSITY_GRASSLAND,
+    private static final ArrayList<Texture> textures = new ArrayList<>(List.of(GROUND,GRAVEL_GROUND,GRASS,ROCK,ROCKY_GROUND,METAL,HIGH_DENSITY_GRASSLAND,
             LOW_DENSITY_GRASSLAND,PETROLEUM,PLAIN,SHALLOW_WATER,RIVER,SMALL_POUND,LARGE_POUND,BEACH,SEE));
 
     Texture(String name) {

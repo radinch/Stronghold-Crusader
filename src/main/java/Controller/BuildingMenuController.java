@@ -5,9 +5,10 @@ import Model.buildings.OtherBuilding;
 import Model.buildings.WeaponBuilding;
 import Model.gameandbattle.Government;
 import Model.gameandbattle.battle.Person;
+import Model.gameandbattle.battle.Troop;
 import Model.gameandbattle.map.*;
 
-import java.awt.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -50,11 +51,40 @@ public class BuildingMenuController {
             government.getBuildings().add(newBuilding);
             government.getStockpile().increaseByName(tempBuilding.getResourceRequired().getName(), (-1) * tempBuilding.getAmountOfResource());
             government.setCoin(government.getCoin() - tempBuilding.getGold());
-            if (!newBuilding.getName().equals("Small stone gatehouse"))
+            if (!newBuilding.getName().equals("Small stone gatehouse") && !newBuilding.getName().equals("oil smelter"))
                 government.addWorker(newBuilding, newBuilding.getAmountOfWorkers());
+            if(newBuilding.getName().equals("oil smelter")) {
+                if(getEngineer() == null)
+                    return "you have not engineer";
+                newBuilding.addUnit(getEngineer());
+            }
+            if (newBuilding.getName().equals("Small stone gatehouse")) {
+                map.getACell(x,y).getPeople().add(government.getKing());
+                government.getKing().setBuilding(newBuilding);
+            }
             if (tempBuilding.getName().equals("Hovel")) government.setMaxPopulation(government.getMaxPopulation() + 8);
             return "success";
         }
+    }
+
+    private Troop getEngineer() {
+        for (Person person : government.getPeople()) {
+            if (person.getName().equals("engineer"))
+                return (Troop) person;
+        }
+        return null;
+    }
+
+    static void addUnit(Building newBuilding, Troop troop, Government government) {
+        government.addUnit(new Troop(troop.getName(), troop.getHp(), government, troop.isBusy(), newBuilding,
+                troop.getAttackStrength(), troop.getSpeed(), troop.getDefenseStrength(), troop.getAttackRange(),
+                troop.getCost(), troop.getWeapons()));
+        newBuilding.addUnit(new Troop(troop.getName(), troop.getHp(), government, troop.isBusy(), newBuilding,
+                troop.getAttackStrength(), troop.getSpeed(), troop.getDefenseStrength(), troop.getAttackRange(),
+                troop.getCost(), troop.getWeapons()));
+        newBuilding.getOccupiedCell().addUnit(new Troop(troop.getName(), troop.getHp(), government, troop.isBusy(), newBuilding,
+                troop.getAttackStrength(), troop.getSpeed(), troop.getDefenseStrength(), troop.getAttackRange(),
+                troop.getCost(), troop.getWeapons()));
     }
 
     public String dropWall(Matcher matcher) {
@@ -100,7 +130,7 @@ public class BuildingMenuController {
         if (isCoordinateValid(x, y) != null)
             return isCoordinateValid(x, y);
         if(!isCellProperForWall(x,y))
-            return "you cant drop wall in this cell";
+            return "you cant drop stair in this cell";
         if(isNearWall(x,y) == 0)
             return "there is no wall near here";
         if(!isStoneEnough(isNearWall(x,y)))

@@ -1,9 +1,12 @@
 package Controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 
 import Model.Regex.MapMenuRegexes;
 import Model.gameandbattle.battle.Person;
+import Model.gameandbattle.battle.Troop;
 import Model.gameandbattle.map.Cell;
 import Model.gameandbattle.map.Map;
 
@@ -20,6 +23,7 @@ public class MapMenuController {
     }
 
     public String showMapWithXY(Map currentMap, int x, int y) {
+        updateCells(currentMap);
         String ANSI_RESET = "\u001B[0m";
         String colorCode;
         /*String ANSI_RED = "\u001b[31m";
@@ -96,7 +100,8 @@ public class MapMenuController {
     }
 
     public String getColorCode(Cell cell) {
-        if (cell.getTexture().getName().equals("water"))
+        ArrayList<String> waters = new ArrayList<>(List.of("see","large pound","small pound","river","shallow water"));
+        if (waters.contains(cell.getTexture().getName()))
             return "\u001B[44m";
         if (cell.getTexture().getName().matches(".*grass.*"))
             return "\u001B[42m";
@@ -144,7 +149,10 @@ public class MapMenuController {
         int y = Integer.parseInt(matcher.group("x"));
         Cell cell = currentMap.getACell(x, y);
         StringBuilder result = new StringBuilder();
-        result.append("texture: ").append(cell.getTexture().getName()).append("\n");
+        result.append("texture: ").append(cell.getTexture().getName());
+        if(cell.getTexture().getName().equals("rock"))
+            result.append(" direction: ").append(cell.getTexture().getDirection());
+        result.append("\n");
         if (cell.isDitch())
             result.append("this cell is ditch\n");
         if (cell.isPartOfTunnel())
@@ -160,7 +168,10 @@ public class MapMenuController {
         }
         if (cell.getBuilding() != null) { //todo check government for killing pit
             result.append("building: ").append(cell.getBuilding().getName());
-            result.append(" hp: ").append(cell.getBuilding().getHitpoint());
+            if (cell.getBuilding().getHitpoint() > 0)
+                result.append(" hp: ").append(cell.getBuilding().getHitpoint());
+            else
+                result.append(" destroyed");
             result.append(" color: ").append(cell.getBuilding().getGovernment().getColor()).append("\n");
         }
         if (cell.getPeople().size() != 0) {
@@ -170,12 +181,35 @@ public class MapMenuController {
                 personCounter++;
                 result.append(personCounter).append(") ").append(person.getName());
                 result.append(" color: ").append(person.getGovernment().getColor());
-                result.append(" hp: ").append(person.getHp()).append("\n");
+                if(person.getHp()> 0)
+                    result.append(" hp: ").append(person.getHp()).append("\n");
+                else
+                    result.append(" dead").append("\n");
             }
-            if (cell.getTree() != null)
-                result.append("tree: ").append(cell.getTree().getName()).append("\n");
         }
+        if (cell.getTree() != null)
+            result.append("tree: ").append(cell.getTree().getName()).append("\n");
         return result.toString();
+    }
+    private void updateCells(Map map){
+        for (int i=0;i<map.getSize();i++){
+            for (int j=0;j< map.getSize();j++){
+                if(map.getACell(i,j).getPeople().size() !=0 ) {
+                    for (Person person : map.getACell(i, j).getPeople()) {
+                        if(person instanceof Troop){
+                            map.getACell(i,j).setDetail('S');
+                        }
+                    }
+                }
+                else if(map.getACell(i,j).getBuilding()!=null) {
+                    map.getACell(i, j).setDetail('B');
+                }
+                else if(map.getACell(i,j).getTree()!=null) map.getACell(i,j).setDetail('T');
+                else
+                    map.getACell(i,j).setDetail('#');
+
+            }
+        }
     }
 
     private boolean isCoordinateValid(int x, int y, int mapSize) {

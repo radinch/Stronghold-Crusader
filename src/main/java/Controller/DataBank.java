@@ -11,6 +11,7 @@ import Model.gameandbattle.map.*;
 import Model.gameandbattle.shop.Request;
 import Model.gameandbattle.stockpile.Resource;
 import Model.signup_login_profile.User;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import java.util.List;
 
 public class DataBank {
 
+    private static Stage stage;
     private static final ArrayList<Person> allUnits = new ArrayList<>();
     private static final HashMap<String, Building> buildingName = new HashMap<>(); // name to building
     private static final ArrayList<Wall> walls = new ArrayList<>();
@@ -128,7 +130,7 @@ public class DataBank {
         // rate of mill and Inn and Iron mine and Ox tether
         // TODO : sepehr please write the cost for barrack and Mercenary Post and engineer guild
         buildingName.put("Small stone gatehouse", new CastleBuilding(null, 0, "Small stone gatehouse",
-                75, Resource.WOOD, 0, 8, castleBuildingTextures,
+                375, Resource.WOOD, 0, 8, castleBuildingTextures,
                 null, null, null, null, null, null, null, null));
         buildingName.put("big stone gatehouse", new CastleBuilding(null, 0, "big stone gatehouse",
                 75, Resource.STONE, 20, 10, castleBuildingTextures,
@@ -189,7 +191,7 @@ public class DataBank {
                 null, 2, 0));
         buildingName.put("Stockpile", new OtherBuilding(null, 0, "Stockpile",
                 75, Resource.WOOD, 0, 0, foodAndIndustryTextures,
-                null, 0, 100));
+                null, 0, 1000));
         buildingName.put("Woodcutter", new OtherBuilding(null, 0, "Woodcutter",
                 75, Resource.WOOD, 1, 0, foodAndIndustryTextures,
                 null, 2, 0));
@@ -215,7 +217,7 @@ public class DataBank {
                 null, new ArrayList<>(List.of(Resource.METAL)), 10));
         buildingName.put("oil smelter", new CastleBuilding(null, 100, "oil smelter", 114, Resource.METAL,
                 10, 1, castleBuildingTextures,
-                null, null, null, null, null, null, null, null));
+                null, null, null, null, null, null, null, 2));
         buildingName.put("pitch ditch", new CastleBuilding(null, 0, "pitch ditch", 1000000, Resource.PITCH,
                 2, 0, castleBuildingTextures,
                 null, null, null, null, null, null, 1000, null));
@@ -241,7 +243,7 @@ public class DataBank {
                 5, 1, new ArrayList<Texture>(List.of(Texture.GROUND)),
                 null, 2, null));
         buildingName.put("Wheat garden", new OtherBuilding(null, 0, "Wheat garden", 39, Resource.WOOD,
-                15, 1, castleBuildingTextures,
+                15, 1, gardensAllowedTextures,
                 null, 2, null));
         buildingName.put("Bakery", new OtherBuilding(null, 0, "Bakery", 39, Resource.WOOD,
                 10, 1, foodAndIndustryTextures,
@@ -251,8 +253,7 @@ public class DataBank {
                 null, 2, null));
         buildingName.put("Food StockPile", new OtherBuilding(null, 0, "Food StockPile", 39, Resource.WOOD,
                 5, 0, foodAndIndustryTextures,
-                null, null, 100));
-
+                null, null, 1000));
 
     }
 
@@ -266,10 +267,10 @@ public class DataBank {
         allUnits.add(new Troop("Archer", 100, null, true, null, 100, 300, 100, 5, 12, new ArrayList<Weapon>(List.of(Weapon.BOW))));
         allUnits.add(new Troop("Crossbowmen", 200, null, true, null, 100, 100, 200, 5, 20, new ArrayList<Weapon>(List.of(Weapon.CROSSBOW, Weapon.LEATHER_ARMOR))));
         allUnits.add(new Troop("Spearmen", 50, null, true, null, 200, 200, 50, 5, 8, new ArrayList<Weapon>(List.of(Weapon.SPEAR))));
-        allUnits.add(new Troop("Pikemen", 300, null, true, null, 200, 100, 300, 5, 20, new ArrayList<Weapon>(List.of(Weapon.METAL_ARMOR))));
+        allUnits.add(new Troop("Pikemen", 300, null, true, null, 200, 100, 300, 5, 20, new ArrayList<Weapon>(List.of(Weapon.METAL_ARMOR,Weapon.PIKE))));
         allUnits.add(new Troop("Macemen", 200, null, true, null, 300, 200, 200, 5, 20, new ArrayList<Weapon>(List.of(Weapon.LEATHER_ARMOR, Weapon.MACE))));
         allUnits.add(new Troop("Swordsmen", 100, null, true, null, 300, 100, 100, 5, 40, new ArrayList<Weapon>(List.of(Weapon.SWORDS, Weapon.METAL_ARMOR))));
-        allUnits.add(new Troop("Knight", 300, null, true, null, 600, 600, 300, 5, 40, new ArrayList<Weapon>(List.of(Weapon.METAL_ARMOR, Weapon.SWORDS))));
+        allUnits.add(new Troop("Knight", 300, null, true, null, 600, 600, 300, 5, 40, new ArrayList<Weapon>(List.of(Weapon.METAL_ARMOR, Weapon.SWORDS,Weapon.HORSE))));
         allUnits.add(new Troop("Tunneler", 50, null, true, null, 200, 300, 50, 5, 30, new ArrayList<>()));
         allUnits.add(new Troop("Black Monk", 200, null, true, null, 200, 100, 200, 5, 10, new ArrayList<>()));
         allUnits.add(new Troop("Archer Bow", 100, null, true, null, 100, 300, 100, 5, 75, new ArrayList<>()));
@@ -284,6 +285,8 @@ public class DataBank {
         allUnits.add(new Troop("siege tower", 200, null, true, null, 0, 200, 0, 0, 10, new ArrayList<>()));
         allUnits.add(new Troop("portable shields", 200, null, true, null, 0, 200, 0, 0, 10, new ArrayList<>()));
         allUnits.add(new Troop("battering ram", 200, null, true, null, 600, 50, 0, 2, 10, new ArrayList<>()));
+        allUnits.add(new Troop("dog", 50, null, true, null, 200, 300, 50, 2, 0, new ArrayList<>()));
+
 
     }
 
@@ -312,5 +315,13 @@ public class DataBank {
 
     public static ArrayList<Texture> getCastleBuildingTextures() {
         return castleBuildingTextures;
+    }
+
+    public static Stage getStage() {
+        return stage;
+    }
+
+    public static void setStage(Stage stage) {
+        DataBank.stage = stage;
     }
 }

@@ -1,6 +1,15 @@
 package Controller;
 
 import Model.gameandbattle.Government;
+import Model.gameandbattle.battle.Catapult;
+import Model.gameandbattle.battle.Patrol;
+import Model.gameandbattle.battle.Person;
+import Model.gameandbattle.battle.Troop;
+import Model.gameandbattle.map.Map;
+import Model.gameandbattle.map.Texture;
+import Model.gameandbattle.map.Tunnel;
+
+import java.net.PortUnreachableException;
 import Model.gameandbattle.battle.*;
 import Model.gameandbattle.map.Map;
 import Model.gameandbattle.map.Texture;
@@ -24,7 +33,7 @@ public class UnitMenuController {
         this.government = government;
     }
 
-    public String moveUnit(Matcher matcher,Map map) {
+    public String moveUnit(Matcher matcher, Map map) {
         int finalX = x;
         int finalY = y;
         this.map = map;
@@ -43,7 +52,6 @@ public class UnitMenuController {
                 if(currentUnit.get(i).getGovernment().getRuler().getUsername().equals(government.getRuler().getUsername())) {
                     int speed = 100;
                     if ((currentUnit.get(i) instanceof Troop)) speed = ((Troop) currentUnit.get(i)).getSpeed();
-                    System.out.println(pathX.size());
                     x = pathX.get(Math.min(pathX.size() - 1, speed/25));
                     y = pathY.get(Math.min(pathY.size() - 1, speed/25));
                     map.getACell(x, y).getPeople().add(currentUnit.get(i));
@@ -53,7 +61,25 @@ public class UnitMenuController {
         }
         return "troop moved successfully";
     }
-    /*private static void findPath(boolean[][] table, int startX, int startY, int endX, int endY,
+
+    public String setCondition(Matcher matcher) {
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        int con = 0;
+        String condition = matcher.group("condition");
+        if (condition.equals("defensive")) con = 1;
+        if (condition.equals("standing")) con = 2;
+        if (condition.equals("offensive")) con = 3;
+        for (Person person : map.getACell(y, x).getPeople()) {
+            if (person.getGovernment().getRuler().getUsername().equals(government.getRuler().getUsername())
+                    && person instanceof Troop) {
+                ((Troop) person).setState(con);
+            }
+        }
+        return "successful";
+    }
+
+    private static void findPath(boolean[][] table, int startX, int startY, int endX, int endY,
                                  ArrayList<Integer> pathX, ArrayList<Integer> pathY) {
         if (startX < 0 || startX >= table.length || startY < 0 || startY >= table[0].length
                 || endX < 0 || endX >= table.length || endY < 0 || endY >= table[0].length) {
@@ -67,7 +93,7 @@ public class UnitMenuController {
             pathX.clear();
             pathY.clear();
         }
-    }*/
+    }
     private static boolean findPathHelper(boolean[][] table, int currX, int currY, int endX, int endY,
                                           boolean[][] visited, ArrayList<Integer> pathX, ArrayList<Integer> pathY) {
         //System.out.println("x: " + currX + " y: " + currY+" end x :"+endX+" end y: "+endY);
@@ -80,22 +106,22 @@ public class UnitMenuController {
         if (currX >= 0 && currX < table.length && currY >= 0 && currY < table[0].length
                 && !visited[currX][currY] && table[currX][currY]) {
             visited[currX][currY] = true;
-            if (findPathHelper(table, currX+1, currY, endX, endY, visited, pathX, pathY)) {
+            if (findPathHelper(table, currX + 1, currY, endX, endY, visited, pathX, pathY)) {
                 pathX.add(currX);
                 pathY.add(currY);
                 return true;
             }
-            if (findPathHelper(table, currX-1, currY, endX, endY, visited, pathX, pathY)) {
+            if (findPathHelper(table, currX - 1, currY, endX, endY, visited, pathX, pathY)) {
                 pathX.add(currX);
                 pathY.add(currY);
                 return true;
             }
-            if (findPathHelper(table, currX, currY+1, endX, endY, visited, pathX, pathY)) {
+            if (findPathHelper(table, currX, currY + 1, endX, endY, visited, pathX, pathY)) {
                 pathX.add(currX);
                 pathY.add(currY);
                 return true;
             }
-            if (findPathHelper(table, currX, currY-1, endX, endY, visited, pathX, pathY)) {
+            if (findPathHelper(table, currX, currY - 1, endX, endY, visited, pathX, pathY)) {
                 pathX.add(currX);
                 pathY.add(currY);
                 return true;
@@ -104,6 +130,7 @@ public class UnitMenuController {
         }
         return false;
     }
+
     private static <T> void reverseList(ArrayList<T> list) {
         int size = list.size();
         for (int i = 0; i < size / 2; i++) {
@@ -112,171 +139,216 @@ public class UnitMenuController {
             list.set(size - i - 1, temp);
         }
     }
-    public String patrolUnit(Matcher matcher){
-        int x1=Integer.parseInt(matcher.group("x"));
-        int y1=Integer.parseInt(matcher.group("y"));
-        ArrayList<Integer> pathX=new ArrayList<>(); ArrayList<Integer> pathY=new ArrayList<>();
-        boolean[][] help=new boolean[map.getSize()][map.getSize()];
+
+    public String patrolUnit(Matcher matcher,Map map) {
+        int x1 = Integer.parseInt(matcher.group("y"));
+        int y1 = Integer.parseInt(matcher.group("x"));
+        ArrayList<Integer> pathX = new ArrayList<>();
+        ArrayList<Integer> pathY = new ArrayList<>();
+        boolean[][] help = new boolean[map.getSize()][map.getSize()];
         //findPath(help,x,y,x1,y1,pathX,pathY);
-        aStarSearch(help,x,y,x1,y1,pathX,pathY,map.getSize(),map.getSize());
-        Patrol patrol=new Patrol(x,y,x1,y1);
-        if(pathX.size()==0) return "there is no path between these points";
-        for(Person person:currentUnit) {
-            if(person.getGovernment().getRuler().getUsername().equals(government.getRuler().getUsername())) person.setPatrol(patrol);
+        aStarSearch(help, x, y, x1, y1, pathX, pathY, map.getSize(), map.getSize());
+        Patrol patrol = new Patrol(x, y, x1, y1);
+        if (pathX == null) return "there is no path between these points";
+        for (Person person : currentUnit) {
+            if (person.getGovernment().getRuler().getUsername().equals(government.getRuler().getUsername()))
+                person.setPatrol(patrol);
         }
         return "done!";
     }
-    public String stopPatrol(){
-        for(Person person:currentUnit) {
-            if(person.getGovernment().getRuler().equals(government.getRuler().getUsername())) person.setPatrol(null);
+
+    public String stopPatrol() {
+        for (Person person : currentUnit) {
+            if (person.getGovernment().getRuler().equals(government.getRuler().getUsername())) person.setPatrol(null);
         }
         return "done";
     }
-    public String attack(Matcher matcher){
+
+    public String attack(Matcher matcher) {
         int enemyX = Integer.parseInt(matcher.group("y"));
-        int enemyY= Integer.parseInt(matcher.group("x"));
-        if(!isEnemyClose(((Troop)currentUnit.get(0)).getAttackRange(),enemyX,enemyY))
+        int enemyY = Integer.parseInt(matcher.group("x"));
+        if (!isEnemyClose(((Troop) currentUnit.get(0)).getAttackRange(), enemyX, enemyY))
             return "enemy is not close";
         for (Person person : currentUnit) {
-            moveUnitWithOnePerson(person,enemyX,enemyY);
+            moveUnitWithOnePerson(person, enemyX, enemyY);
         }
+        for (Person person : map.getACell(enemyX, enemyY).getPeople()) {
+            for (Person person1 : currentUnit) {
+                int attackStrength = ((Troop) person1).getAttackStrength();
+                if (person instanceof Troop && ((Troop) person).getState() == 2) attackStrength = attackStrength / 2;
+                person.setHp(person.getHp() - attackStrength);
+                int strength = ((Troop) person).getDefenseStrength();
+                if (((Troop) person1).getState() == 2) strength = strength / 2;
+                person1.setHp(person1.getHp() - strength);
+            }
+        }
+        shotBuildingAndWall(enemyX,enemyY);
         /*for (Person person : map.getACell(enemyX, enemyY).getPeople()) {
             if(!person.getGovernment().equals(government))
 
         }*/
-        return "success";
+        return "succsess";
     }
-    public String skyAttack(Matcher matcher){
+
+    public String skyAttack(Matcher matcher) {
         int attackStrength;
         int enemyX = Integer.parseInt(matcher.group("y"));
-        int enemyY= Integer.parseInt(matcher.group("x"));
-        if(!isEnemyClose(((Troop)currentUnit.get(0)).getAttackRange(),enemyX,enemyY))
+        int enemyY = Integer.parseInt(matcher.group("x"));
+        if (!isEnemyClose(((Troop) currentUnit.get(0)).getAttackRange(), enemyX, enemyY))
             return "enemy is not close";
-        if(getCountOfAirAttackers() == 0)
+        if (getCountOfAirAttackers() == 0)
             return "you can't do an airstrike with this troops";
-        shotPeople(enemyX,enemyY);
-        shotBuildingAndWall(enemyX,enemyY);
+        shotPeople(enemyX, enemyY);
+        shotBuildingAndWall(enemyX, enemyY);
         return "success";
     }
-    private void damagePeople(int enemyX,int enemyY) {
-        int attackStrength;
-        for (Person person : map.getACell(enemyX, enemyY).getPeople()) {
-            for (Person unit : currentUnit) {
 
-            }
-        }
-    }
-    private void shotPeople(int enemyX,int enemyY) {
+    public void shotPeople(int enemyX, int enemyY) {
         int attackStrength;
         for (Person person : map.getACell(enemyX, enemyY).getPeople()) {
             for (Person unit : currentUnit) {
-                if(isAirAttacker(unit)) {
+                if (isAirAttacker(unit)) {
                     attackStrength = ((Troop) unit).getAttackStrength();
                     if (map.getACell(x, y).hasTower(government))
                         attackStrength *= 2;
+                    if (person instanceof Troop && ((Troop) person).getState() == 2)
+                        attackStrength = attackStrength / 2;
                     person.setHp(person.getHp() - attackStrength);
+                    if (person instanceof Troop && ((Troop) person).getState() == 3) {
+                        int strength = ((Troop) person).getDefenseStrength();
+                        if (((Troop) unit).getState() == 2) strength = strength / 2;
+                        unit.setHp(unit.getHp() - strength);
+                    }
                 }
             }
         }
     }
 
-    private void shotBuildingAndWall(int enemyX,int enemyY) {
+    public void shotBuildingAndWall(int enemyX, int enemyY) {
         int attackStrength;
         for (Person unit : currentUnit) {
-            if(isAirAttacker(unit)) {
-                attackStrength = ((Troop) unit).getAttackStrength();
-                if (map.getACell(x, y).hasTower(government))
-                    attackStrength *= 2;
-                if(map.getACell(enemyX,enemyY).getBuilding() != null) {
-                    map.getACell(enemyX, enemyY).getBuilding().setHitpoint(map.getACell(enemyX, enemyY).getBuilding().getHitpoint() - attackStrength);
-                    if(unit.getName().equals("Fire Throwers"))
-                        map.getACell(enemyX,enemyY).getBuilding().setFiery(true);
-                }
-                if(map.getACell(enemyX,enemyY).hasWall())
-                    map.getACell(enemyX,enemyY).getWall().setHitpoint(map.getACell(enemyX,enemyY).getWall().getHitpoint() - attackStrength);
+            attackStrength = ((Troop) unit).getAttackStrength()/10;
+            if (map.getACell(x, y).hasTower(government)&&isAirAttacker(unit))
+                attackStrength *= 2;
+            if (map.getACell(enemyX, enemyY).getBuilding() != null) {
+                map.getACell(enemyX, enemyY).getBuilding().setHitpoint(map.getACell(enemyX, enemyY).getBuilding().getHitpoint() - attackStrength);
+                if (unit.getName().equals("Fire Throwers"))
+                    map.getACell(enemyX, enemyY).getBuilding().setFiery(true);
             }
+            if (map.getACell(enemyX, enemyY).hasWall())
+                map.getACell(enemyX, enemyY).getWall().setHitpoint(map.getACell(enemyX, enemyY).getWall().getHitpoint() - attackStrength);
         }
     }
 
-    private boolean isEnemyClose(int attackRange,int enemyX, int enemyY) {
-        if(attackRange + x < enemyX || attackRange +y < enemyY)
+    private boolean isEnemyClose(int attackRange, int enemyX, int enemyY) {
+        if (attackRange + x < enemyX || attackRange + y < enemyY)
             return false;
         return x - attackRange <= enemyX && y - attackRange <= enemyY;
     }
 
     private int getCountOfAirAttackers() {
         int count = 0;
-        ArrayList<String> airAttackers = new ArrayList<>(List.of("Crossbowmen", "Archer Bow", "Horse Archers", "Slingers","Archer","Fire Throwers","catapult","fiery catapult"));
+        ArrayList<String> airAttackers = new ArrayList<>(List.of("Crossbowmen", "Archer Bow", "Horse Archers", "Slingers", "Archer", "Fire Throwers"));
         for (Person person : currentUnit) {
-            if(airAttackers.contains(person.getName()))
+            if (airAttackers.contains(person.getName()))
                 count++;
         }
         return count;
     }
 
     public boolean isAirAttacker(Person person) {
-        ArrayList<String> airAttackers = new ArrayList<>(List.of("Crossbowmen", "Archer Bow", "Horse Archers", "Slingers","Archer","Fire Throwers","catapult","fiery catapult"));
+        ArrayList<String> airAttackers = new ArrayList<>(List.of("Crossbowmen", "Archer Bow", "Horse Archers", "Slingers", "Archer", "Fire Throwers"));
         return airAttackers.contains(person.getName());
     }
 
     public String digTunnel(Matcher matcher) {
-        return null;
+        int x = Integer.parseInt(matcher.group("y"));
+        int y = Integer.parseInt(matcher.group("x"));
+        if ((map.getACell(x, y).getBuilding() == null && map.getACell(x, y).getWall() == null) || map.getACell(x, y).getBuilding().getGovernment().getRuler().getUsername().equals(government.getRuler().getUsername()))
+            return "there is no defensive structure here";
+        if (!isTunnelCoordinateValid(x, y)) return "invalid coordinates!";
+        if (currentUnit == null) return "no units";
+        boolean flag = false;
+        int counter = 0;
+        Troop troop;
+        for (Person person : currentUnit) {
+            if (person.getName().equals("Tunneler")) {
+                flag = true;
+                moveUnitWithOnePerson(person, x, y);
+                break;
+            }
+        }
+        if (!flag) return "no tunnelers!";
+        Tunnel tunnel = new Tunnel(0);
+        map.getACell(x, y).setTunnel(tunnel);
 
+        return "done!";
+    }
+
+    private boolean isTunnelCoordinateValid(int x, int y) {
+        if (!DataBank.getCastleBuildingTextures().contains(map.getACell(x, y).getTexture())) return false;
+        if (map.getACell(x, y).getBuilding().getName().contains("tower")) return false;
+        if (map.getACell(x, y).isDitch()) return false;
+        return true;
     }
 
     public String digDitch(Matcher matcher) {
         Person spearman = null;
         int ditchX = Integer.parseInt(matcher.group("y"));
-        int ditchY= Integer.parseInt(matcher.group("x"));
+        int ditchY = Integer.parseInt(matcher.group("x"));
         for (Person person : currentUnit) {
-            if(person.getName().equals("Spearmen"))
+            if (person.getName().equals("Spearmen"))
                 spearman = person;
         }
-        if(spearman == null)
+        if (spearman == null)
             return "you dont have Spearmen in this cell";
-        if(!isCellProperForDitch(ditchX,ditchY))
+        if (!isCellProperForDitch(ditchX, ditchY))
             return "you cant dig ditch in this cell";
-        if(moveUnitWithOnePerson(spearman,ditchX,ditchY).equals("fail"))
+        if (moveUnitWithOnePerson(spearman, ditchX, ditchY).equals("fail"))
             return "there is no path to move this unit";
-        map.getACell(ditchX,ditchY).digDitch();
+        map.getACell(ditchX, ditchY).digDitch();
         return "ditch is under construction";
     }
 
     public String cancelDitch(Matcher matcher) {
         int ditchX = Integer.parseInt(matcher.group("y"));
-        int ditchY= Integer.parseInt(matcher.group("x"));
-        if (!map.getACell(ditchX,ditchY).isDitchUnderConstruction())
+        int ditchY = Integer.parseInt(matcher.group("x"));
+        if (!map.getACell(ditchX, ditchY).isDitchUnderConstruction())
             return "there is not a ditch under construction in this cell";
-        map.getACell(ditchX,ditchY).cancelDitch();
+        map.getACell(ditchX, ditchY).cancelDitch();
         return "success";
+    }
+
+    public void setMap(Map map) {
+        this.map = map;
     }
 
     public String removeDitch(Matcher matcher) {
         int ditchX = Integer.parseInt(matcher.group("y"));
-        int ditchY= Integer.parseInt(matcher.group("x"));
-        if(!map.getACell(ditchX,ditchY).isDitch())
+        int ditchY = Integer.parseInt(matcher.group("x"));
+        if (!map.getACell(ditchX, ditchY).isDitch())
             return "there is no ditch in this cell";
-        map.getACell(ditchX,ditchY).removeDitch();
+        map.getACell(ditchX, ditchY).removeDitch();
         return "success";
     }
 
     private boolean isCellProperForDitch(int x, int y) {
-        if(map.getACell(x,y).getBuilding() != null)
+        if (map.getACell(x, y).getBuilding() != null)
             return false;
-        if(map.getACell(x,y).getPeople().size() != 0)
+        if (map.getACell(x, y).getPeople().size() != 0)
             return false;
-        if(!DataBank.getCastleBuildingTextures().contains(map.getACell(x,y).getTexture()))
+        if (!DataBank.getCastleBuildingTextures().contains(map.getACell(x, y).getTexture()))
             return false;
-        if(map.getACell(x,y).hasStair())
+        if (map.getACell(x, y).hasStair())
             return false;
-        if(map.getACell(x,y).isDitch())
+        if (map.getACell(x, y).isDitch())
             return false;
         return !map.getACell(x, y).hasWall();
     }
 
-    public String disbandUnit(){
+    public String disbandUnit() {
         for (Person person : currentUnit) {
-            if(person.getGovernment().equals(government)) {
+            if (person.getGovernment().equals(government)) {
                 person.getBuilding().getWorkers().remove(person);
                 map.getACell(x, y).getPeople().remove(person);
                 if (person.getGovernment().getKing().getHp() > 0)
@@ -307,6 +379,9 @@ public class UnitMenuController {
                             help[i][j] = true;
                         }
                     }
+                    if(map.getACell(i,j).isDitch()) {
+                        help[i][j] =false;
+                    }
                 }
             }
         }
@@ -331,7 +406,7 @@ public class UnitMenuController {
                     if ((person instanceof Troop)) speed = ((Troop) person).getSpeed();
                     finalX = pathX.get(Math.min(pathX.size() - 1, speed * 100));
                     finalY = pathY.get(Math.min(pathY.size() - 1, speed * 100));
-                    map.getACell(x, y).getPeople().add(person);
+                    map.getACell(x1,y1).getPeople().add(person);
                     return "done";
                 }
                 counter++;
@@ -396,6 +471,7 @@ public class UnitMenuController {
                 return "invalid direction";
             }
         }
+        ((Troop) engineer).pourOil();
         return "success";
     }
 
@@ -415,6 +491,8 @@ public class UnitMenuController {
             return "this engineer had equipped with oil before";
         moveUnitWithOnePerson(engineer,government.getBuildingByName("oil smelter").getOccupiedCell().getCellCoordinate(map).get(0),
                 government.getBuildingByName("oil smelter").getOccupiedCell().getCellCoordinate(map).get(1));
+        if(government.getStockpile().getOil() < 2)
+            return "not enough oil";
         ((Troop) engineer).equipWithOil();
         return "success";
     }
@@ -553,33 +631,34 @@ public class UnitMenuController {
      * if eny error occurs the pathX and pathY will be null
      * so you should check for errors before calling this method
      **/
-    private Pair make_pair(int x,int y)
+
+    private static Pair make_pair(int x, int y)
     {
         return new Pair(x,y);
     }
-    private pPair make_pair(double x,Pair y)
+    private static pPair make_pair(double x, Pair y)
     {
         return new pPair(x,y);
     }
 
-    private boolean isValid(int row, int col,int ROW,int COL)
+    private static boolean isValid(int row, int col, int ROW, int COL)
     {
         return (row >= 0) && (row < ROW) && (col >= 0)
                 && (col < COL);
     }
-    private boolean isUnBlocked(boolean[][] grid, int row, int col)
+    private static boolean isUnBlocked(boolean[][] grid, int row, int col)
     {
         return grid[row][col];
     }
-    private boolean isDestination(int row, int col, int destX,int destY)
+    private static boolean isDestination(int row, int col, int destX, int destY)
     {
         return row == destX && col == destY;
     }
-    private double calculateHValue(int row, int col, int destX,int destY)
+    private static double calculateHValue(int row, int col, int destX, int destY)
     {
         return (Math.abs(row - destX) + Math.abs(col - destY));
     }
-    private void tracePath(cellForPath[][] cellDetails, int destX, int destY,ArrayList<Integer> PathX,ArrayList<Integer> PathY)
+    private static void tracePath(cellForPath[][] cellDetails, int destX, int destY, ArrayList<Integer> PathX, ArrayList<Integer> PathY)
     {
         int row = destX;
         int col = destY;
@@ -603,7 +682,7 @@ public class UnitMenuController {
             PathY.add(p.second);
         }
     }
-    public void aStarSearch(boolean[][] grid, int srcX, int srcY, int destX, int destY, ArrayList<Integer> PathX,ArrayList<Integer> PathY,int ROW,int COL)
+    public static void aStarSearch(boolean[][] grid, int srcX, int srcY, int destX, int destY, ArrayList<Integer> PathX,ArrayList<Integer> PathY,int ROW,int COL)
     {
         if (!isValid(srcX, srcY,ROW,COL)) {
             return;
@@ -759,6 +838,65 @@ public class UnitMenuController {
                         cellDetails[i][j - 1].parent_i = i;
                         cellDetails[i][j - 1].parent_j = j;
                     }
+                }
+            }
+        }
+    }
+
+    public String putLadder(Matcher matcher) {
+        boolean flag = false;
+        int x = Integer.parseInt(matcher.group("y"));
+        int y = Integer.parseInt(matcher.group("x"));
+        for (Person person : currentUnit) {
+            if (person.getName().equals("Ladderman")) {
+                flag = true;
+                break;
+            }
+        }
+        if(!flag)
+            return "you dont have ladderman in this cell";
+        if (!isCoordinateValid(x,y, map.getSize()))
+            return "invalid coordinate";
+        if(!isNearWall(x,y))
+            return "in destination cell no wall exists";
+        changeAccessibilityOfWall(x,y,x,y,new ArrayList<>(),new ArrayList<>());
+        return "success";
+    }
+
+    private boolean isNearWall(int x,int y)
+    {
+        for (int i = x-1; i <= x+1; i++) {
+            for (int j = y-1; j <= y+1; j++) {
+                if(!(i < 0 || i > map.getSize() || j < 0 || j > map.getSize()))
+                {
+                    if(!(i != x && j != y)) {
+                        if (map.getACell(i, j).hasWall())
+                            return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private void changeAccessibilityOfWall(int firstX,int firstY,int x,int y,ArrayList<Integer> visitedX,ArrayList<Integer> visitedY)
+    {
+//        System.out.println("x : "+x);
+//        System.out.println("y : "+y);
+        if(!(x < 0 || x > map.getSize() || y < 0 || y > map.getSize()))
+        {
+            if(map.getACell(x,y).hasWall() || (x == firstX && y == firstY)) {
+                if(map.getACell(x,y).hasWall()) {
+                    map.getACell(x, y).getWall().setAccessible(true);
+                }
+                if(!visitedX.contains(x) || !visitedY.contains(y))
+                {
+                    visitedX.add(x);
+                    visitedY.add(y);
+                    changeAccessibilityOfWall(firstX,firstY,x - 1, y,visitedX,visitedY);
+                    changeAccessibilityOfWall(firstX,firstY,x, y - 1,visitedX,visitedY);
+                    changeAccessibilityOfWall(firstX,firstY,x + 1, y,visitedX,visitedY);
+                    changeAccessibilityOfWall(firstX,firstY,x, y + 1,visitedX,visitedY);
                 }
             }
         }

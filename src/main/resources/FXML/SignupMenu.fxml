@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.graphic.SignupMenu">
+   <center>
+        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5" BorderPane.alignment="CENTER">
+            <children>
+                <Label text="Sign up Menu" />
+                <TextField fx:id="Username" maxWidth="300" promptText="Username" />
+                <Label fx:id="usernameLabel" text="" />
+            <AnchorPane prefHeight="23.0" prefWidth="600.0">
+               <children>
+                      <PasswordField fx:id="Password" layoutX="150.0" layoutY="1.0" maxWidth="354.0" prefHeight="26.0" prefWidth="300.0" promptText="Password" />
+                  <CheckBox fx:id="Show" layoutX="471.0" layoutY="5.0" mnemonicParsing="false" text="Show" />
+                  <TextField fx:id="VisiblePass" layoutX="150.0" layoutY="2.0" prefHeight="26.0" prefWidth="300.0" visible="false" />
+                  <Button fx:id="RandomPass" layoutX="534.0" layoutY="2.0" mnemonicParsing="false" text="Random" />
+               </children>
+            </AnchorPane>
+                <Label fx:id="passwordLabel" text="" />
+                <TextField fx:id="Email" maxWidth="300" promptText="Email" />
+                <Label fx:id="EmailLabel" text="" />
+                <TextField fx:id="NickName" maxWidth="300" promptText="NickName" />
+            <CheckBox fx:id="sloganBox" mnemonicParsing="false" text="Slogan" />
+            <AnchorPane prefHeight="19.0" prefWidth="600.0">
+               <children>
+                  <TextField fx:id="slogan" layoutX="150.0" layoutY="1.0" maxWidth="300" prefHeight="26.0" prefWidth="300.0" promptText="Slogan" visible="false" />
+                  <Button layoutX="468.0" layoutY="2.0" mnemonicParsing="false" text="Random" visible="false" fx:id="RandomSlogan"/>
+               </children>
+            </AnchorPane>
+            <Button mnemonicParsing="false" text="Submit" fx:id="Submit"/>
+            </children>
+        </VBox>
+   </center>
+</BorderPane>

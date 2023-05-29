@@ -19,6 +19,9 @@ import java.util.List;
 
 public class DataBank {
 
+    public static ArrayList captcha  = new ArrayList<>(List.of(1181,1381,1491,1722,1959,2163,2177,2723,2785,3541,3847,3855,3876,3967,4185,4310,
+            4487,4578,4602,4681,4924,5326,5463,5771,5849,6426,6553,6601,6733,6960,7415,7609
+            ,7755,7905,8003,8070,8368,8455,8506,9061,9386));
     private static Stage stage;
     private static final ArrayList<Person> allUnits = new ArrayList<>();
     private static final HashMap<String, Building> buildingName = new HashMap<>(); // name to building

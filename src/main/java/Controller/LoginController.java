@@ -3,11 +3,13 @@ package Controller;
 import Model.Regex.LoginRegexes;
 import Model.signup_login_profile.SecurityQuestion;
 import Model.signup_login_profile.User;
+import View.graphic.ProfileMenu;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 
@@ -44,6 +46,21 @@ public class LoginController {
         System.out.println(SignUpController.checkingCaptcha(scanner));
         SignUpController.writeToJson(DataBank.getAllUsers());
         return "Welcome to the profile menu!";
+    }
+
+    public boolean doesUserExists(String username) {
+        return DataBank.getUserByUsername(username) != null;
+    }
+
+    public boolean isPasswordCorrect(String username, String password) {
+        return Objects.requireNonNull(DataBank.getUserByUsername(username)).getCodedPassword().equals(User.hashString(password));
+    }
+
+    public void graphicLogin(String username, String password) throws Exception {
+        DataBank.setCurrentUser(DataBank.getUserByUsername(username));
+        Objects.requireNonNull(DataBank.getUserByUsername(username)).setFailedAttemptsToLogin(0);
+        SignUpController.writeToJson(DataBank.getAllUsers());
+        new ProfileMenu().start(DataBank.getStage());
     }
 
     public String forgotPassword(Scanner scanner, Matcher matcher) {

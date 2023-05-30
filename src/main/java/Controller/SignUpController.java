@@ -96,14 +96,14 @@ public class SignUpController {
         return new ArrayList<>();
     }
 
-    public boolean isUsernameValid(String username) {
+    public static boolean isUsernameValid(String username) {
         String regex = "\\w+";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(username);
         return matcher.matches();
     }
 
-    private boolean isUsernameUsed(String username) {
+    public static boolean isUsernameUsed(String username) {
         for (User user : DataBank.getAllUsers()) {
             if (user.getUsername().equals(username)) return true;
         }
@@ -166,14 +166,14 @@ public class SignUpController {
         return randomChars.toString();
     }
 
-    public boolean isEmailUsed(String email) {
+    public static boolean isEmailUsed(String email) {
         for (User user : DataBank.getAllUsers()) {
             if (user.getEmail().equalsIgnoreCase(email)) return true;
         }
         return false;
     }
 
-    public boolean isEmailFormatOk(String email) {
+    public static boolean isEmailFormatOk(String email) {
         String regex = "[a-zA-Z0-9_.]+@[a-zA-Z0-9_.]+\\.[a-zA-Z0-9_.]+";
         if (Pattern.compile(regex).matcher(email).matches()) return true;
         return false;

@@ -1,6 +1,7 @@
 package View.graphic;
 
 import Controller.DataBank;
+import Controller.SignUpController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -67,6 +68,7 @@ public class QuestionMenu extends Application {
         alert.setHeaderText("Pick question");
         alert.setContentText("question and answer picked successfully");
         alert.showAndWait();
+        SignUpController.writeToJson(DataBank.getAllUsers());
         new LoginMenu().start(DataBank.getStage());
     }
 }

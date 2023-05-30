@@ -20,6 +20,7 @@ public class User {
     private int rank;
     private ArrayList<Request> requests;
     private ArrayList<Request> acceptedOrMadeRequests;
+    private String avatar;
     public User(String username, String password, String nickname, String email) {
         this.username = username;
         this.email = email;
@@ -31,6 +32,7 @@ public class User {
         rank = DataBank.getAllUsers().size() + 1;
         requests=new ArrayList<>();
         acceptedOrMadeRequests=new ArrayList<>();
+        avatar = Avatar.class.getResource("/IMAGE/Avatars/"+8+".png").toExternalForm();
     }
 
     public User() {
@@ -137,4 +139,11 @@ public class User {
         return failedAttemptsToLogin * 5;
     }
 
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
 }

@@ -203,3 +203,17 @@ PasswordField{
 .captcha{
     -fx-image: url(../IMAGE/Captcha/1181.png);
 }
+
+.label2 {
+    -fx-text-fill: white;
+    -fx-font-family: "Calibri";
+    -fx-font-style: italic;
+    -fx-font-size: 20px;
+}
+
+.BackGround3{
+    -fx-background-image: url(../IMAGE/04.jpg);
+    -fx-background-repeat: stretch;
+    -fx-background-position: center center;
+    -fx-background-size: 600 400;
+}

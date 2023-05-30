@@ -71,6 +71,7 @@ public class Main extends Application {
         BorderPane borderPane = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("/FXML/main.fxml")));
         Scene scene = new Scene(borderPane);
         stage.setScene(scene);
+        stage.getIcons().add(new Image(Main.class.getResource("/IMAGE/icon.png").openStream()));
         stage.show();
     }
 

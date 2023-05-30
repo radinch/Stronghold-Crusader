@@ -109,7 +109,7 @@ public class SignupMenu extends Application {
         });
     }
     public String usernameValidation() {
-
+        usernameLabel.getStyleClass().clear();
         if(!signUpController.isUsernameValid(Username.getText())) {
             usernameLabel.getStyleClass().add("error-text");
             return ("Username Not Valid");
@@ -120,6 +120,7 @@ public class SignupMenu extends Application {
         }
     }
     public String emailValidation() {
+        EmailLabel.getStyleClass().clear();
         if(!signUpController.isEmailFormatOk(Email.getText())) {
             EmailLabel.getStyleClass().add("error-text");
             return ("Email Not Valid");
@@ -130,6 +131,7 @@ public class SignupMenu extends Application {
         }
     }
     public String passwordValidation() {
+        passwordLabel.getStyleClass().clear();
         if(Password.isVisible()) {
             if (!SignUpController.isPasswordStrong(Password.getText())) {
                 passwordLabel.getStyleClass().add("error-text");

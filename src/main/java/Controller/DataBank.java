@@ -31,6 +31,7 @@ public class DataBank {
     public static ArrayList<Map> allMaps = new ArrayList<>();
     private static ArrayList<Request> requests = new ArrayList<>();
     private static ArrayList<Government> governments;
+    public static User userUnderConstruction;
     public static ArrayList<String> colors = new ArrayList<>(List.of("Blue", "Green", "Red", "Purple", "Orange", "Cyan", "Yellow", "Black"));
     private static final ArrayList<Texture> castleBuildingTextures = new ArrayList<>(List.of(Texture.GROUND, Texture.GRAVEL_GROUND
             , Texture.GRASS, Texture.HIGH_DENSITY_GRASSLAND, Texture.LOW_DENSITY_GRASSLAND, Texture.PLAIN));

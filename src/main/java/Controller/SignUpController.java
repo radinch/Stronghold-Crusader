@@ -234,6 +234,7 @@ public class SignUpController {
             , String nickname, String slogan) {
         User newUser = new User(username, password, nickname, email);
         if (slogan != null) newUser.setSlogan(slogan);
+        DataBank.userUnderConstruction = newUser;
         DataBank.getAllUsers().add(newUser);
         writeToJson(DataBank.getAllUsers());
     }

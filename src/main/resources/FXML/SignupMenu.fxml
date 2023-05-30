@@ -48,7 +48,7 @@
                 </AnchorPane>
                 <ImageView fx:id="captcha"/>
                 <TextField promptText="Captcha" fx:id="captchaText" maxWidth="160"/>
-                <Button mnemonicParsing="false" text="Submit" onMouseClicked="#submit" fx:id="Submit"
+                <Button mnemonicParsing="false" text="Continue" onMouseClicked="#submit" fx:id="Submit"
                         styleClass="submit-button"/>
             </children>
         </VBox>

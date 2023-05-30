@@ -6,6 +6,7 @@ import Controller.SignUpController;
 import Model.signup_login_profile.SecurityQuestion;
 import Model.signup_login_profile.User;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -32,10 +33,8 @@ public class LoginMenu extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        BorderPane borderPane = new BorderPane();
+        BorderPane borderPane = FXMLLoader.load(Objects.requireNonNull(LoginMenu.class.getResource("/FXML/loginMenu.fxml")));
         Scene scene = new Scene(borderPane);
-        stage.setWidth(700);
-        stage.setHeight(550);
         scene.getStylesheets().add(String.valueOf(LoginMenu.class.getResource("/CSS/style1.css")));
         javafx.scene.image.ImageView background = new ImageView(new Image(
                 Objects.requireNonNull(LoginMenu.class.getResource("/IMAGE/22.jpg")).toString(), 700 ,550, false, false));
@@ -189,9 +188,7 @@ public class LoginMenu extends Application {
             alert.setHeaderText("change password");
             alert.setContentText("password changed successfully");
             alert.showAndWait();
-            DataBank.getStage().setHeight(525);
-            DataBank.getStage().setWidth(675);
-            new Main().start(DataBank.getStage());
+            new LoginMenu().start(DataBank.getStage());
         }
 
     }

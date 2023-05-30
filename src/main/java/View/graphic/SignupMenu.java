@@ -152,7 +152,7 @@ public class SignupMenu extends Application {
         }
     }
 
-    public void submit(MouseEvent mouseEvent) {
+    public void submit(MouseEvent mouseEvent) throws Exception {
         String capText = captchaText.getText();
         String username = Username.getText();
         String password = Password.getText();
@@ -168,6 +168,7 @@ public class SignupMenu extends Application {
             alert.setHeaderText("submit error");
             alert.setContentText("username is not valid");
             alert.showAndWait();
+            reloadCaptcha();
         }
         else if(DataBank.getUserByUsername(username) != null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -175,6 +176,7 @@ public class SignupMenu extends Application {
             alert.setHeaderText("submit error");
             alert.setContentText("username already exists");
             alert.showAndWait();
+            reloadCaptcha();
         }
         else if(!SignUpController.isPasswordStrong(password)) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -182,6 +184,7 @@ public class SignupMenu extends Application {
             alert.setHeaderText("submit error");
             alert.setContentText("password is weak");
             alert.showAndWait();
+            reloadCaptcha();
         }
         else if(!signUpController.isEmailFormatOk(email)) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -189,6 +192,7 @@ public class SignupMenu extends Application {
             alert.setHeaderText("submit error");
             alert.setContentText("email is not valid");
             alert.showAndWait();
+            reloadCaptcha();
         }
         else if(signUpController.isEmailUsed(email)) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -196,6 +200,7 @@ public class SignupMenu extends Application {
             alert.setHeaderText("submit error");
             alert.setContentText("email is already used");
             alert.showAndWait();
+            reloadCaptcha();
         }
         else if(!capText.equals(String.valueOf(DataBank.captcha.get(random_int)))) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -203,6 +208,7 @@ public class SignupMenu extends Application {
             alert.setHeaderText("submit error");
             alert.setContentText("captcha is not correct");
             alert.showAndWait();
+            reloadCaptcha();
         }
         else if(nickname == null || username == null || password == null || email == null || capText == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -210,9 +216,18 @@ public class SignupMenu extends Application {
             alert.setHeaderText("submit error");
             alert.setContentText("empty field");
             alert.showAndWait();
+            reloadCaptcha();
         }
         else {
             signUpController.graphicSignUp(username, password, email, nickname, sloganText);
+            new QuestionMenu().start(DataBank.getStage());
         }
+    }
+
+    private void reloadCaptcha() {
+        random_int = (int) Math.floor(Math.random() * (DataBank.captcha.size() - 1) + 1);
+        captcha.setImage(new Image(
+                Objects.requireNonNull(LoginMenu.class.getResource("/IMAGE/Captcha/" + DataBank.captcha.get(random_int) +
+                        ".png" )).toString(), 160 ,60, false, false));
     }
 }

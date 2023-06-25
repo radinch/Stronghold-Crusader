@@ -326,7 +326,7 @@ public class ProfileMenu extends Application {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 try {
-                    new GameMap().start(DataBank.getStage());
+                    new SelectOpponentsMenu().start(DataBank.getStage());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

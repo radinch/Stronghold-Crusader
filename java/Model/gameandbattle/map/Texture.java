@@ -17,11 +17,11 @@ public enum Texture {
     PETROLEUM("petroleum",null),
     PLAIN("plain",Texture.class.getResource("/IMAGE/Tile/SmallPound.png").toExternalForm()),
     SHALLOW_WATER("shallow water",Texture.class.getResource("/IMAGE/Tile/SmallPound.png").toExternalForm()),
-    RIVER("river",Texture.class.getResource("/IMAGE/Tile/Sea.jpg").toExternalForm()),
+    RIVER("river",Texture.class.getResource("/IMAGE/Tile/Sea.png").toExternalForm()),
     SMALL_POUND("small pound",Texture.class.getResource("/IMAGE/Tile/SmallPound.png").toExternalForm()),
     LARGE_POUND("large pound",Texture.class.getResource("/IMAGE/Tile/LargePound.png").toExternalForm()),
     BEACH("beach",Texture.class.getResource("/IMAGE/Tile/Ground.png").toExternalForm()),
-    SEE("see",Texture.class.getResource("/IMAGE/Tile/Sea.jpg").toExternalForm());
+    SEE("see",Texture.class.getResource("/IMAGE/Tile/Sea.png").toExternalForm());
 
     private String name;
     private String imageAddress;

@@ -10,9 +10,8 @@ public enum Weapon {
     PIKE("pike",100,new Stockpile(2,0,0,0,0,0,0,0,0),100,50),
     MACE("mace",100,new Stockpile(0,0,1,0,0,0,0,0,0),100,50),
     SWORDS("swords",100,new Stockpile(0,0,1,0,0,0,0,0,0),100,50),
-    LEATHER_ARMOR("leather armor",100,new Stockpile(2,0,0,0,0,0,0,0,0),100,50),
-    METAL_ARMOR("metal armor",100,new Stockpile(0,0,1,0,0,0,0,0,0),100,50),
-    HORSE("horse",10,new Stockpile(0,0,0,0,0,0,0,0,0),0,0);
+    LEATHER_ARMOR("leatherArmor",100,new Stockpile(2,0,0,0,0,0,0,0,0),100,50),
+    METAL_ARMOR("metalArmor",100,new Stockpile(0,0,1,0,0,0,0,0,0),100,50);
     private String name;
     private int damage;
     private Stockpile stockpile;
@@ -68,7 +67,7 @@ public enum Weapon {
     }
 
     public static Weapon[] getAllWeapons(){
-        Weapon[] weapons={Weapon.BOW,Weapon.CROSSBOW,Weapon.SPEAR,Weapon.PIKE,Weapon.MACE,Weapon.SWORDS,Weapon.LEATHER_ARMOR,Weapon.METAL_ARMOR,Weapon.HORSE};
+        Weapon[] weapons={Weapon.BOW,Weapon.CROSSBOW,Weapon.SPEAR,Weapon.PIKE,Weapon.MACE,Weapon.SWORDS,Weapon.LEATHER_ARMOR,Weapon.METAL_ARMOR};
         return weapons;
     }
 

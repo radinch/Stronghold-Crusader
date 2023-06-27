@@ -21,9 +21,9 @@ public class ShopMenu {
             input=scanner.nextLine();
             Matcher sell =ShopMenuRegexes.SELL.getMatcher(input);
             Matcher buy =ShopMenuRegexes.BUY.getMatcher(input);
-            if(sell.matches()) System.out.println(controller.sell(input));
-            else if(buy.matches()) System.out.println(controller.buy(input));
-            else if(input.equals("show price list")) System.out.println(controller.showPriceList());
+//            if(sell.matches()) System.out.println(controller.sell(input));
+//            else if(buy.matches()) System.out.println(controller.buy(input));
+            if(input.equals("show price list")) System.out.println(controller.showPriceList());
             else if(input.equals("exit")) break;
             else System.out.println("invalid command");
         }

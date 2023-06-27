@@ -274,7 +274,7 @@ public class DataBank {
         allUnits.add(new Troop("Pikemen", 300, null, true, null, 200, 100, 300, 5, 20, new ArrayList<Weapon>(List.of(Weapon.METAL_ARMOR,Weapon.PIKE))));
         allUnits.add(new Troop("Macemen", 200, null, true, null, 300, 200, 200, 5, 20, new ArrayList<Weapon>(List.of(Weapon.LEATHER_ARMOR, Weapon.MACE))));
         allUnits.add(new Troop("Swordsmen", 100, null, true, null, 300, 100, 100, 5, 40, new ArrayList<Weapon>(List.of(Weapon.SWORDS, Weapon.METAL_ARMOR))));
-        allUnits.add(new Troop("Knight", 300, null, true, null, 600, 600, 300, 5, 40, new ArrayList<Weapon>(List.of(Weapon.METAL_ARMOR, Weapon.SWORDS,Weapon.HORSE))));
+        allUnits.add(new Troop("Knight", 300, null, true, null, 600, 600, 300, 5, 40, new ArrayList<Weapon>(List.of(Weapon.METAL_ARMOR, Weapon.SWORDS))));
         allUnits.add(new Troop("Tunneler", 50, null, true, null, 200, 300, 50, 5, 30, new ArrayList<>()));
         allUnits.add(new Troop("Black Monk", 200, null, true, null, 200, 100, 200, 5, 10, new ArrayList<>()));
         allUnits.add(new Troop("Archer Bow", 100, null, true, null, 100, 300, 100, 5, 75, new ArrayList<>()));

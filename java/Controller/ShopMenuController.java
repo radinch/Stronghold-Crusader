@@ -28,28 +28,21 @@ public class ShopMenuController {
                 "\nsell price: "+shop.getResources()[i].getSellPrice()+"\nyou have: "+ government.getStockpile().getByName(shop.getResources()[i].getName()));
         return "that's it!";
     }
-    public String buy(String input){
-        Matcher nameMather= ShopMenuRegexes.NAME.getMatcher(input); Matcher amountMather= ShopMenuRegexes.AMOUNT.getMatcher(input);
-        String name = null; int amount = 0;
-        if(nameMather.find()) name=nameMather.group("name");
-        if(amountMather.find()) amount=Integer.parseInt(amountMather.group("amount"));
+    public static boolean buy(String input,Government government){
+        String name = input; int amount = 1;
         int gold=getNeededGold(name);
-        if(gold*amount>government.getCoin()) return "not enough gold";
-        if(government.amountOfAllResources()+amount>Government.getLimitOfResources()) return "you will pass your limit";
+        if(gold*amount>government.getCoin()) return false;
         government.setCoin(government.getCoin()-gold*amount);
         addItem(name,government,amount);
-        return "item bought successfully";
+        return true;
     }
-    public String sell(String input){
-        Matcher nameMather= ShopMenuRegexes.NAME.getMatcher(input); Matcher amountMather= ShopMenuRegexes.AMOUNT.getMatcher(input);
-        String name = null; int amount = 0;
-        if(nameMather.find()) name=nameMather.group("name");
-        if(amountMather.find()) amount=Integer.parseInt(amountMather.group("amount"));
-        if(!isThereEnoughItems(name,amount,government)) return "you don't have that many items";
+    public static boolean sell(String input,Government government){
+        String name = input; int amount = 1;
+        if(!isThereEnoughItems(name,amount,government)) return false;
         int increaseGold=getSellGold(name);
         government.setCoin(government.getCoin()+increaseGold*amount);
         addItem(name,government,-1*amount);
-        return "item sold successfully";
+        return true;
     }
     public static int getNeededGold(String name){
         Shop shop=Shop.getShop();

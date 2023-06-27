@@ -53,10 +53,10 @@ public class UnitMenuController {
                 if(currentUnit.get(i).getGovernment().getRuler().getUsername().equals(government.getRuler().getUsername())) {
                     int speed = 100;
                     if ((currentUnit.get(i) instanceof Troop)) speed = ((Troop) currentUnit.get(i)).getSpeed();
-                    x = pathX.get(Math.min(pathX.size() - 1, speed*25));
-                    y = pathY.get(Math.min(pathY.size() - 1, speed*25));
-                    System.out.println(x + "   " + y);
-                    map.getACell(x, y).getPeople().add(currentUnit.get(i));
+                    map.getACell(x,y).getPeople().remove(currentUnit.get(i));
+                    int x2 = pathX.get(Math.min(pathX.size() - 1, speed*25));
+                    int y2 = pathY.get(Math.min(pathY.size() - 1, speed*25));
+                    map.getACell(x2, y2).getPeople().add(currentUnit.get(i));
                     currentUnit.remove(i);
                 }
             }

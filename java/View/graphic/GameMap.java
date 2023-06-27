@@ -3,9 +3,14 @@ package View.graphic;
 import Controller.*;
 import Model.HoverRectangle;
 import Model.buildings.BuildingImage;
+import Model.gameandbattle.ShopImages;
 import Model.gameandbattle.battle.Person;
 import Model.gameandbattle.battle.Troop;
+import Model.gameandbattle.battle.Weapon;
 import Model.gameandbattle.map.Map;
+import Model.gameandbattle.shop.Shop;
+import Model.gameandbattle.stockpile.Food;
+import Model.gameandbattle.stockpile.Resource;
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -35,6 +40,15 @@ import java.util.List;
 import java.util.Objects;
 
 public class GameMap extends Application {
+
+    private Button sell;
+    private Button buy;
+    private Text buyPrice;
+    private Text sellPrice;
+    private HBox shopBox;
+    private ShopImages selectedItem;
+    private int shopStartRow=0;
+    private ArrayList<ShopImages> shopImages;
 
     private boolean sick = false;
     private Text popularity = new Text();
@@ -79,6 +93,9 @@ public class GameMap extends Application {
     private int selectX = -1,selectY = -1;
 
     {
+        shopBox=new HBox(); shopBox.setLayoutX(350); shopBox.setLayoutY(610);
+        shopImages= new ArrayList<>();
+        images=new ImageView[size][size];
         images = new ImageView[size][size];
         stageHeight = imageHeight * size;
         stageWidth = imageWidth * size;
@@ -258,7 +275,7 @@ public class GameMap extends Application {
                             pane.getChildren().remove(border);
                         }
                         borders.clear();
-                        DataBank.selectedCells.clear(); // TODO : RADIN
+                        DataBank.selectedCells.clear();
                         if(isSelecting && selectX != -1 && selectY != -1)
                         {
                             int minX = Math.min(selectX,i);
@@ -364,8 +381,113 @@ public class GameMap extends Application {
                     buildingImage.setOnMouseClicked(me -> goToGovernmentMenu());
             case "Mercenary Post" ->
                     buildingImage.setOnMouseClicked(me -> goToUnitMenu());
+            case "Market" ->
+                    buildingImage.setOnMouseClicked(me->goToShopMenu());
         }
         selectedBuilding = buildingImage;
+    }
+
+    private void goToShopMenu() {
+        pane.getChildren().add(shopBox);
+        createShopImages();
+        pane.getChildren().remove(hBox);
+        createShopButtonsAndText();
+        updateShopImages(0);
+    }
+
+    private void createShopButtonsAndText() {
+        sell=new Button("Sell"); sell.setLayoutX(460); sell.setLayoutY(655);
+        buy=new Button("Buy");  buy.setLayoutX(460); buy.setLayoutY(680);
+        sellPrice=new Text("-"); sellPrice.setLayoutX(510); sellPrice.setLayoutY(675); sellPrice.setFill(Color.DARKORANGE); sellPrice.setFont(Font.font(15));
+        buyPrice=new Text("-"); buyPrice.setLayoutX(510); buyPrice.setLayoutY(702); buyPrice.setFill(Color.DARKORANGE); buyPrice.setFont(Font.font(15));
+        pane.getChildren().addAll(buy,buyPrice,sell,sellPrice);
+        Button back=new Button("Back");  pane.getChildren().add(back);  back.setLayoutY(610);  back.setLayoutX(275);
+        back.setOnMouseClicked(me -> backToBuildingMenuFromShop());
+        sell.setOnMouseClicked(e->sellClicked());
+        buy.setOnMouseClicked(e->buyClicked());
+    }
+    private void sellClicked() {
+        Alert alert=new Alert(Alert.AlertType.ERROR);
+        if (selectedItem==null) {
+            alert.setContentText("you did not choose an item");
+            alert.showAndWait();
+        }
+        else {
+            String name=getSelectedItemName();
+            if (ShopMenuController.sell(name,DataBank.getCurrentGovernment())){
+                alert=new Alert(Alert.AlertType.CONFIRMATION); alert.setContentText("successful"); alert.showAndWait();
+            }
+            else {
+                alert.setContentText("dont have enough items");
+                alert.showAndWait();
+            }
+        }
+    }
+
+    private String getSelectedItemName() {
+        if (selectedItem.getFood()!=null) return selectedItem.getFood().getName();
+        else if(selectedItem.getWeapon()!=null) return selectedItem.getWeapon().getName();
+        else return selectedItem.getResource().getName();
+    }
+
+    private void backToBuildingMenuFromShop() {
+        pane.getChildren().removeAll(shopBox,sell,buy,sellPrice,buyPrice);
+        createBuildingMenuBar();
+    }
+
+    private void buyClicked(){
+        Alert alert=new Alert(Alert.AlertType.ERROR);
+        if (selectedItem==null) {
+            alert.setContentText("you did not choose an item");
+            alert.showAndWait();
+        }
+        else {
+            String name=getSelectedItemName();
+            if (ShopMenuController.buy(name,DataBank.getCurrentGovernment())){
+                alert=new Alert(Alert.AlertType.CONFIRMATION); alert.setContentText("successful"); alert.showAndWait();
+            }
+            else {
+                alert.setContentText("dont have enough golds");
+                alert.showAndWait();
+            }
+        }
+    }
+
+    private void updateShopImages(int start) {
+        shopBox.getChildren().clear();
+        if (start<=0) {
+            shopStartRow=shopStartRow+shopImages.size();
+            start=start+shopImages.size();
+        }
+        for (int i=start;i<start+6;i++){
+            ShopImages shopImages1=shopImages.get(i%(shopImages.size()));
+            shopBox.getChildren().add(shopImages.get(i%(shopImages.size())));
+            shopImages.get(i%shopImages.size()).setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    if (shopImages1.getFood()!=null) {
+                        sellPrice.setText(shopImages1.getFood().getSellPrice()+"");
+                        buyPrice.setText(shopImages1.getFood().getPrice()+"");
+                    }
+                    else if (shopImages1.getWeapon()!=null) {
+                        sellPrice.setText(shopImages1.getWeapon().getSellPrice()+"");
+                        buyPrice.setText(shopImages1.getWeapon().getPrice()+"");
+                    }
+                    else {
+                        sellPrice.setText(shopImages1.getResource().getSellPrice()+"");
+                        buyPrice.setText(shopImages1.getResource().getPrice()+"");
+                    }
+                    selectedItem=shopImages1;
+                }
+            });
+        }
+    }
+
+    private void createShopImages() {
+        Shop shop=Shop.getShop();
+        for(Food food:shop.getFoods()) shopImages.add(new ShopImages(getClass().getResource("/IMAGE/Shop/"+food.getName()+".png").toExternalForm(),food,null,null));
+        for(Resource food:shop.getResources()) shopImages.add(new ShopImages(getClass().getResource("/IMAGE/Shop/"+food.getName()+".png").toExternalForm(),null,null,food));
+        for(Weapon weapon:shop.getWeapons()) shopImages.add(new ShopImages(getClass().getResource("/IMAGE/Shop/"+weapon.getName()+".png").toExternalForm(),null,weapon,null));
     }
 
     private void goToUnitMenu() {
@@ -853,6 +975,8 @@ public class GameMap extends Application {
             pane.getChildren().remove(fearRateVBox);
             pane.getChildren().add(popularityHBox);
             showPopularityFactors();
+        } else if (pane.getChildren().contains(sell)){
+            updateShopImages(++shopStartRow);
         }
     }
 
@@ -885,6 +1009,8 @@ public class GameMap extends Application {
             pane.getChildren().remove(popularityHBox);
             pane.getChildren().add(fearRateVBox);
             showFearRate();
+        } else if (pane.getChildren().contains(sell)){
+            updateShopImages(--shopStartRow);
         }
     }
 

@@ -40,7 +40,7 @@ public class SelectBuildingMenu {
             else if ((matcher = BuildingMenuRegexes.getMatcher(command, BuildingMenuRegexes.CREATE_UNIT)) != null &&
                     (building.getName().equals("barrack") || building.getName().equals("Mercenary Post") ||
                             (building.getName().equals("engineer guild")))) {
-                System.out.println(selectBuildingController.createUnit(building.getGovernment(), matcher, building));
+              //  System.out.println(selectBuildingController.createUnit(building.getGovernment(), matcher, building));
             } else if (command.equals("open cage of war dogs") && building.getName().equals("Caged War Dogs"))
                 System.out.println(selectBuildingController.openCageOfWarDogs(building));
             else if(command.equals("exit"))

@@ -19,9 +19,8 @@ public class SelectBuildingController {
         OtherBuildingsMethods.changeTaxRate(government, matcher);
     }
 
-    public String createUnit(Government government,Matcher matcher,Building building) {
-        String type= matcher.group("type");
-        int count = Integer.parseInt(matcher.group("count"));
+    public String createUnit(Government government,String type,Building building) {
+        int count = 1;
         if(DataBank.getUnitByName(type) == null)
             return "invalid name of troop";
         else if(count <= 0)

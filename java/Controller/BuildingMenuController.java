@@ -19,10 +19,7 @@ public class BuildingMenuController {
     private final Map map;
     private final Government government;
 
-    public String dropBuilding(Matcher matcher) {
-        int x = Integer.parseInt(matcher.group("y"));
-        int y = Integer.parseInt(matcher.group("x"));
-        String type = matcher.group("type");
+    public String dropBuilding(int x,int y,String type) {
         if (!doIHaveAKingPlace() && !type.equals("Small stone gatehouse"))
             return "you have to place a small stone gatehouse first";
         else if (isCoordinateValid(x, y) != null)
@@ -221,8 +218,9 @@ public class BuildingMenuController {
 
     private boolean isThisCellMaterialValid(int x, int y, Building building) {
         for (Texture allowedTexture : building.getAllowedTextures()) {
-            if (allowedTexture.getName().equals(map.getACell(x, y).getTexture().getName()))
+            if (allowedTexture.getName().equals(map.getACell(x, y).getTexture().getName())) {
                 return true;
+            }
         }
         return false;
     }

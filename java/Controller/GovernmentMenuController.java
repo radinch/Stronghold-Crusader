@@ -26,12 +26,10 @@ public class GovernmentMenuController {
         return government.getPopularity();
     }
 
-    public void changeFoodRate(Matcher matcher, Government government) {
-        int rate = Integer.parseInt(matcher.group("rate"));
+    public static void changeFoodRate(int rate,Government government) {
         government.setFoodRate(rate);
         if(government.getGranary().getTotalFood() <= 0)
             government.setFoodRate(-2);
-        //government.setPopularity(government.getPopularity() + 4 * rate);
     }
 
     public String showFoodList(Government government) {
@@ -47,23 +45,17 @@ public class GovernmentMenuController {
         return government.getFoodRate();
     }
 
-    public void changeTaxRate(Government government, Matcher matcher) {
-        int rateNumber = Integer.parseInt(matcher.group("rate"));
+    public static void changeTaxRate(int rateNumber,Government government) {
         government.setTaxRate(rateNumber);
         if(government.getCoin() <= 0)
             government.setTaxRate(0);
-        /*if (rateNumber <= 0)
-            government.setPopularity(government.getPopularity() + -2 * rateNumber + 1);
-        else
-            government.setPopularity(government.getPopularity() + -2 * rateNumber);*/
     }
 
     public int showTaxRate(Government government) {
         return government.getTaxRate();
     }
 
-    public void changeFearRate(Government government, Matcher matcher) {
-        int rateNumber = Integer.parseInt(matcher.group("rate"));
+    public static void changeFearRate(int rateNumber,Government government) {
         government.setFearRate(rateNumber);
         //government.setPopularity(government.getPopularity() + rateNumber);
         government.setWorkersEfficiency(100 + 5 * rateNumber);

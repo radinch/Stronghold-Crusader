@@ -22,7 +22,7 @@ public class GovernmentMenu {
             else if (command.matches("show\\s+popularity"))
                 System.out.println(governmentMenuController.showPopularity(government));
             else if ((matcher = GovernmentMenuRegexes.getMatcher(command, GovernmentMenuRegexes.CHANGE_FOOD_RATE)) != null) {
-                governmentMenuController.changeFoodRate(matcher, government);
+              //  governmentMenuController.changeFoodRate(matcher, government);
                 System.out.println("successful");
             }
             else if (command.matches("food\\s+rate\\s+show"))
@@ -30,14 +30,14 @@ public class GovernmentMenu {
             else if (command.matches("show\\s+food\\s+list"))
                 System.out.print(governmentMenuController.showFoodList(government));
             else if ((matcher = GovernmentMenuRegexes.getMatcher(command, GovernmentMenuRegexes.CHANGE_TAX_RATE)) != null) {
-                governmentMenuController.changeTaxRate(government, matcher);
+                //governmentMenuController.changeTaxRate(government, matcher);
                 System.out.println("successful");
             }
             else if (command.matches("tax\\s+rate\\s+show"))
                 System.out.println(governmentMenuController.showTaxRate(government));
             else if ((matcher = GovernmentMenuRegexes.getMatcher(command, GovernmentMenuRegexes.CHANGE_FEAR_RATE)) != null) {
                 System.out.println("successful");
-                governmentMenuController.changeFearRate(government, matcher);
+               // governmentMenuController.changeFearRate(government, matcher);
             } else if(command.equals("show gold"))
                 System.out.println(government.getCoin());
             else if(command.equals("exit")) return;

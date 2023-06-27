@@ -328,4 +328,23 @@ public class DataBank {
     public static void setStage(Stage stage) {
         DataBank.stage = stage;
     }
+
+    public static Government currentGovernment;
+
+    public static Government getCurrentGovernment() {
+        return currentGovernment;
+    }
+
+    public static void setCurrentGovernment(Government currentGovernment) {
+        DataBank.currentGovernment = currentGovernment;
+    }
+    public static ArrayList<Cell> selectedCells = new ArrayList<>();
+
+    public static ArrayList<Cell> getSelectedCells() {
+        return selectedCells;
+    }
+
+    public static void setSelectedCells(int i, int j) {
+        DataBank.selectedCells.add(Map.MAP_NUMBER_ONE.getACell(i,j));
+    }
 }

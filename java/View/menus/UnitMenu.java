@@ -28,7 +28,7 @@ public class UnitMenu {
         System.out.println("Welcome to the unit menu");
         String input;
         while (true){
-            unitMenuController=selectUnit(scanner);
+            unitMenuController=null;
             if(unitMenuController == null)
                 return;
             if(selectedTroop.size() == 0)
@@ -47,8 +47,8 @@ public class UnitMenu {
             Matcher matcher10=UnitMenuRegexes.SET_CONDITION.getMatcher(input);
             Matcher matcher11=UnitMenuRegexes.DIG_TUNNEL.getMatcher(input);
             Matcher matcher12=UnitMenuRegexes.PUT_LADDER.getMatcher(input);
-            if(matcher1.matches()) System.out.println(unitMenuController.moveUnit(matcher1,map));
-            else if(matcher2.matches()) System.out.println(unitMenuController.patrolUnit(matcher2,map));
+            //if(matcher1.matches()) System.out.println(unitMenuController.moveUnit(matcher1,map));
+            if(matcher2.matches()) System.out.println(unitMenuController.patrolUnit(matcher2,map));
             else if(input.equals("stop patrol")) unitMenuController.stopPatrol();
             else if(matcher3.matches()) System.out.println(unitMenuController.buildSurroundings(matcher3));
             else if(matcher4.matches()) System.out.println(unitMenuController.pourOil(matcher4));
@@ -65,29 +65,15 @@ public class UnitMenu {
             else System.out.println("invalid command");
         }
     }
-    public UnitMenuController selectUnit(Scanner scanner){
-        System.out.println("ok,select a unit now!");
-        String input;
+    public UnitMenuController selectUnit(int x,int y){
         UnitMenuController unitMenuController;
-        while (true){
-            input=scanner.nextLine();
-            Matcher matcher=UnitMenuRegexes.SELECT_UNIT.getMatcher(input);
-            if(matcher.matches()){
-                x=Integer.parseInt(matcher.group("y"));
-                y=Integer.parseInt(matcher.group("x"));
-                for (Person person : map.getACell(x, y).getPeople()) {
-                    if(person.getGovernment().equals(government) && person instanceof Troop)
-                        selectedTroop.add(person);
-                }
-                unitMenuController=new UnitMenuController(selectedTroop,x,y,government);
-                unitMenuController.setMap(map);
-                return unitMenuController;
-            }
-            else if(input.equals("exit"))
-                break;
-            else System.out.println("you have to select a unit first");
+        for (Person person : map.getACell(x, y).getPeople()) {
+            if(person.getGovernment().equals(government) && person instanceof Troop)
+                selectedTroop.add(person);
         }
-        return null;
+        unitMenuController=new UnitMenuController(selectedTroop,x,y,government);
+        unitMenuController.setMap(map);
+        return unitMenuController;
     }
 
     public Map getMap() {

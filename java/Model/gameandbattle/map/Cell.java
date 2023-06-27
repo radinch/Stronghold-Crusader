@@ -1,8 +1,11 @@
 package Model.gameandbattle.map;
 
+import Model.buildings.BuildingImage;
 import Model.gameandbattle.Government;
 import Model.gameandbattle.battle.Person;
 import Model.gameandbattle.battle.Troop;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +22,10 @@ public class Cell {
     private Stair stair;
     private Tunnel tunnel;
     private String toPrint;
+    private BuildingImage buildingImage;
+    private final VBox leftQueue = new VBox();
+    private final VBox rightQueue = new VBox();
+    private final HBox queues = new HBox();
     private char detail;
     public Cell(Texture texture, Building building, ArrayList<Person> people) {
         this.texture = texture;
@@ -162,5 +169,25 @@ public class Cell {
 
     public void setStair(Stair stair) {
         this.stair = stair;
+    }
+
+    public VBox getLeftQueue() {
+        return leftQueue;
+    }
+
+    public VBox getRightQueue() {
+        return rightQueue;
+    }
+
+    public BuildingImage getBuildingImage() {
+        return buildingImage;
+    }
+
+    public void setBuildingImage(BuildingImage buildingImage) {
+        this.buildingImage = buildingImage;
+    }
+
+    public HBox getQueues() {
+        return queues;
     }
 }

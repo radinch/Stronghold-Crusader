@@ -9,9 +9,9 @@ import java.util.Scanner;
 
 public class MainMenuController {
     private User host;
-    private final ArrayList<User> players = new ArrayList<>();
-    private final ArrayList<Government> governments = new ArrayList<>();
-    private final MainMenu mainMenu = new MainMenu(this);
+    private  ArrayList<User> players = new ArrayList<>();
+    private  ArrayList<Government> governments = new ArrayList<>();
+    private MainMenu mainMenu = new MainMenu(this);
 
     public void run(Scanner scanner) {
         host=DataBank.getCurrentUser();
@@ -31,5 +31,37 @@ public class MainMenuController {
             governments.add(new Government(100,0,player,0,100000,0,8));
         }
         return governments;
+    }
+
+    public User getHost() {
+        return host;
+    }
+
+    public void setHost(User host) {
+        this.host = host;
+    }
+
+    public ArrayList<User> getPlayers() {
+        return players;
+    }
+
+    public ArrayList<Government> getGovernments() {
+        return governments;
+    }
+
+    public MainMenu getMainMenu() {
+        return mainMenu;
+    }
+
+    public void setPlayers(ArrayList<User> players) {
+        this.players = players;
+    }
+
+    public void setGovernments(ArrayList<Government> governments) {
+        this.governments = governments;
+    }
+
+    public void setMainMenu(MainMenu mainMenu) {
+        this.mainMenu = mainMenu;
     }
 }

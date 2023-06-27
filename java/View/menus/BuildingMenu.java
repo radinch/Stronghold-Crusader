@@ -24,7 +24,7 @@ public class BuildingMenu {
             command = scanner.nextLine();
             if((matcher = BuildingMenuRegexes.getMatcher(command,BuildingMenuRegexes.DROP_BUILDING)) != null)
             {
-                System.out.println(buildingMenuController.dropBuilding(matcher));
+                //System.out.println(buildingMenuController.dropBuilding(matcher));
             }
             else if((matcher = BuildingMenuRegexes.getMatcher(command,BuildingMenuRegexes.DROP_WALL)) != null)
                 System.out.println(buildingMenuController.dropWall(matcher));

@@ -9,10 +9,15 @@ import Model.gameandbattle.map.Map;
 import Model.gameandbattle.map.Texture;
 import Model.gameandbattle.map.Tunnel;
 
-import java.net.PortUnreachableException;
-import Model.gameandbattle.battle.*;
-import Model.gameandbattle.map.Map;
-import Model.gameandbattle.map.Texture;
+import View.graphic.MoveAnimation;
+import javafx.animation.KeyFrame;
+import javafx.animation.SequentialTransition;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.util.Duration;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -20,6 +25,9 @@ import java.util.regex.Matcher;
 import static Model.gameandbattle.map.Texture.*;
 
 public class UnitMenuController {
+
+    private int currentAnimationIndex = 0;
+    public static boolean isAnimationFinished = true;
     private final Government government;
     private Map map;
     private final ArrayList<Person> currentUnit;
@@ -33,33 +41,55 @@ public class UnitMenuController {
         this.government = government;
     }
 
-    public String moveUnit(Matcher matcher, Map map) {
-        int finalX = x;
-        int finalY = y;
+    public String moveUnit(int x1, int y1, Map map, HBox queues, ImageView[][] imageViews, int startRow, int startCol) {
         this.map = map;
-        int x1 = Integer.parseInt(matcher.group("y"));
-        int y1 = Integer.parseInt(matcher.group("x"));
         boolean[][] help = new boolean[map.getSize()][map.getSize()];
         prepareHelp(help);
         ArrayList<Integer> pathX=new ArrayList<>(); ArrayList<Integer> pathY=new ArrayList<>();
-        //findPath(help,x,y,x1,y1,pathX,pathY);
         aStarSearch(help,x,y,x1,y1,pathX,pathY,map.getSize(),map.getSize());
-        //System.out.println(pathY);
         if(pathX.size()==0) return "there is no path between these points";
         else{
             for(int i=currentUnit.size()-1;i>=0;i--) {
-                //System.out.println(person.getGovernment().getRuler().getUsername());
                 if(currentUnit.get(i).getGovernment().getRuler().getUsername().equals(government.getRuler().getUsername())) {
                     int speed = 100;
                     if ((currentUnit.get(i) instanceof Troop)) speed = ((Troop) currentUnit.get(i)).getSpeed();
-                    x = pathX.get(Math.min(pathX.size() - 1, speed/25));
-                    y = pathY.get(Math.min(pathY.size() - 1, speed/25));
+                    x = pathX.get(Math.min(pathX.size() - 1, speed*25));
+                    y = pathY.get(Math.min(pathY.size() - 1, speed*25));
+                    System.out.println(x + "   " + y);
                     map.getACell(x, y).getPeople().add(currentUnit.get(i));
                     currentUnit.remove(i);
                 }
             }
+            ArrayList<MoveAnimation> animations = new ArrayList<>();
+            for (int i = 0; i < pathX.size(); i++) {
+                if(pathX.get(i) - startRow < imageViews.length && pathX.get(i) - startRow >= 0 &&
+                        pathY.get(i) -startCol < imageViews[pathX.get(i) - startRow].length &&
+                        pathY.get(i) -startCol >= 0) {
+                    animations.add(new MoveAnimation(queues,imageViews[pathX.get(i) - startRow][pathY.get(i) -startCol]));
+                }
+                else {
+                    break;
+                }
+            }
+//            Timeline timeline;
+//            timeline = new Timeline(new KeyFrame(Duration.millis(1), event -> {
+//                if (isAnimationFinished) {
+//                    isAnimationFinished = false;
+//                    System.out.println(currentAnimationIndex);
+//                    if(currentAnimationIndex < animations.size())
+//                        playAnimation(animations.get(currentAnimationIndex++),animations.size());
+//                }
+//            }));
+//            timeline.setCycleCount(-1);
+//            timeline.play();
+            playAnimation(animations.get(animations.size()-1));
+
         }
         return "troop moved successfully";
+    }
+
+    private void playAnimation(MoveAnimation animation) {
+        animation.play();
     }
 
     public String setCondition(Matcher matcher) {

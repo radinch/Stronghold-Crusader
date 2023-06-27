@@ -144,9 +144,7 @@ public class MapMenuController {
         return delta;
     }
 
-    public String showDetails(Map currentMap, Matcher matcher) {
-        int x = Integer.parseInt(matcher.group("y"));
-        int y = Integer.parseInt(matcher.group("x"));
+    public static String showDetails(Map currentMap, int x,int y) {
         Cell cell = currentMap.getACell(x, y);
         StringBuilder result = new StringBuilder();
         result.append("texture: ").append(cell.getTexture().getName());

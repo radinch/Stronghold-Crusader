@@ -33,36 +33,6 @@ public class Main extends Application {
         File loggedInUser = new File("loggedInUser.json");
         launch(args);
         // TODO: 4/12/2023 1.unit 2.final check 3.package 4.errors method
-       /* boolean invalidCommandChecker = false;
-        if (loggedInUser.length() == 0) {
-            label:
-            while (true) {
-                if (!invalidCommandChecker)
-                    System.out.println("welcome to the start menu of the game!\nwould you like to sign up or login?\nalso if you want to close just type close!\ntype sign up or login:");
-                invalidCommandChecker = false;
-                String input = scanner.nextLine();
-                switch (input) {
-                    case "login":
-                        LoginMenu loginMenu = new LoginMenu();
-                        loginMenu.run(scanner);
-                        break;
-                    case "sign up":
-                        SignUpMenu signUpMenu = new SignUpMenu();
-                        signUpMenu.run(scanner);
-                        break;
-                    case "close":
-                        break label;
-                    default:
-                        invalidCommandChecker = true;
-                        System.out.println("invalid command");
-                        break;
-                }
-            }
-        } else {
-            DataBank.setCurrentUser(mapper.readValue(loggedInUser, User.class));
-            ProfileMenuController controller = new ProfileMenuController();
-            controller.run(scanner);
-        }*/
     }
 
     @Override

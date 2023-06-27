@@ -6,15 +6,23 @@ import javafx.scene.shape.Rectangle;
 
 
 public class BuildingImage extends Rectangle {
-
-    private final ImagePattern imagePattern;
+    int i;
+    int j;
     public BuildingImage(String address) {
         super(75,75);
-        this.imagePattern = new ImagePattern(new Image(address));
-        this.setFill(imagePattern);
+        this.setFill(new ImagePattern(new Image(address)));
     }
 
-    public ImagePattern getImagePattern() {
-        return imagePattern;
+    public int getI() {
+        return i;
+    }
+
+    public int getJ() {
+        return j;
+    }
+
+    public void setCoordinates(int i, int j) {
+        this.i = i;
+        this.j = j;
     }
 }

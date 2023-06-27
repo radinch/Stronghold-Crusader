@@ -18,8 +18,8 @@ public class MapMenu {
             command = scanner.nextLine();
             if ((matcher = MapMenuRegexes.getMatcher(command, MapMenuRegexes.SHOW_MAP)) != null)
                 System.out.println(mapMenuController.showMap(currentMap, matcher));
-            else if ((matcher = MapMenuRegexes.getMatcher(command, MapMenuRegexes.SHOW_DETAILS)) != null)
-                System.out.print(mapMenuController.showDetails(currentMap, matcher));
+//            else if ((matcher = MapMenuRegexes.getMatcher(command, MapMenuRegexes.SHOW_DETAILS)) != null)
+//                System.out.print(mapMenuController.showDetails(currentMap, matcher));
             else if (MapMenuRegexes.getMatcher(command, MapMenuRegexes.MOVE_MAP) != null)
                 System.out.println(mapMenuController.moveMap(currentMap, command));
             else if(command.equals("exit")) return;

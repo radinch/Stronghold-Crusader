@@ -30,6 +30,17 @@ public class MoveAnimation extends Transition {
                 this.queues.getBoundsInParent().getCenterX();
         double deltaY =imageView.getBoundsInParent().getCenterY() -
                 this.queues.getBoundsInParent().getCenterY();
+        if(UnitMenuController.isFar) {
+            System.out.println("salam");
+            if(deltaX > 0)
+                deltaX += 200;
+            if(deltaY > 0)
+                deltaY += 200;
+            if(deltaX < 0)
+                deltaX -= 100;
+            if(deltaY < 0)
+                deltaY -= 100;
+        }
         finalX = queues.getLayoutX() + deltaX;
         finalY = queues.getLayoutY() + deltaY;
     }
@@ -52,6 +63,9 @@ public class MoveAnimation extends Transition {
         }
         if(areUnitsArrived(x,y)) {
             UnitMenuController.isAnimationFinished = true;
+            if(UnitMenuController.isFar) {
+                UnitMenuController.isFar = false;
+            }
             this.stop();
         }
         queues.setLayoutX(x);

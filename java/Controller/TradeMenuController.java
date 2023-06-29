@@ -16,17 +16,12 @@ public class TradeMenuController {
         this.otherGovernment = otherGovernment;
     }
 
-    public String trade(Matcher matcher) {
-        String type=matcher.group("type");
-        int amount=Integer.parseInt(matcher.group("amount"));
-        int price =Integer.parseInt(matcher.group("price"));
-        String message=matcher.group("message");
+    public void trade(String type,int amount,int price,String message) {
         Request request=new Request(government,otherGovernment, Resource.getByName(type),message,price,amount);
         DataBank.getRequests().add(request);
         government.getRequestsMadeByMe().add(request);
         otherGovernment.getRequestsToMe().add(request);
         otherGovernment.getUnseenRequests().add(request);
-        return "trade made!";
     }
 
     public String showTradeList() {
@@ -37,33 +32,18 @@ public class TradeMenuController {
         return "that's all of your trades!";
     }
 
-    public String acceptTrade(Matcher matcher) {
-        int id=Integer.parseInt(matcher.group("id"));
-        String message=matcher.group("message");
-        Request request=government.getRequestById(id);
-        request.setReceiverMessage(message);
+    public void acceptTrade(Request request) {
         if(request.getPrice()==0){
             government.getStockpile().increaseByName(request.getResource().getName(),request.getAmount());
-            for(int i=0;i<government.getRequestsToMe().size();i++){
-                if(government.getRequestsToMe().get(i).getId()==id){
-                    government.getRequestsToMe().remove(i);
-                    break;
-                }
-            }
+            government.getRequestsToMe().remove(request);
             government.getRequestsAcceptedByMe().add(request);
         }
         else{
             government.getStockpile().increaseByName(request.getResource().getName(),-1*request.getAmount());
-            for(int i=0;i<government.getRequestsToMe().size();i++){
-                if(government.getRequestsToMe().get(i).getId()==id){
-                    government.getRequestsToMe().remove(i);
-                    break;
-                }
-            }
+            government.getRequestsToMe().remove(request);
             government.getRequestsAcceptedByMe().add(request);
             government.setCoin(government.getCoin()+request.getPrice());
         }
-        return "accepted!";
     }
 
     public String tradeHistory() {

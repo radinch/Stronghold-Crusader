@@ -4,14 +4,10 @@ import Controller.DataBank;
 import Controller.GameMenuController;
 import Controller.MainMenuController;
 import Controller.MapMenuController;
-import Model.gameandbattle.Government;
 import Model.gameandbattle.map.Map;
-import Model.signup_login_profile.User;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class MainMenu {
     //this is the menu before game menu
@@ -59,7 +55,7 @@ public class MainMenu {
                     mapNumber = scanner.nextInt();
                 }*/
                 GameMenuController gameMenuController = new GameMenuController(mainMenuController.createGovernments(),Map.MAP_NUMBER_ONE);
-                gameMenuController.run(scanner);
+                //gameMenuController.run(scanner);
             }
             else if(command.equals("exit")) return;
         }

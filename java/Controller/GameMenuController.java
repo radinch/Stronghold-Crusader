@@ -2,16 +2,12 @@ package Controller;
 
 import Model.gameandbattle.Government;
 import Model.gameandbattle.map.*;
-import Model.gameandbattle.battle.Patrol;
 import Model.gameandbattle.battle.Person;
 import Model.gameandbattle.battle.Troop;
 import Model.gameandbattle.map.Map;
-import Model.signup_login_profile.User;
-import View.menus.*;
+import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 
 import static Model.gameandbattle.map.Texture.RIVER;
 import static Model.gameandbattle.map.Texture.SHALLOW_WATER;
@@ -20,31 +16,17 @@ public class GameMenuController {
 
     private final Map currentMap;
     private final ArrayList<Government> governments;
-    private Government currentGovernment;
     private int turnCounter;
-    private final GameMenu gameMenu;
     private final int amountOfAllPlayers;
+
     public GameMenuController(ArrayList<Government> governments, Map currentMap) {
-        turnCounter=0;
-        gameMenu=new GameMenu(this);
-        this.governments=governments;
-        currentGovernment=governments.get(0);
-        this.currentMap=currentMap;
-        amountOfAllPlayers=governments.size();
+        turnCounter = 0;
+        this.governments = governments;
+        this.currentMap = currentMap;
+        amountOfAllPlayers = governments.size();
         DataBank.initializeBuildingName();
         DataBank.initializeAllUnits();
         DataBank.initializeWalls();
-    }
-    public void run(Scanner scanner) {
-        gameMenu.run(scanner);
-    }
-
-    public Government getCurrentGovernment() {
-        return currentGovernment;
-    }
-
-    public void setCurrentGovernment(Government currentGovernment) {
-        this.currentGovernment = currentGovernment;
     }
 
     public int getTurnCounter() {
@@ -59,34 +41,37 @@ public class GameMenuController {
         this.turnCounter = turnCounter;
     }
 
-    public void nextTurn(BuildingMenu buildingMenu, ShopMenu shopMenu, TradeMenu tradeMenu, UnitMenu unitMenu,DropElementMenu dropMenu,GameMenu gameMenu)
-    {
-        int counterLosers=0;
-        turnCounter++;
-        for(int i=governments.size()-1;i>=0;i--){
-            if(governments.get(i).getKing().getHp()<=0) {
+    private int removeDeadGovernments() {
+        int counterLosers = 0;
+        for (int i = governments.size() - 1; i >= 0; i--) {
+            if (governments.get(i).getKing().getHp() <= 0) {
                 governments.get(i).setAlive(false);
                 counterLosers++;
-                if(governments.get(i).getRuler().getHighScore()<turnCounter)
+                if (governments.get(i).getRuler().getHighScore() < turnCounter)
                     governments.get(i).getRuler().setHighScore(turnCounter);
                 governments.remove(i);
             }
         }
-        if(counterLosers==amountOfAllPlayers-1){
-            gameMenu.setGameOver(true);
-            return;
+        return counterLosers;
+    }
+
+    public String nextTurn() {
+        turnCounter++;
+        int counterLosers = removeDeadGovernments();
+        if (counterLosers == amountOfAllPlayers - 1) {
+            return "Game Over";
         }
-        while (true){
-            if(!governments.get(turnCounter%amountOfAllPlayers).isAlive()) turnCounter++;
+        while (true) {
+            if (!governments.get(turnCounter % amountOfAllPlayers).isAlive()) turnCounter++;
             else break;
         }
-        currentGovernment=governments.get(turnCounter%amountOfAllPlayers);
-        for (int i=0;i<currentMap.getSize();i++) {
+        DataBank.setCurrentGovernment(governments.get(turnCounter % amountOfAllPlayers));
+        for (int i = 0; i < currentMap.getSize(); i++) {
             for (int j = 0; j < currentMap.getSize(); j++) {
-                tunnelAbility(currentMap.getACell(i,j));
-                affectElementsOfGame(i,j);
-                for (int m=currentMap.getACell(i,j).getPeople().size()-1;m>=0;m--) {
-                    Person person=currentMap.getACell(i,j).getPeople().get(m);
+                tunnelAbility(currentMap.getACell(i, j));
+                affectElementsOfGame(i, j);
+               /* for (int m = currentMap.getACell(i, j).getPeople().size() - 1; m >= 0; m--) {
+                    Person person = currentMap.getACell(i, j).getPeople().get(m);
                     ArrayList<String> airAttackers = new ArrayList<>(List.of("Crossbowmen", "Archer Bow", "Horse Archers",
                             "Slingers", "Archer", "Fire Throwers"));
                     boolean flagAir = false;
@@ -116,7 +101,7 @@ public class GameMenuController {
                         boolean[][] help = new boolean[currentMap.getSize()][currentMap.getSize()];
                         prepareHelp(help);
                         currentMap.getACell(i, j).getPeople().remove(m);
-                        UnitMenuController.aStarSearch(help,x,y,x1,y1,pathX,pathY,currentMap.getSize(),currentMap.getSize());
+                        UnitMenuController.aStarSearch(help, x, y, x1, y1, pathX, pathY, currentMap.getSize(), currentMap.getSize());
                         int speed = 100;
                         if ((person instanceof Troop)) speed = ((Troop) person).getSpeed();
                         x = pathX.get(Math.min(pathX.size() - 1, speed / 25));
@@ -125,51 +110,51 @@ public class GameMenuController {
                             patrol.setCondition(1 - patrol.getCondition());
                         currentMap.getACell(x, y).getPeople().add(person);
                     }
-                    if (person instanceof Troop&&((Troop) person).getState() == 2 && flagAir) {
-                        for (int k = Math.max(i-5,0); k < Math.min(i+5,currentMap.getSize()-1); k++) {
-                            for (int q =Math.max(j-5,0); q <Math.min(j+5,currentMap.getSize()-1) ; q++) {
-                                for(Person person1:currentMap.getACell(k,q).getPeople()){
-                                    if(!person1.getGovernment().getRuler().getUsername().equals(person.getGovernment().getRuler().getUsername())){
-                                       person1.setHp(person1.getHp()-((Troop)person).getAttackStrength());
+                    if (person instanceof Troop && ((Troop) person).getState() == 2 && flagAir) {
+                        for (int k = Math.max(i - 5, 0); k < Math.min(i + 5, currentMap.getSize() - 1); k++) {
+                            for (int q = Math.max(j - 5, 0); q < Math.min(j + 5, currentMap.getSize() - 1); q++) {
+                                for (Person person1 : currentMap.getACell(k, q).getPeople()) {
+                                    if (!person1.getGovernment().getRuler().getUsername().equals(person.getGovernment().getRuler().getUsername())) {
+                                        person1.setHp(person1.getHp() - ((Troop) person).getAttackStrength());
                                     }
                                 }
-                                if(currentMap.getACell(k,q).getBuilding()!=null &&
-                                        !currentMap.getACell(k,q).getBuilding().getGovernment().getRuler().getUsername().equals(person.getGovernment().getRuler().getUsername())){
-                                    currentMap.getACell(k,q).getBuilding().setHitpoint(currentMap.getACell(k,q).getBuilding().getHitpoint()-((Troop) person).getAttackStrength());
+                                if (currentMap.getACell(k, q).getBuilding() != null &&
+                                        !currentMap.getACell(k, q).getBuilding().getGovernment().getRuler().getUsername().equals(person.getGovernment().getRuler().getUsername())) {
+                                    currentMap.getACell(k, q).getBuilding().setHitpoint(currentMap.getACell(k, q).getBuilding().getHitpoint() - ((Troop) person).getAttackStrength());
                                 }
                             }
                         }
                     }
-                    int x=0;
+                    int x = 0;
                     int y = 0;
-                    if (person instanceof Troop&&((Troop) person).getState() != 2) {
+                    if (person instanceof Troop && ((Troop) person).getState() != 2) {
                         int amountOfMove;
-                        if(((Troop) person).getState()==1) amountOfMove=5;
-                        else amountOfMove=10;
+                        if (((Troop) person).getState() == 1) amountOfMove = 5;
+                        else amountOfMove = 10;
                         outer:
-                        for (int k = Math.max(i-amountOfMove,0); k < Math.min(i+amountOfMove,currentMap.getSize()-1); k++) {
-                            for (int q =Math.max(j-amountOfMove,0); q <Math.min(j+amountOfMove,currentMap.getSize()-1) ; q++) {
+                        for (int k = Math.max(i - amountOfMove, 0); k < Math.min(i + amountOfMove, currentMap.getSize() - 1); k++) {
+                            for (int q = Math.max(j - amountOfMove, 0); q < Math.min(j + amountOfMove, currentMap.getSize() - 1); q++) {
                                 Person toBeAdded = null;
-                                int counter1=0;
-                                for(Person person1:currentMap.getACell(k,q).getPeople()){
-                                    if(!person1.getGovernment().getRuler().getUsername().equals(person.getGovernment().getRuler().getUsername())){
+                                int counter1 = 0;
+                                for (Person person1 : currentMap.getACell(k, q).getPeople()) {
+                                    if (!person1.getGovernment().getRuler().getUsername().equals(person.getGovernment().getRuler().getUsername())) {
                                         ArrayList<Integer> pathX = new ArrayList<>();
                                         ArrayList<Integer> pathY = new ArrayList<>();
                                         boolean[][] help = new boolean[currentMap.getSize()][currentMap.getSize()];
                                         prepareHelp(help);
-                                        UnitMenuController.aStarSearch(help,i,j,k,q,pathX,pathY,currentMap.getSize(),currentMap.getSize());
-                                        if(pathX.size()!=0) {
+                                        UnitMenuController.aStarSearch(help, i, j, k, q, pathX, pathY, currentMap.getSize(), currentMap.getSize());
+                                        if (pathX.size() != 0) {
                                             int speed = 100;
                                             speed = ((Troop) person).getSpeed();
                                             x = pathX.get(Math.min(pathX.size() - 1, speed / 25));
                                             y = pathY.get(Math.min(pathY.size() - 1, speed / 25));
-                                            toBeAdded=person;
+                                            toBeAdded = person;
                                         }
                                     }
                                     counter1++;
                                 }
-                                if(toBeAdded!=null){
-                                    currentMap.getACell(x,y).getPeople().add(toBeAdded);
+                                if (toBeAdded != null) {
+                                    currentMap.getACell(x, y).getPeople().add(toBeAdded);
                                     currentMap.getACell(i, j).getPeople().remove(toBeAdded);
                                     break outer;
                                 }
@@ -177,51 +162,48 @@ public class GameMenuController {
                         }
                     }
 
-                }
+                }*/
             }
         }
         affectGovernments();
-        buildingMenu.setGovernment(currentGovernment); shopMenu.setGovernment(currentGovernment);
-        tradeMenu.setGovernment(currentGovernment);
-        unitMenu.setGovernment(currentGovernment);
-        tradeMenu.setGovernment(currentGovernment);
-        System.out.println("it's your turn "+currentGovernment.getRuler().getNickname());
+        return "it's your turn " + DataBank.getCurrentGovernment().getRuler().getNickname();
     }
-    private void tunnelAbility(Cell cell){
-        if(cell.getTunnel()==null) return;
-        cell.getTunnel().setLength(cell.getTunnel().getLength()+1);
-        if(cell.getTunnel().getLength()==Tunnel.limitLength) {
+
+    private void tunnelAbility(Cell cell) {
+        if (cell.getTunnel() == null) return;
+        cell.getTunnel().setLength(cell.getTunnel().getLength() + 1);
+        if (cell.getTunnel().getLength() == Tunnel.limitLength) {
             if (cell.getBuilding() != null) removeBuilding(cell);
-            removePeople(cell,true);
+            removePeople(cell, true);
             cell.setTunnel(null);
         }
     }
 
     private void affectGovernments() {
-        for(Government government:governments){
-            double amount=0;
-            if (government.getTaxRate()>0) amount=0.6+(government.getTaxRate()-1)*0.2;
-            else if(government.getTaxRate()==0) amount=0;
-            else amount=-1*(0.6+(Math.abs(government.getTaxRate())-1)*0.2);
-            government.setCoin(government.getCoin()+government.getPopulation()*amount);
-            government.setPopularity(government.nonZeroFoods()-1+government.getPopularity());
+        for (Government government : governments) {
+            double amount = 0;
+            if (government.getTaxRate() > 0) amount = 0.6 + (government.getTaxRate() - 1) * 0.2;
+            else if (government.getTaxRate() == 0) amount = 0;
+            else amount = -1 * (0.6 + (Math.abs(government.getTaxRate()) - 1) * 0.2);
+            government.setCoin(government.getCoin() + government.getPopulation() * amount);
+            government.setPopularity(government.nonZeroFoods() - 1 + government.getPopularity());
             government.setPopularity(government.getPopularity() + 4 * government.getFoodRate());
             if (government.getTaxRate() <= 0)
                 government.setPopularity(government.getPopularity() + (-2) * government.getTaxRate() + 1);
             else
                 government.setPopularity(government.getPopularity() + (-2) * government.getTaxRate());
             government.setPopularity(government.getPopularity() + government.getFearRate());
-            government.setPopularity( Math.min(100, government.getPopularity()));
+            government.setPopularity(Math.min(100, government.getPopularity()));
             government.getGranary().setApple(government.getGranary().getApple() -
-                    (1 + government.getFoodRate()*0.5)*government.getPopulation());
+                    (1 + government.getFoodRate() * 0.5) * government.getPopulation());
             government.getGranary().setCheese(government.getGranary().getCheese() -
-                    (1 + government.getFoodRate()*0.5)*government.getPopulation());
+                    (1 + government.getFoodRate() * 0.5) * government.getPopulation());
             government.getGranary().setBread(government.getGranary().getBread() -
-                    (1 + government.getFoodRate()*0.5)*government.getPopulation());
+                    (1 + government.getFoodRate() * 0.5) * government.getPopulation());
             government.getGranary().setMeat(government.getGranary().getMeat() -
-                    (1 + government.getFoodRate()*0.5)*government.getPopulation());
-            for(int i=0;i<government.getFoods().length;i++){
-                government.getFoods()[i]=government.getFoods()[i]-(1 + government.getFoodRate()*0.5)*government.getPopulation();
+                    (1 + government.getFoodRate() * 0.5) * government.getPopulation());
+            for (int i = 0; i < government.getFoods().length; i++) {
+                government.getFoods()[i] = government.getFoods()[i] - (1 + government.getFoodRate() * 0.5) * government.getPopulation();
             }
             changePopulation(government);
         }
@@ -229,8 +211,8 @@ public class GameMenuController {
 
     private void changePopulation(Government government) {
         int previousPopulation = government.getPopulation();
-        government.setPopulation(government.getMaxPopulation()*government.getPopularity()/100);
-        for (int i = 0; i <government.getPopulation() - previousPopulation ; i++) {
+        government.setPopulation(government.getMaxPopulation() * government.getPopularity() / 100);
+        for (int i = 0; i < government.getPopulation() - previousPopulation; i++) {
             government.addPerson();
         }
     }
@@ -238,16 +220,23 @@ public class GameMenuController {
     private void removeBuilding(Cell cell) {
         cell.getBuilding().getGovernment().getBuildings().remove(cell.getBuilding());
         cell.setBuilding(null);
+        cell.setBuildingImage(null);
     }
 
     private void removePeople(Cell cell, boolean isTunnelDestroyed) {
         ArrayList<Person> people = new ArrayList<>();
         for (Person person : cell.getPeople()) {
-            if(person.getHp()<=0 || cell.getTexture().equals(Texture.PETROLEUM) || isTunnelDestroyed) {
+            if (person.getHp() <= 0 || cell.getTexture().equals(Texture.PETROLEUM) || isTunnelDestroyed) {
                 person.getBuilding().getWorkers().remove(person);
                 person.getGovernment().getPeople().remove(person);
                 people.add(person);
                 person.getGovernment().setPopulation(person.getGovernment().getPopulation() - 1);
+                if (cell.getQueues().getChildren().size() != 0) {
+                    VBox left = (VBox) cell.getQueues().getChildren().get(0);
+                    VBox right = (VBox) cell.getQueues().getChildren().get(1);
+                    left.getChildren().remove(((Troop) person).getImageView());
+                    right.getChildren().remove(((Troop) person).getImageView());
+                }
             }
         }
         for (Person person : people) {
@@ -255,11 +244,12 @@ public class GameMenuController {
         }
     }
 
-    private void affectElementsOfGame(int i,int j) {
-        removePeople(currentMap.getACell(i, j),false);
+    private void affectElementsOfGame(int i, int j) {
+        removePeople(currentMap.getACell(i, j), false);
         if (currentMap.getACell(i, j).getBuilding() != null) {
-            if (currentMap.getACell(i, j).getBuilding().getHitpoint() <= 0)
+            if (currentMap.getACell(i, j).getBuilding().getHitpoint() <= 0) {
                 removeBuilding(currentMap.getACell(i, j));
+            }
         }
         if (currentMap.getACell(i, j).getBuilding() != null) {
             currentMap.getACell(i, j).getBuilding().makeAffect(i, j, currentMap);
@@ -279,9 +269,6 @@ public class GameMenuController {
         return governments;
     }
 
-    public GameMenu getGameMenu() {
-        return gameMenu;
-    }
     private static boolean findPathHelper(boolean[][] table, int currX, int currY, int endX, int endY,
                                           boolean[][] visited, ArrayList<Integer> pathX, ArrayList<Integer> pathY) {
         if (currX == endX && currY == endY) {
@@ -292,22 +279,22 @@ public class GameMenuController {
         if (currX >= 0 && currX < table.length && currY >= 0 && currY < table[0].length
                 && !visited[currX][currY] && table[currX][currY]) {
             visited[currX][currY] = true;
-            if (findPathHelper(table, currX+1, currY, endX, endY, visited, pathX, pathY)) {
+            if (findPathHelper(table, currX + 1, currY, endX, endY, visited, pathX, pathY)) {
                 pathX.add(currX);
                 pathY.add(currY);
                 return true;
             }
-            if (findPathHelper(table, currX-1, currY, endX, endY, visited, pathX, pathY)) {
+            if (findPathHelper(table, currX - 1, currY, endX, endY, visited, pathX, pathY)) {
                 pathX.add(currX);
                 pathY.add(currY);
                 return true;
             }
-            if (findPathHelper(table, currX, currY+1, endX, endY, visited, pathX, pathY)) {
+            if (findPathHelper(table, currX, currY + 1, endX, endY, visited, pathX, pathY)) {
                 pathX.add(currX);
                 pathY.add(currY);
                 return true;
             }
-            if (findPathHelper(table, currX, currY-1, endX, endY, visited, pathX, pathY)) {
+            if (findPathHelper(table, currX, currY - 1, endX, endY, visited, pathX, pathY)) {
                 pathX.add(currX);
                 pathY.add(currY);
                 return true;
@@ -316,6 +303,7 @@ public class GameMenuController {
         }
         return false;
     }
+
     private static <T> void reverseList(ArrayList<T> list) {
         int size = list.size();
         for (int i = 0; i < size / 2; i++) {
@@ -324,24 +312,22 @@ public class GameMenuController {
             list.set(size - i - 1, temp);
         }
     }
-    public void prepareHelp(boolean[][] help){
-        for(int i=0;i<currentMap.getSize();i++){
-            for(int j=0;j<currentMap.getSize();j++){
-                if(currentMap.getACell(i,j).getTexture()== Texture.SEE||currentMap.getACell(i,j).getTexture()== SHALLOW_WATER||
-                        currentMap.getACell(i,j).getTexture()== Texture.ROCK||currentMap.getACell(i,j).getTexture()== RIVER||
-                        currentMap.getACell(i,j).getTexture()== Texture.SMALL_POUND||
-                        currentMap.getACell(i,j).getTexture()== Texture.LARGE_POUND){
-                    help[i][j]=false;
-                }
-                else
-                {
-                    help[i][j]=true;
-                    if(currentMap.getACell(i,j).hasWall())
-                    {
+
+    public void prepareHelp(boolean[][] help) {
+        for (int i = 0; i < currentMap.getSize(); i++) {
+            for (int j = 0; j < currentMap.getSize(); j++) {
+                if (currentMap.getACell(i, j).getTexture() == Texture.SEE || currentMap.getACell(i, j).getTexture() == SHALLOW_WATER ||
+                        currentMap.getACell(i, j).getTexture() == Texture.ROCK || currentMap.getACell(i, j).getTexture() == RIVER ||
+                        currentMap.getACell(i, j).getTexture() == Texture.SMALL_POUND ||
+                        currentMap.getACell(i, j).getTexture() == Texture.LARGE_POUND) {
+                    help[i][j] = false;
+                } else {
+                    help[i][j] = true;
+                    if (currentMap.getACell(i, j).hasWall()) {
                         help[i][j] = currentMap.getACell(i, j).getWall().isAccessible();
                     }
 
-                    if(currentMap.getACell(i,j).isDitch())
+                    if (currentMap.getACell(i, j).isDitch())
                         help[i][j] = false;
                 }
             }

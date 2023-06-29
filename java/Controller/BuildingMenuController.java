@@ -7,6 +7,7 @@ import Model.gameandbattle.Government;
 import Model.gameandbattle.battle.Person;
 import Model.gameandbattle.battle.Troop;
 import Model.gameandbattle.map.*;
+import javafx.scene.image.ImageView;
 
 
 import java.util.ArrayList;
@@ -72,16 +73,14 @@ public class BuildingMenuController {
         return null;
     }
 
-    static void addUnit(Building newBuilding, Troop troop, Government government) {
-        government.addUnit(new Troop(troop.getName(), troop.getHp(), government, troop.isBusy(), newBuilding,
+    static void addUnit(ImageView imageView, Building newBuilding, Troop troop, Government government) {
+        Troop newTroop = new Troop(troop.getName(), troop.getHp(), government, troop.isBusy(), newBuilding,
                 troop.getAttackStrength(), troop.getSpeed(), troop.getDefenseStrength(), troop.getAttackRange(),
-                troop.getCost(), troop.getWeapons()));
-        newBuilding.addUnit(new Troop(troop.getName(), troop.getHp(), government, troop.isBusy(), newBuilding,
-                troop.getAttackStrength(), troop.getSpeed(), troop.getDefenseStrength(), troop.getAttackRange(),
-                troop.getCost(), troop.getWeapons()));
-        newBuilding.getOccupiedCell().addUnit(new Troop(troop.getName(), troop.getHp(), government, troop.isBusy(), newBuilding,
-                troop.getAttackStrength(), troop.getSpeed(), troop.getDefenseStrength(), troop.getAttackRange(),
-                troop.getCost(), troop.getWeapons()));
+                troop.getCost(), troop.getWeapons());
+        government.addUnit(newTroop);
+        newBuilding.addUnit(troop);
+        newBuilding.getOccupiedCell().addUnit(newTroop);
+        newTroop.setImageView(imageView);
     }
 
     public String dropWall(Matcher matcher) {

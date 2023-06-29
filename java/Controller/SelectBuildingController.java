@@ -6,6 +6,7 @@ import Model.gameandbattle.battle.Troop;
 import Model.gameandbattle.battle.Weapon;
 import Model.gameandbattle.map.Building;
 import Model.gameandbattle.map.Map;
+import javafx.scene.image.ImageView;
 
 import java.util.regex.Matcher;
 
@@ -19,7 +20,7 @@ public class SelectBuildingController {
         OtherBuildingsMethods.changeTaxRate(government, matcher);
     }
 
-    public String createUnit(Government government,String type,Building building) {
+    public String createUnit(ImageView unit, Government government, String type, Building building) {
         int count = 1;
         if(DataBank.getUnitByName(type) == null)
             return "invalid name of troop";
@@ -47,7 +48,7 @@ public class SelectBuildingController {
                 government.setCountOfWeapon((-1)*count,weapon.getName());
             }
             for (int i = 0; i <count ; i++) {
-                BuildingMenuController.addUnit(building, troop, government);
+                BuildingMenuController.addUnit(unit,building, troop, government);
             }
             return "successful";
         }
@@ -63,7 +64,7 @@ public class SelectBuildingController {
         return true;
     }
 
-    public String openCageOfWarDogs(Building building) {
+    /*public String openCageOfWarDogs(Building building) {
         Troop troop = (Troop) DataBank.getUnitByName("dog");
         for (int i = 0; i <3 ; i++) {
             assert troop != null;
@@ -72,5 +73,5 @@ public class SelectBuildingController {
         building.getGovernment().getBuildings().remove(building);
         building.getOccupiedCell().setBuilding(null);
         return "success";
-    }
+    }*/
 }

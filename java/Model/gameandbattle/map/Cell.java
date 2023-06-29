@@ -22,10 +22,8 @@ public class Cell {
     private Stair stair;
     private Tunnel tunnel;
     private String toPrint;
-    private BuildingImage buildingImage;
-    private final VBox leftQueue = new VBox();
-    private final VBox rightQueue = new VBox();
-    private final HBox queues = new HBox();
+    private BuildingImage buildingImage = null;
+    private HBox queues = new HBox();
     private char detail;
     public Cell(Texture texture, Building building, ArrayList<Person> people) {
         this.texture = texture;
@@ -170,15 +168,6 @@ public class Cell {
     public void setStair(Stair stair) {
         this.stair = stair;
     }
-
-    public VBox getLeftQueue() {
-        return leftQueue;
-    }
-
-    public VBox getRightQueue() {
-        return rightQueue;
-    }
-
     public BuildingImage getBuildingImage() {
         return buildingImage;
     }
@@ -189,5 +178,9 @@ public class Cell {
 
     public HBox getQueues() {
         return queues;
+    }
+
+    public void setQueues(HBox queues) {
+        this.queues = queues;
     }
 }

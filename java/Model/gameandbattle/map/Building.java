@@ -1,5 +1,6 @@
 package Model.gameandbattle.map;
 
+import Model.buildings.BuildingImage;
 import Model.buildings.CastleBuilding;
 import Model.buildings.OtherBuildingsMethods;
 import Model.gameandbattle.Government;

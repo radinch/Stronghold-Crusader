@@ -4,7 +4,7 @@ import Controller.DataBank;
 import Controller.LoginController;
 import Controller.SignUpController;
 import Model.signup_login_profile.SecurityQuestion;
-import Model.signup_login_profile.User;
+import org.example.User;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -37,7 +37,7 @@ public class LoginMenu extends Application {
         Scene scene = new Scene(borderPane);
         scene.getStylesheets().add(String.valueOf(LoginMenu.class.getResource("/CSS/style1.css")));
         javafx.scene.image.ImageView background = new ImageView(new Image(
-                Objects.requireNonNull(LoginMenu.class.getResource("/IMAGE/22.jpg")).toString(), 700 ,550, false, false));
+                Objects.requireNonNull(LoginMenu.class.getResource("/IMAGE/22.jpg")).toString(), 700 ,552, false, false));
         VBox vBox = new VBox();
         vBox.setSpacing(35);
         vBox.setAlignment(Pos.CENTER);

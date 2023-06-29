@@ -1,22 +1,17 @@
 package Model.gameandbattle;
 
-import Controller.DataBank;
 import Model.buildings.CastleBuilding;
 import Model.buildings.OtherBuilding;
-import Model.buildings.WeaponBuilding;
 import Model.gameandbattle.battle.Person;
 import Model.gameandbattle.battle.Troop;
 import Model.gameandbattle.battle.Weapon;
 import Model.gameandbattle.map.Building;
 import Model.gameandbattle.shop.Request;
-import Model.gameandbattle.stockpile.Food;
 import Model.gameandbattle.stockpile.Granary;
-import Model.gameandbattle.stockpile.Resource;
 import Model.gameandbattle.stockpile.Stockpile;
-import Model.signup_login_profile.User;
+import org.example.User;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Government {
     private static final int limitOfResources = 600000;

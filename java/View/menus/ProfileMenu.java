@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import Controller.MainMenuController;
 import Controller.ProfileMenuController;
 import Model.Regex.ProfileMenuRegexes;
-import Model.signup_login_profile.User;
+import org.example.User;
 import View.enums.Validations;
 
 public class ProfileMenu{

@@ -1,6 +1,6 @@
 package Controller;
 
-import Model.signup_login_profile.User;
+import org.example.User;
 import View.menus.ProfileMenu;
 import Model.signup_login_profile.Slogan;
 import View.enums.Validations;

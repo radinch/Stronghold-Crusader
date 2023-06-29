@@ -1,5 +1,6 @@
 package Controller;
 
+import Model.UserNetwork;
 import Model.buildings.CastleBuilding;
 import Model.buildings.OtherBuilding;
 import Model.buildings.WeaponBuilding;
@@ -10,7 +11,7 @@ import Model.gameandbattle.battle.Weapon;
 import Model.gameandbattle.map.*;
 import Model.gameandbattle.shop.Request;
 import Model.gameandbattle.stockpile.Resource;
-import Model.signup_login_profile.User;
+import org.example.User;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class DataBank {
-
+    public static ArrayList<UserNetwork> userNetworks=new ArrayList<>();
     public static ArrayList captcha  = new ArrayList<>(List.of(1181,1381,1491,1722,1959,2163,2177,2723,2785,3541,3847,3855,3876,3967,4185,4310,
             4487,4578,4602,4681,4924,5326,5463,5771,5849,6426,6553,6601,6733,6960,7415,7609
             ,7755,7905,8003,8070,8368,8455,8506,9061,9386));
@@ -59,6 +60,7 @@ public class DataBank {
 
     ///////////////////////////////////////////////////////
     public static User getUserByUsername(String username) {
+        System.out.println(allUsers.size());
         for (User allUser : allUsers) {
             if (allUser.getUsername().equals(username)) return allUser;
         }
@@ -123,7 +125,6 @@ public class DataBank {
     }
 
     public static void initializeBuildingName() {
-        //todo 1.textures 2.production rate for weapon buildings
         //damage of Siege tent is not correct
         //rate of apple garden is not correct
         //rates are not correct
@@ -132,7 +133,6 @@ public class DataBank {
         // capacity of armoury
         // damages of towers and killing pit
         // rate of mill and Inn and Iron mine and Ox tether
-        // TODO : sepehr please write the cost for barrack and Mercenary Post and engineer guild
         buildingName.put("Small stone gatehouse", new CastleBuilding(null, 0, "Small stone gatehouse",
                 375, Resource.WOOD, 0, 8, castleBuildingTextures,
                 null, null, null, null, null, null, null, null));
@@ -346,5 +346,11 @@ public class DataBank {
 
     public static void setSelectedCells(int i, int j) {
         DataBank.selectedCells.add(Map.MAP_NUMBER_ONE.getACell(i,j));
+    }
+    public static UserNetwork getUserNetworkByUsername(String s){
+        for (UserNetwork userNetwork:userNetworks){
+            if (userNetwork.getUser().getUsername().equals(s)) return userNetwork;
+        }
+        return null;
     }
 }

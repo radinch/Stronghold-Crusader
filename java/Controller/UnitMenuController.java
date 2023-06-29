@@ -26,8 +26,9 @@ import static Model.gameandbattle.map.Texture.*;
 
 public class UnitMenuController {
 
-    private int currentAnimationIndex = 0;
+    private int currentAnimationIndex = 1;
     public static boolean isAnimationFinished = true;
+    public static boolean isFar = false;
     private final Government government;
     private Map map;
     private final ArrayList<Person> currentUnit;
@@ -77,11 +78,14 @@ public class UnitMenuController {
 //                    isAnimationFinished = false;
 //                    System.out.println(currentAnimationIndex);
 //                    if(currentAnimationIndex < animations.size())
-//                        playAnimation(animations.get(currentAnimationIndex++),animations.size());
+//                        playAnimation(animations.get(currentAnimationIndex++));
 //                }
 //            }));
 //            timeline.setCycleCount(-1);
 //            timeline.play();
+            Map.MAP_NUMBER_ONE.getACell(x1,y1).setQueues(queues);
+            if(animations.size() < pathX.size())
+                isFar = true;
             playAnimation(animations.get(animations.size()-1));
 
         }
@@ -107,22 +111,6 @@ public class UnitMenuController {
             }
         }
         return "successful";
-    }
-
-    private static void findPath(boolean[][] table, int startX, int startY, int endX, int endY,
-                                 ArrayList<Integer> pathX, ArrayList<Integer> pathY) {
-        if (startX < 0 || startX >= table.length || startY < 0 || startY >= table[0].length
-                || endX < 0 || endX >= table.length || endY < 0 || endY >= table[0].length) {
-            throw new IllegalArgumentException("Start or end coordinates are out of bounds!");
-        }
-        boolean[][] visited = new boolean[table.length][table[0].length];
-        if (findPathHelper(table, startX, startY, endX, endY, visited, pathX, pathY)) {
-            reverseList(pathX);
-            reverseList(pathY);
-        } else {
-            pathX.clear();
-            pathY.clear();
-        }
     }
     private static boolean findPathHelper(boolean[][] table, int currX, int currY, int endX, int endY,
                                           boolean[][] visited, ArrayList<Integer> pathX, ArrayList<Integer> pathY) {
@@ -194,9 +182,7 @@ public class UnitMenuController {
         return "done";
     }
 
-    public String attack(Matcher matcher) {
-        int enemyX = Integer.parseInt(matcher.group("y"));
-        int enemyY = Integer.parseInt(matcher.group("x"));
+    public String attack(int enemyX, int enemyY) {
         if (!isEnemyClose(((Troop) currentUnit.get(0)).getAttackRange(), enemyX, enemyY))
             return "enemy is not close";
         for (Person person : currentUnit) {
@@ -217,13 +203,10 @@ public class UnitMenuController {
             if(!person.getGovernment().equals(government))
 
         }*/
-        return "succsess";
+        return "success";
     }
 
-    public String skyAttack(Matcher matcher) {
-        int attackStrength;
-        int enemyX = Integer.parseInt(matcher.group("y"));
-        int enemyY = Integer.parseInt(matcher.group("x"));
+    public String skyAttack(int enemyX, int enemyY) {
         if (!isEnemyClose(((Troop) currentUnit.get(0)).getAttackRange(), enemyX, enemyY))
             return "enemy is not close";
         if (getCountOfAirAttackers() == 0)
@@ -258,9 +241,9 @@ public class UnitMenuController {
         int attackStrength;
         for (Person unit : currentUnit) {
             attackStrength = ((Troop) unit).getAttackStrength()/10;
-            if (map.getACell(x, y).hasTower(government)&&isAirAttacker(unit))
-                attackStrength *= 2;
             if (map.getACell(enemyX, enemyY).getBuilding() != null) {
+                if (map.getACell(x, y).hasTower(government)&&isAirAttacker(unit))
+                    attackStrength *= 2;
                 map.getACell(enemyX, enemyY).getBuilding().setHitpoint(map.getACell(enemyX, enemyY).getBuilding().getHitpoint() - attackStrength);
                 if (unit.getName().equals("Fire Throwers"))
                     map.getACell(enemyX, enemyY).getBuilding().setFiery(true);
@@ -648,7 +631,6 @@ public class UnitMenuController {
     }
 
     //FIND PATH METHODS start
-    // TODO : HOW TO USE
     /**
      *
      * first you should create a 2d boolean for grid(false = blocked,true = accessible)

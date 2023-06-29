@@ -2,8 +2,7 @@ package View.graphic;
 
 import Controller.DataBank;
 import Controller.MainMenuController;
-import Model.signup_login_profile.User;
-import View.menus.GameMenu;
+import org.example.User;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -52,7 +51,7 @@ public class SelectOpponentsMenu extends Application {
                     DataBank.initializeBuildingName();
                     DataBank.initializeWalls();
                     DataBank.initializeAllUnits();
-                    DataBank.setCurrentGovernment(DataBank.getGovernments().get(0));//TODO : to next turn baiad avaz konimesh
+                    DataBank.setCurrentGovernment(DataBank.getGovernments().get(0));
                     new GameMap().start(DataBank.getStage());
                 } catch (Exception e) {
                     throw new RuntimeException(e);

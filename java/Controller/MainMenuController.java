@@ -1,7 +1,7 @@
 package Controller;
 
 import Model.gameandbattle.Government;
-import Model.signup_login_profile.User;
+import org.example.User;
 import View.menus.MainMenu;
 
 import java.util.ArrayList;

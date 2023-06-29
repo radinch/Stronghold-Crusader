@@ -1,14 +1,16 @@
 package Controller;
 
 import Model.Regex.LoginRegexes;
+import Model.UserNetwork;
 import Model.signup_login_profile.SecurityQuestion;
-import Model.signup_login_profile.User;
+import org.example.User;
 import View.graphic.ProfileMenu;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -60,6 +62,9 @@ public class LoginController {
         DataBank.setCurrentUser(DataBank.getUserByUsername(username));
         Objects.requireNonNull(DataBank.getUserByUsername(username)).setFailedAttemptsToLogin(0);
         SignUpController.writeToJson(DataBank.getAllUsers());
+        UserNetwork userNetwork=new UserNetwork(DataBank.getCurrentUser(),new Socket("localhost",8080));
+        DataBank.userNetworks.add(userNetwork);
+        userNetwork.start();
         new ProfileMenu().start(DataBank.getStage());
     }
 

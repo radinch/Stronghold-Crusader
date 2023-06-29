@@ -3,6 +3,8 @@ package Model.gameandbattle.battle;
 import Model.gameandbattle.map.Building;
 import Model.gameandbattle.Government;
 import Model.gameandbattle.map.Texture;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.ImagePattern;
 
 import java.util.ArrayList;
 
@@ -20,6 +22,7 @@ public class Troop extends Person{
     private boolean canThrowLadder;
     private boolean canDigDitch;
     private boolean hasOil;
+    private ImageView imageView = null;
 
 
     public Troop(String name, int hp, Government government, boolean isBusy, Building building, int attackStrength, int speed, int defenseStrength, int attackRange,int cost,ArrayList<Weapon> weapons) {
@@ -107,5 +110,13 @@ public class Troop extends Person{
 
     public void pourOil() {
         hasOil = false;
+    }
+
+    public ImageView getImageView() {
+        return imageView;
+    }
+
+    public void setImageView(ImageView imageView) {
+        this.imageView = imageView;
     }
 }

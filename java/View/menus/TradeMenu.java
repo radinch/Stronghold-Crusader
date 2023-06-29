@@ -35,9 +35,9 @@ public class TradeMenu {
             TradeMenuController controller=new TradeMenuController(government,otherGovernment);
             Matcher request= TradeMenuRegexes.TRADE.getMatcher(input);
             Matcher accept=TradeMenuRegexes.ACCEPT_TRADE.getMatcher(input);
-            if(request.matches()) System.out.println(controller.trade(request));
-            else if(accept.matches()) System.out.println(controller.acceptTrade(accept));
-            else if(input.equals("trade list")) System.out.println(controller.showTradeList());
+            //if(request.matches()) System.out.println(controller.trade(request));
+           // if(accept.matches()) System.out.println(controller.acceptTrade(accept));
+            if(input.equals("trade list")) System.out.println(controller.showTradeList());
             else if (input.equals("trade history")) System.out.println(controller.tradeHistory());
             else if(input.equals("exit")) break;
             else System.out.println("invalid command");

@@ -1,12 +1,11 @@
 package Controller;
 
 import Model.Regex.SignUpRegexes;
-import Model.signup_login_profile.User;
+import org.example.User;
 import Model.signup_login_profile.Captcha;
 import Model.signup_login_profile.Slogan;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javafx.scene.control.TextField;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +14,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 public class SignUpController {
-    public String register(String input, Scanner scanner) {
+    public String register(String input, Scanner scanner) throws IOException {
         ArrayList<User> users = readFromJson();
         String slogan = "";
         DataBank.setAllUsers(users);
@@ -60,7 +59,7 @@ public class SignUpController {
             slogan = randomSlogan();
             System.out.println("your random slogan is: " + slogan);
         }
-        User newUser = new User(username, password, nickname, email);
+        User newUser = new User(username, password, nickname, email,"localhost",8080);
         if (!slogan.equals("")) newUser.setSlogan(slogan);
         users.add(newUser);
         System.out.println(securityQuestion(scanner, newUser));
@@ -231,8 +230,8 @@ public class SignUpController {
     }
 
     public void graphicSignUp(String username, String password, String email
-            , String nickname, String slogan) {
-        User newUser = new User(username, password, nickname, email);
+            , String nickname, String slogan) throws IOException {
+        User newUser = new User(username, password, nickname, email,"localhost",8080);
         if (slogan != null) newUser.setSlogan(slogan);
         DataBank.userUnderConstruction = newUser;
         DataBank.getAllUsers().add(newUser);

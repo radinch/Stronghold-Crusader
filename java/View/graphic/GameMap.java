@@ -3,6 +3,7 @@ package View.graphic;
 import Controller.*;
 import Model.HoverRectangle;
 import Model.buildings.BuildingImage;
+import Model.gameandbattle.Government;
 import Model.gameandbattle.ShopImages;
 import Model.gameandbattle.battle.Person;
 import Model.gameandbattle.battle.Troop;
@@ -12,13 +13,17 @@ import Model.gameandbattle.shop.Shop;
 import Model.gameandbattle.stockpile.Food;
 import Model.gameandbattle.stockpile.Resource;
 import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -39,19 +44,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+//todo 1.dade tajamoii 2.bug of zoom 3.shortcuts 4.clipboard 5.fire 6.attack
 public class GameMap extends Application {
 
+
+    private VBox copyAndNext;
+    private String selectedBuildingName;
+    private ArrayList<String> clipBoard;
+    private int clipBoardClicks=0;
+    private Text clipBoardText;
+    private Cell selectedCell;
+    private final GameMenuController gameMenuController = new GameMenuController(DataBank.getGovernments(), Map.MAP_NUMBER_ONE);
     private Button sell;
     private Button buy;
     private Text buyPrice;
     private Text sellPrice;
     private HBox shopBox;
     private ShopImages selectedItem;
-    private int shopStartRow=0;
-    private ArrayList<ShopImages> shopImages;
+    private int shopStartRow = 0;
+    private final ArrayList<ShopImages> shopImages;
 
     private boolean sick = false;
-    private Text popularity = new Text();
+    private final Text popularity = new Text();
     private int zoomLevel = 0;
     private int stageWidth = 0;
     private int stageHeight = 0;
@@ -63,8 +77,8 @@ public class GameMap extends Application {
     private HBox popularityHBox;
     private ImageView[][] images;
     private Scene scene;
-    private ArrayList<Rectangle> borders = new ArrayList<>();
-    private ArrayList<FadeTransition> transitions = new ArrayList<>();
+    private final ArrayList<Rectangle> borders = new ArrayList<>();
+    private final ArrayList<FadeTransition> transitions = new ArrayList<>();
 
     private final ArrayList<HoverRectangle> hoverRectangles;
     private final ArrayList<String> buildingNames = new ArrayList<>(List.of("Small stone gatehouse", "big stone gatehouse",
@@ -89,13 +103,13 @@ public class GameMap extends Application {
     private Pane pane;
     private boolean isSelecting = false;
     private ArrayList<Person> selectedTroop = new ArrayList<>();
-    private int x1,y1;
-    private int selectX = -1,selectY = -1;
+    private int x1, y1;
+    private int selectX = -1, selectY = -1;
 
     {
-        shopBox=new HBox(); shopBox.setLayoutX(350); shopBox.setLayoutY(610);
-        shopImages= new ArrayList<>();
-        images=new ImageView[size][size];
+        clipBoard=new ArrayList<>();
+        shopImages = new ArrayList<>();
+        images = new ImageView[size][size];
         images = new ImageView[size][size];
         stageHeight = imageHeight * size;
         stageWidth = imageWidth * size;
@@ -107,7 +121,7 @@ public class GameMap extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         pane = new Pane();
-        pane.setBackground(new Background(new BackgroundFill(Color.rgb(255,0,0,0.5),null,null)));
+        pane.setBackground(new Background(new BackgroundFill(Color.rgb(255, 0, 0, 0.5), null, null)));
         stage.setHeight(stageHeight); //change whenever you want
         stage.setWidth(stageWidth);
         initialize();
@@ -183,12 +197,107 @@ public class GameMap extends Application {
         }
     }
 
+    private void createNextTurnButton() {
+        copyAndNext=new VBox();
+        Button button = new Button("next");
+        button.getStyleClass().add("button2");
+        button.setLayoutY(595);
+        button.setLayoutX(0);
+        button.setOnMouseClicked(me -> {
+            try {
+                nextTurn();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        Button copy=new Button("Copy"); Button paste=new Button("Paste"); Button clipBoard=new Button("Clipboard");
+        copy.getStyleClass().add("button2");  paste.getStyleClass().add("button2");  clipBoard.getStyleClass().add("button2");
+        copyAndNext.getChildren().addAll(button,copy,paste,clipBoard); copyAndNext.setSpacing(2); copyAndNext.setLayoutY(595);
+        copy.setOnMouseClicked(e->copyClicked());
+        clipBoard.setOnMouseClicked(e->clipBoardClicked());
+        paste.setOnMouseClicked(e-> {
+            try {
+                pasteClicked();
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        Button chat=new Button("chat room");
+        chat.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                try {
+                    new ChatRoom().start(DataBank.getStage());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        copyAndNext.getChildren().add(chat);
+        pane.getChildren().add(copyAndNext);
+    }
+
+    private void pasteClicked() throws InterruptedException {
+        BuildingMenuController buildingMenuController = new BuildingMenuController(Map.MAP_NUMBER_ONE, DataBank.getCurrentGovernment());
+        String text = buildingMenuController.dropBuilding(selectX, selectY, clipBoard.get(clipBoard.size()-1));
+        if (!text.equals("success")) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Drop building error");
+            alert.setContentText(text);
+            alert.showAndWait();
+        } else {
+            BuildingImage buildingImage = new BuildingImage(getBuildingImageAddress(clipBoard.get(clipBoard.size()-1)));
+            Map.MAP_NUMBER_ONE.getACell(selectX,selectY).setBuildingImage(buildingImage);
+            update();
+        }
+        selectX = -1;
+        selectY = -1;
+    }
+
+    private void clipBoardClicked() {
+        if (clipBoardClicks%2==0) {
+            String string = "";
+            int i = 1;
+            for (String name : clipBoard) {
+                string = string + i + ": " + name + "\n";
+                i++;
+            }
+            clipBoardText = new Text(string); clipBoardText.setX(110); clipBoardText.setY(620); clipBoardText.setFont(Font.font(15));
+            clipBoardText.setFill(Color.BLACK);
+            clipBoardClicks++;
+            pane.getChildren().add(clipBoardText);
+        }
+        else {
+            pane.getChildren().remove(clipBoardText);
+            clipBoardClicks++;
+        }
+
+    }
+
+    private void copyClicked() {
+        clipBoard.add(selectedBuildingName);
+        if (clipBoard.size()>5) clipBoard.remove(0);
+    }
+
+    private void nextTurn() throws InterruptedException {
+        String text = gameMenuController.nextTurn();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Turn Finished");
+        alert.setHeaderText("This month has ended");
+        alert.setContentText(text);
+        alert.showAndWait();
+        pane.getChildren().clear();
+        initialize();
+    }
+
     private void createArabUnit(String name) {
+        ImageView unit = new ImageView(new Image(getUnitImageAddress(name)));
         SelectBuildingController selectBuildingController = new SelectBuildingController();
-        String text = selectBuildingController.createUnit(DataBank.getCurrentGovernment(),name,
+        String text = selectBuildingController.createUnit(unit,DataBank.getCurrentGovernment(), name,
                 Map.MAP_NUMBER_ONE.getACell(selectedBuilding.getI(), selectedBuilding.getJ()).getBuilding());
         if (text.equals("successful")) {
-            dropUnit(name);
+            dropUnit(unit);
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
@@ -199,29 +308,33 @@ public class GameMap extends Application {
 
     }
 
-    private void dropUnit(String name) {
-        ImageView unit = new ImageView(new Image(getUnitImageAddress(name)));
+    private void dropUnit(ImageView unit) {
         unit.setScaleX(0.3);
         unit.setScaleY(0.3);
         HBox queues = Map.MAP_NUMBER_ONE.getACell(selectedBuilding.getI(),
                 selectedBuilding.getJ()).getQueues();
         queues.setSpacing(-15);
         queues.setAlignment(Pos.CENTER);
-        VBox leftQueue = Map.MAP_NUMBER_ONE.getACell(selectedBuilding.getI(),
-                selectedBuilding.getJ()).getLeftQueue();
-        VBox rightQueue = Map.MAP_NUMBER_ONE.getACell(selectedBuilding.getI(),
-                selectedBuilding.getJ()).getRightQueue();
+        VBox leftQueue;
+        VBox rightQueue;
+        if (queues.getChildren().size() == 0) {
+            leftQueue = new VBox();
+            rightQueue = new VBox();
+        } else {
+            leftQueue = (VBox) queues.getChildren().get(0);
+            rightQueue = (VBox) queues.getChildren().get(1);
+        }
         rightQueue.setAlignment(Pos.CENTER);
         rightQueue.setSpacing(-60);
         leftQueue.setAlignment(Pos.CENTER);
         leftQueue.setSpacing(-60);
-        if(!pane.getChildren().contains(queues)){
+        if (!pane.getChildren().contains(queues)) {
             queues.getChildren().clear();
             queues.getChildren().add(leftQueue);
             queues.getChildren().add(rightQueue);
             pane.getChildren().add(queues);
         }
-        if(leftQueue.getChildren().size() < rightQueue.getChildren().size()) {
+        if (leftQueue.getChildren().size() < rightQueue.getChildren().size()) {
             setTroopQueues(unit, leftQueue);
         } else {
             setTroopQueues(unit, rightQueue);
@@ -229,7 +342,7 @@ public class GameMap extends Application {
         double deltaX = selectedBuilding.getBoundsInParent().getMinX() -
                 queues.getBoundsInParent().getMaxX() + 5;
         queues.setLayoutX(queues.getLayoutX() + deltaX);
-        double deltaY =selectedBuilding.getBoundsInParent().getCenterY() -
+        double deltaY = selectedBuilding.getBoundsInParent().getCenterY() -
                 queues.getBoundsInParent().getCenterY();
         queues.setLayoutY(queues.getLayoutY() + deltaY);
 
@@ -239,7 +352,7 @@ public class GameMap extends Application {
         queue.getChildren().add(unit);
     }
 
-    private void initialize() {
+    private void initialize() throws InterruptedException {
         for (int i = startRow; i < Math.min(startRow + size, 200); i++) {
             for (int j = startCol; j < Math.min(size + startCol, 200); j++) {
                 images[i - startRow][j - startCol] = new ImageView(new Image(Map.MAP_NUMBER_ONE.getACell(i, j).getTexture().getImageAddress()));
@@ -252,6 +365,7 @@ public class GameMap extends Application {
             }
         }
         createBuildingMenuBar();
+        update();
     }
 
     private void setOnHover(ImageView imageView, int i, int j) {
@@ -261,7 +375,9 @@ public class GameMap extends Application {
                 HoverRectangle hoverRectangle = new HoverRectangle(new Text(MapMenuController.showDetails(Map.MAP_NUMBER_ONE, i, j)));
                 hoverRectangle.setX(imageView.getX());
                 hoverRectangle.setY(imageView.getY());
-                hoverRectangle.setFill(Color.BLACK);
+                hoverRectangle.setFill(Color.TRANSPARENT);
+                hoverRectangle.setStrokeWidth(2);
+                hoverRectangle.setStroke(Color.LIGHTBLUE);
                 hoverRectangle.setHeight(imageHeight);
                 hoverRectangle.setWidth(imageWidth);
                 hoverRectangle.setAllTextProperties();
@@ -276,17 +392,16 @@ public class GameMap extends Application {
                         }
                         borders.clear();
                         DataBank.selectedCells.clear();
-                        if(isSelecting && selectX != -1 && selectY != -1)
-                        {
-                            int minX = Math.min(selectX,i);
-                            int minY = Math.min(selectY,j);
-                            int maxX = Math.max(selectX,i);
-                            int maxY = Math.max(selectY,j);
+                        if (isSelecting && selectX != -1 && selectY != -1) {
+                            int minX = Math.min(selectX, i);
+                            int minY = Math.min(selectY, j);
+                            int maxX = Math.max(selectX, i);
+                            int maxY = Math.max(selectY, j);
                             for (int z = minX; z <= maxX; z++) {
                                 for (int k = minY; k <= maxY; k++) {
                                     Rectangle border = new Rectangle(imageWidth, imageHeight);
-                                    border.setX(images[z-startRow][k-startCol].getX());
-                                    border.setY(images[z-startRow][k-startCol].getY());
+                                    border.setX(images[z - startRow][k - startCol].getX());
+                                    border.setY(images[z - startRow][k - startCol].getY());
                                     border.setStroke(Color.BLUE);
                                     border.setFill(Color.TRANSPARENT);
                                     border.setStrokeWidth(2);
@@ -295,9 +410,10 @@ public class GameMap extends Application {
                                     DataBank.setSelectedCells(i, j);
                                 }
                             }
-                            selectY = -1;selectX = -1;isSelecting = false;
-                        }
-                        else{
+                            selectY = -1;
+                            selectX = -1;
+                            isSelecting = false;
+                        } else {
                             hoverRectangle.setStroke(Color.RED);
                             Rectangle border = new Rectangle(imageWidth, imageHeight);
                             border.setX(imageView.getX());
@@ -357,11 +473,14 @@ public class GameMap extends Application {
             }
         }
         createBuildingMenuBar();
+        createNextTurnButton();
     }
+
     private void renderDetails(int i, int j) {
+        BuildingImage buildingImage = Map.MAP_NUMBER_ONE.getACell(i, j).getBuildingImage();
+        HBox queues = Map.MAP_NUMBER_ONE.getACell(i, j).getQueues();
         if (Map.MAP_NUMBER_ONE.getACell(i, j).getBuilding() != null) {
-            BuildingImage buildingImage = new BuildingImage(getBuildingImageAddress((
-                    Map.MAP_NUMBER_ONE.getACell(i, j).getBuilding().getName())));
+            addBuildingFeature(buildingImage,Map.MAP_NUMBER_ONE.getACell(i,j).getBuilding().getName());
             if (!pane.getChildren().contains(buildingImage)) {
                 pane.getChildren().add(buildingImage);
                 double deltaX = images[i - startRow][j - startCol].getBoundsInParent().getCenterX() -
@@ -371,6 +490,30 @@ public class GameMap extends Application {
                 buildingImage.setX(buildingImage.getX() + deltaX);
                 buildingImage.setY(buildingImage.getY() + deltaY);
             }
+        }
+        if (Map.MAP_NUMBER_ONE.getACell(i, j).getPeople().size() != 0) {
+            double firstX = queues.getLayoutX();
+            double firstY = queues.getLayoutY();
+            double deltaX;
+            double deltaY;
+            if (!pane.getChildren().contains(queues)) {
+                if (buildingImage != null) {
+                    deltaX = buildingImage.getBoundsInParent().getMinX() -
+                            queues.getBoundsInParent().getMaxX() + 5;
+                    queues.setLayoutX(firstX + deltaX);
+                    deltaY = buildingImage.getBoundsInParent().getCenterY() -
+                            queues.getBoundsInParent().getCenterY();
+                    queues.setLayoutY(firstY + deltaY);
+                } else {
+                    deltaX = images[i - startRow][j - startCol].getBoundsInParent().getCenterX() -
+                            queues.getBoundsInParent().getCenterX();
+                    deltaY = images[i - startRow][j - startCol].getBoundsInParent().getCenterY() -
+                            queues.getBoundsInParent().getCenterY();
+                    queues.setLayoutX(firstX + deltaX);
+                    queues.setLayoutY(firstY + deltaY);
+                }
+                pane.getChildren().add(queues);
+            }
 
         }
     }
@@ -378,16 +521,29 @@ public class GameMap extends Application {
     private void addBuildingFeature(BuildingImage buildingImage, String buildingName) {
         switch (buildingName) {
             case "Small stone gatehouse", "big stone gatehouse" ->
-                    buildingImage.setOnMouseClicked(me -> goToGovernmentMenu());
-            case "Mercenary Post" ->
-                    buildingImage.setOnMouseClicked(me -> goToUnitMenu());
-            case "Market" ->
-                    buildingImage.setOnMouseClicked(me->goToShopMenu());
+                    buildingImage.setOnMouseClicked(me -> {
+                        selectedBuilding = buildingImage;
+                        selectedBuildingName=buildingName;
+                        goToGovernmentMenu();
+                    });
+            case "Mercenary Post" -> buildingImage.setOnMouseClicked(me -> {
+                selectedBuilding = buildingImage;
+                selectedBuildingName=buildingName;
+                goToUnitMenu();
+            });
+            case "Market" -> buildingImage.setOnMouseClicked(me -> {
+                selectedBuilding = buildingImage;
+                selectedBuildingName=buildingName;
+                goToShopMenu();
+            });
         }
-        selectedBuilding = buildingImage;
     }
 
     private void goToShopMenu() {
+        removeEverything();
+        shopBox = new HBox();
+        shopBox.setLayoutX(350);
+        shopBox.setLayoutY(610);
         pane.getChildren().add(shopBox);
         createShopImages();
         pane.getChildren().remove(hBox);
@@ -396,28 +552,58 @@ public class GameMap extends Application {
     }
 
     private void createShopButtonsAndText() {
-        sell=new Button("Sell"); sell.setLayoutX(460); sell.setLayoutY(655);
-        buy=new Button("Buy");  buy.setLayoutX(460); buy.setLayoutY(680);
-        sellPrice=new Text("-"); sellPrice.setLayoutX(510); sellPrice.setLayoutY(675); sellPrice.setFill(Color.DARKORANGE); sellPrice.setFont(Font.font(15));
-        buyPrice=new Text("-"); buyPrice.setLayoutX(510); buyPrice.setLayoutY(702); buyPrice.setFill(Color.DARKORANGE); buyPrice.setFont(Font.font(15));
-        pane.getChildren().addAll(buy,buyPrice,sell,sellPrice);
-        Button back=new Button("Back");  pane.getChildren().add(back);  back.setLayoutY(610);  back.setLayoutX(275);
+        sell = new Button("Sell");
+        sell.setLayoutX(460);
+        sell.setLayoutY(655);
+        buy = new Button("Buy");
+        buy.setLayoutX(460);
+        buy.setLayoutY(680);
+        sellPrice = new Text("-");
+        sellPrice.setLayoutX(510);
+        sellPrice.setLayoutY(675);
+        sellPrice.setFill(Color.DARKORANGE);
+        sellPrice.setFont(Font.font(15));
+        buyPrice = new Text("-");
+        buyPrice.setLayoutX(510);
+        buyPrice.setLayoutY(702);
+        buyPrice.setFill(Color.DARKORANGE);
+        buyPrice.setFont(Font.font(15));
+        pane.getChildren().addAll(buy, buyPrice, sell, sellPrice);
+        Button back = new Button("Back");
+        pane.getChildren().add(back);
+        back.setLayoutY(610);
+        back.setLayoutX(275);
         back.setOnMouseClicked(me -> backToBuildingMenuFromShop());
-        sell.setOnMouseClicked(e->sellClicked());
-        buy.setOnMouseClicked(e->buyClicked());
+        sell.setOnMouseClicked(e -> sellClicked());
+        buy.setOnMouseClicked(e -> buyClicked());
+        Button tradeMenu = new Button("trade menu");
+        pane.getChildren().add(tradeMenu);
+        tradeMenu.setLayoutX(620);
+        tradeMenu.setLayoutY(612.5);
+        tradeMenu.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                try {
+                    new Trade().start(DataBank.getStage());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
+
     private void sellClicked() {
-        Alert alert=new Alert(Alert.AlertType.ERROR);
-        if (selectedItem==null) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        if (selectedItem == null) {
             alert.setContentText("you did not choose an item");
             alert.showAndWait();
-        }
-        else {
-            String name=getSelectedItemName();
-            if (ShopMenuController.sell(name,DataBank.getCurrentGovernment())){
-                alert=new Alert(Alert.AlertType.CONFIRMATION); alert.setContentText("successful"); alert.showAndWait();
-            }
-            else {
+        } else {
+            String name = getSelectedItemName();
+            if (ShopMenuController.sell(name, DataBank.getCurrentGovernment())) {
+                alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setContentText("successful");
+                alert.showAndWait();
+            } else {
                 alert.setContentText("dont have enough items");
                 alert.showAndWait();
             }
@@ -425,28 +611,28 @@ public class GameMap extends Application {
     }
 
     private String getSelectedItemName() {
-        if (selectedItem.getFood()!=null) return selectedItem.getFood().getName();
-        else if(selectedItem.getWeapon()!=null) return selectedItem.getWeapon().getName();
+        if (selectedItem.getFood() != null) return selectedItem.getFood().getName();
+        else if (selectedItem.getWeapon() != null) return selectedItem.getWeapon().getName();
         else return selectedItem.getResource().getName();
     }
 
     private void backToBuildingMenuFromShop() {
-        pane.getChildren().removeAll(shopBox,sell,buy,sellPrice,buyPrice);
+        pane.getChildren().removeAll(shopBox, sell, buy, sellPrice, buyPrice);
         createBuildingMenuBar();
     }
 
-    private void buyClicked(){
-        Alert alert=new Alert(Alert.AlertType.ERROR);
-        if (selectedItem==null) {
+    private void buyClicked() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        if (selectedItem == null) {
             alert.setContentText("you did not choose an item");
             alert.showAndWait();
-        }
-        else {
-            String name=getSelectedItemName();
-            if (ShopMenuController.buy(name,DataBank.getCurrentGovernment())){
-                alert=new Alert(Alert.AlertType.CONFIRMATION); alert.setContentText("successful"); alert.showAndWait();
-            }
-            else {
+        } else {
+            String name = getSelectedItemName();
+            if (ShopMenuController.buy(name, DataBank.getCurrentGovernment())) {
+                alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setContentText("successful");
+                alert.showAndWait();
+            } else {
                 alert.setContentText("dont have enough golds");
                 alert.showAndWait();
             }
@@ -455,39 +641,40 @@ public class GameMap extends Application {
 
     private void updateShopImages(int start) {
         shopBox.getChildren().clear();
-        if (start<=0) {
-            shopStartRow=shopStartRow+shopImages.size();
-            start=start+shopImages.size();
+        if (start <= 0) {
+            shopStartRow = shopStartRow + shopImages.size();
+            start = start + shopImages.size();
         }
-        for (int i=start;i<start+6;i++){
-            ShopImages shopImages1=shopImages.get(i%(shopImages.size()));
-            shopBox.getChildren().add(shopImages.get(i%(shopImages.size())));
-            shopImages.get(i%shopImages.size()).setOnMouseClicked(new EventHandler<MouseEvent>() {
+        for (int i = start; i < start + 6; i++) {
+            ShopImages shopImages1 = shopImages.get(i % (shopImages.size()));
+            shopBox.getChildren().add(shopImages.get(i % (shopImages.size())));
+            shopImages.get(i % shopImages.size()).setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent mouseEvent) {
-                    if (shopImages1.getFood()!=null) {
-                        sellPrice.setText(shopImages1.getFood().getSellPrice()+"");
-                        buyPrice.setText(shopImages1.getFood().getPrice()+"");
+                    if (shopImages1.getFood() != null) {
+                        sellPrice.setText(shopImages1.getFood().getSellPrice() + "");
+                        buyPrice.setText(shopImages1.getFood().getPrice() + "");
+                    } else if (shopImages1.getWeapon() != null) {
+                        sellPrice.setText(shopImages1.getWeapon().getSellPrice() + "");
+                        buyPrice.setText(shopImages1.getWeapon().getPrice() + "");
+                    } else {
+                        sellPrice.setText(shopImages1.getResource().getSellPrice() + "");
+                        buyPrice.setText(shopImages1.getResource().getPrice() + "");
                     }
-                    else if (shopImages1.getWeapon()!=null) {
-                        sellPrice.setText(shopImages1.getWeapon().getSellPrice()+"");
-                        buyPrice.setText(shopImages1.getWeapon().getPrice()+"");
-                    }
-                    else {
-                        sellPrice.setText(shopImages1.getResource().getSellPrice()+"");
-                        buyPrice.setText(shopImages1.getResource().getPrice()+"");
-                    }
-                    selectedItem=shopImages1;
+                    selectedItem = shopImages1;
                 }
             });
         }
     }
 
     private void createShopImages() {
-        Shop shop=Shop.getShop();
-        for(Food food:shop.getFoods()) shopImages.add(new ShopImages(getClass().getResource("/IMAGE/Shop/"+food.getName()+".png").toExternalForm(),food,null,null));
-        for(Resource food:shop.getResources()) shopImages.add(new ShopImages(getClass().getResource("/IMAGE/Shop/"+food.getName()+".png").toExternalForm(),null,null,food));
-        for(Weapon weapon:shop.getWeapons()) shopImages.add(new ShopImages(getClass().getResource("/IMAGE/Shop/"+weapon.getName()+".png").toExternalForm(),null,weapon,null));
+        Shop shop = Shop.getShop();
+        for (Food food : shop.getFoods())
+            shopImages.add(new ShopImages(getClass().getResource("/IMAGE/Shop/" + food.getName() + ".png").toExternalForm(), food, null, null));
+        for (Resource food : shop.getResources())
+            shopImages.add(new ShopImages(getClass().getResource("/IMAGE/Shop/" + food.getName() + ".png").toExternalForm(), null, null, food));
+        for (Weapon weapon : shop.getWeapons())
+            shopImages.add(new ShopImages(getClass().getResource("/IMAGE/Shop/" + weapon.getName() + ".png").toExternalForm(), null, weapon, null));
     }
 
     private void goToUnitMenu() {
@@ -551,67 +738,170 @@ public class GameMap extends Application {
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-                } else if (keyName.equals("Z")) zoomIn();
-                else if (keyName.equals("X")) zoomOut();
+                } else if (keyName.equals("Z")) {
+                    try {
+                        zoomIn();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                else if (keyName.equals("X")) {
+                    try {
+                        zoomOut();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 else if (keyName.equals("B"))
                     setSick(!sick);
-                else if (keyName.equals("M"))
-                {
-                    if(selectX != -1 && selectY != -1) {
-                        Dialog<Pair<String,String>> dialog = new Dialog<>();
-                        dialog.setTitle("select x,y");
-                        dialog.setHeaderText("Enter your destination X and Y");
-                        ButtonType changeButtonType = new ButtonType("MOVE", ButtonBar.ButtonData.OK_DONE);
-                        dialog.getDialogPane().getButtonTypes().addAll(changeButtonType, ButtonType.CANCEL);
-                        TextField textFieldX=new TextField();
-                        TextField textFieldY=new TextField();
-                        textFieldX.setPromptText("X");
-                        textFieldY.setPromptText("Y");
-                        // Enable/disable the Change button depending on the input fields
-                        dialog.getDialogPane().lookupButton(changeButtonType).setDisable(true);
-
-                        textFieldX.textProperty().addListener((observable, oldValue, newValue) -> {
-                            dialog.getDialogPane().lookupButton(changeButtonType).setDisable(newValue.trim().isEmpty());
-                        });
-                        textFieldY.textProperty().addListener((observable, oldValue, newValue) -> {
-                            dialog.getDialogPane().lookupButton(changeButtonType).setDisable(newValue.trim().isEmpty());
-                        });
-                        GridPane gridPane = new GridPane();
-                        gridPane.setPadding(new Insets(10));
-                        gridPane.setHgap(10);
-                        gridPane.setVgap(10);
-                        gridPane.addRow(0, new Label("X :"), textFieldX);
-                        gridPane.addRow(1, new Label("Y :"), textFieldY);
-                        dialog.getDialogPane().setPrefWidth(600);
-                        dialog.getDialogPane().setPrefHeight(400);
-                        dialog.getDialogPane().setContent(gridPane);
-                        Platform.runLater(textFieldX::requestFocus);
-
-                        // Convert the result to a username-password pair when the Change button is clicked
-                        dialog.setResultConverter(dialogButton -> {
-                            if (dialogButton == changeButtonType) {
-                                return new Pair<>(textFieldX.getText(), textFieldY.getText());
-                            }
-                            return null;
-                        });
-                        dialog.showAndWait().ifPresent(result -> {
-                            x1 = Integer.parseInt(textFieldX.getText());
-                            y1 = Integer.parseInt(textFieldY.getText());
-                        });
-                        System.out.println(selectUnit(selectX, selectY).moveUnit(x1,y1,Map.MAP_NUMBER_ONE,
-                                Map.MAP_NUMBER_ONE.getACell(selectX,selectY).getQueues(),images,startRow,startCol));
-                        selectX = -1;
-                        selectY = -1;
+                else if (keyName.equals("M")) {
+                    if (selectX != -1 && selectY != -1) {
+                        moveUnit();
                     }
-                    else {
-                        System.out.println("no unit was selected");
+                } else if(keyName.equals("E")) {
+                    if (selectX != -1 && selectY != -1) {
+                        try {
+                            airAttack();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                } else if (keyName.equals("R")) {
+                    if(selectX != -1 && selectY != -1) {
+                        attack();
                     }
                 }
             }
         });
     }
 
-    private void zoomOut() {
+    private void moveUnit() {
+        showDialog("MOVE");
+        HBox queues = new HBox();
+        VBox leftQueue = new VBox();
+        VBox rightQueue = new VBox();
+        prepareTempHBox(queues, rightQueue, leftQueue);
+        pane.getChildren().remove(Map.MAP_NUMBER_ONE.getACell(selectX, selectY).getQueues());// this statement is not necessary
+        Map.MAP_NUMBER_ONE.getACell(selectX, selectY).getQueues().getChildren().clear();
+        pane.getChildren().add(queues);
+        String text = selectUnit(selectX, selectY).moveUnit(x1, y1, Map.MAP_NUMBER_ONE,
+                queues, images, startRow, startCol);
+        if(!text.contains("success")) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Move Unit Error");
+            alert.setContentText(text);
+            alert.showAndWait();
+        }
+        selectX = -1;
+        selectY = -1;
+    }
+
+    private void airAttack() throws InterruptedException {
+        showDialog("AIR ATTACK");
+        String text = selectUnit(selectX, selectY).skyAttack(x1,y1);
+        setAttackBanner();
+        if(!text.contains("success")) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Air Attack Error");
+            alert.setContentText(text);
+            alert.showAndWait();
+        }
+        if(Map.MAP_NUMBER_ONE.getACell(x1,y1).getBuilding() != null) {
+            if (Map.MAP_NUMBER_ONE.getACell(x1,y1).getBuilding().isFiery()) {
+                BuildingImage fire = new BuildingImage(getBuildingImageAddress("fire"));
+                Map.MAP_NUMBER_ONE.getACell(x1,y1).setBuildingImage(fire);
+                update();
+            }
+        }
+        selectX = -1;
+        selectY = -1;
+    }
+
+    private void attack() {
+        showDialog("ATTACK");
+        String text = selectUnit(selectX, selectY).attack(x1,y1);
+        setAttackBanner();
+        if(!text.contains("success")) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Attack Error");
+            alert.setContentText(text);
+            alert.showAndWait();
+        }
+        HBox queues = new HBox();
+        VBox leftQueue = new VBox();
+        VBox rightQueue = new VBox();
+        prepareTempHBox(queues, rightQueue, leftQueue);
+        pane.getChildren().remove(Map.MAP_NUMBER_ONE.getACell(selectX, selectY).getQueues());// this statement is not necessary
+        Map.MAP_NUMBER_ONE.getACell(selectX, selectY).getQueues().getChildren().clear();
+        pane.getChildren().add(queues);
+        new MoveAnimation(queues,images[x1 - startRow][y1 -startCol]).play();
+        Map.MAP_NUMBER_ONE.getACell(x1,y1).setQueues(queues);
+        selectX = -1;
+        selectY = -1;
+    }
+
+    private void showDialog(String type) {
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("select x,y");
+        dialog.setHeaderText("Enter your destination X and Y");
+        ButtonType changeButtonType = new ButtonType(type, ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(changeButtonType, ButtonType.CANCEL);
+        TextField textFieldX = new TextField();
+        TextField textFieldY = new TextField();
+        textFieldX.setPromptText("X");
+        textFieldY.setPromptText("Y");
+        dialog.getDialogPane().lookupButton(changeButtonType).setDisable(true);
+
+        textFieldX.textProperty().addListener((observable, oldValue, newValue) -> {
+            dialog.getDialogPane().lookupButton(changeButtonType).setDisable(newValue.trim().isEmpty());
+        });
+        textFieldY.textProperty().addListener((observable, oldValue, newValue) -> {
+            dialog.getDialogPane().lookupButton(changeButtonType).setDisable(newValue.trim().isEmpty());
+        });
+        GridPane gridPane = new GridPane();
+        gridPane.setPadding(new Insets(10));
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.addRow(0, new Label("X :"), textFieldX);
+        gridPane.addRow(1, new Label("Y :"), textFieldY);
+        dialog.getDialogPane().setPrefWidth(600);
+        dialog.getDialogPane().setPrefHeight(400);
+        dialog.getDialogPane().setContent(gridPane);
+        Platform.runLater(textFieldX::requestFocus);
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == changeButtonType) {
+                return new Pair<>(textFieldX.getText(), textFieldY.getText());
+            }
+            return null;
+        });
+        dialog.showAndWait().ifPresent(result -> {
+            x1 = Integer.parseInt(textFieldX.getText());
+            y1 = Integer.parseInt(textFieldY.getText());
+        });
+    }
+
+    private void prepareTempHBox(HBox queues, VBox rightQueue, VBox leftQueue) {
+        queues.setSpacing(-15);
+        queues.setAlignment(Pos.CENTER);
+        rightQueue.setAlignment(Pos.CENTER);
+        rightQueue.setSpacing(-60);
+        leftQueue.setAlignment(Pos.CENTER);
+        leftQueue.setSpacing(-60);
+        queues.getChildren().addAll(leftQueue, rightQueue);
+        VBox rightTemp = (VBox) Map.MAP_NUMBER_ONE.getACell(selectX, selectY).getQueues().getChildren().get(1);
+        VBox leftTemp = (VBox) Map.MAP_NUMBER_ONE.getACell(selectX, selectY).getQueues().getChildren().get(0);
+        ArrayList<Node> leftNodes = new ArrayList<>(leftTemp.getChildren());
+        ArrayList<Node> rightNodes = new ArrayList<>(rightTemp.getChildren());
+        rightQueue.getChildren().addAll(rightNodes);
+        leftQueue.getChildren().addAll(leftNodes);
+        queues.setLayoutX(Map.MAP_NUMBER_ONE.getACell(selectX, selectY).getQueues().getLayoutX());
+        queues.setLayoutY(Map.MAP_NUMBER_ONE.getACell(selectX, selectY).getQueues().getLayoutY());
+    }
+
+    private void zoomOut() throws InterruptedException {
         size++;
         zoomLevel--;
         imageWidth = stageWidth / size;
@@ -621,7 +911,7 @@ public class GameMap extends Application {
         initialize();
     }
 
-    private void zoomIn() {
+    private void zoomIn() throws InterruptedException {
         size--;
         zoomLevel++;
         imageWidth = stageWidth / size;
@@ -639,7 +929,8 @@ public class GameMap extends Application {
             }
         }
         for (int j = 0; j < size; j++) {
-            images[j][0] = new ImageView(new Image(Map.MAP_NUMBER_ONE.getACell(startRow + j, startCol).getTexture().getImageAddress()));
+            images[j][0] = new ImageView(new Image(Map.MAP_NUMBER_ONE.getACell(startRow + j,
+                    startCol).getTexture().getImageAddress()));
         }
         update();
 
@@ -653,7 +944,8 @@ public class GameMap extends Application {
             }
         }
         for (int j = 0; j < size; j++) {
-            images[j][size - 1] = new ImageView(new Image(Map.MAP_NUMBER_ONE.getACell(startRow + j, startCol + size - 1).getTexture().getImageAddress()));
+            images[j][size - 1] = new ImageView(new Image(Map.MAP_NUMBER_ONE.getACell(startRow + j,
+                    startCol + size - 1).getTexture().getImageAddress()));
         }
         update();
     }
@@ -666,7 +958,8 @@ public class GameMap extends Application {
             }
         }
         for (int j = 0; j < size; j++) {
-            images[0][j] = new ImageView(new Image(Map.MAP_NUMBER_ONE.getACell(startRow, j + startCol).getTexture().getImageAddress()));
+            images[0][j] = new ImageView(new Image(Map.MAP_NUMBER_ONE.getACell(startRow,
+                    j + startCol).getTexture().getImageAddress()));
         }
         update();
     }
@@ -679,14 +972,10 @@ public class GameMap extends Application {
             }
         }
         for (int j = 0; j < size; j++) {
-            images[size - 1][j] = new ImageView(new Image(Map.MAP_NUMBER_ONE.getACell(size - 1 + startRow, j + startCol).getTexture().getImageAddress()));
+            images[size - 1][j] = new ImageView(new Image(Map.MAP_NUMBER_ONE.getACell(size - 1 + startRow,
+                    j + startCol).getTexture().getImageAddress()));
         }
         update();
-    }
-
-
-    private void changeMenu(HBox hBox) {
-        hBox.getChildren().clear();
     }
 
     private Pair<Integer, Integer> getBuildingDestination(BuildingImage buildingImage, String buildingName) {
@@ -721,7 +1010,7 @@ public class GameMap extends Application {
         buildingImage.setY(buildingImage.getY() + deltaY);
         BuildingMenuController buildingMenuController = new BuildingMenuController(Map.MAP_NUMBER_ONE, DataBank.getCurrentGovernment());
         String text = buildingMenuController.dropBuilding(finalI + startRow, finalJ + startCol, buildingName);
-        if(!text.equals("success")){
+        if (!text.equals("success")) {
             pane.getChildren().remove(buildingImage);
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
@@ -756,7 +1045,7 @@ public class GameMap extends Application {
         gold.setY(462.5);
         popularity.setX(855);
         popularity.setY(437.5);
-        popularity.setFont(new Font("Callibri",20));
+        popularity.setFont(new Font("Callibri", 20));
         gold.setFill(Color.GREEN);
         popularity.setFill(Color.GREEN);
         hBox = new HBox(); //hBox for buildings
@@ -772,10 +1061,11 @@ public class GameMap extends Application {
         front.setY(688.5);
         back.setY(688.5);
         back.setX(265.5);
-        pane.getChildren().addAll(menu, front, back,minimap);
+        pane.getChildren().addAll(menu, front, back, minimap);
         setBuildingImages(hBox);
         pane.getChildren().add(hBox);
-       // pane.getChildren().addAll(popularity,gold); todo : please fix this bug mini
+        createNextTurnButton();
+        // pane.getChildren().addAll(popularity,gold); todo : please fix this bug mini
     }
 
     private void showFoodRate() {
@@ -838,62 +1128,61 @@ public class GameMap extends Application {
         VBox vBox2 = new VBox();
         vBox1.setSpacing(10);
         vBox1.setAlignment(Pos.CENTER);
-        HBox hBox1 = getFactorHbox(4 * DataBank.getCurrentGovernment().getFoodRate(),"Food");
+        HBox hBox1 = getFactorHbox(4 * DataBank.getCurrentGovernment().getFoodRate(), "Food");
         int taxRate;
         if (DataBank.getCurrentGovernment().getTaxRate() <= 0)
             taxRate = (-2) * DataBank.getCurrentGovernment().getTaxRate() + 1;
         else
             taxRate = (-2) * DataBank.getCurrentGovernment().getTaxRate();
-        HBox hBox2 = getFactorHbox(taxRate,"Tax");
+        HBox hBox2 = getFactorHbox(taxRate, "Tax");
         int populationRate = DataBank.getCurrentGovernment().getPopulation() -
-                DataBank.getCurrentGovernment().getMaxPopulation()*DataBank.getCurrentGovernment().getPopularity()/100;
-        HBox hBox3 = getFactorHbox(populationRate,"Crowding");
-        HBox hBox4 = getFactorHbox(DataBank.getCurrentGovernment().getFearRate(),"Fear Factor");
+                DataBank.getCurrentGovernment().getMaxPopulation() * DataBank.getCurrentGovernment().getPopularity() / 100;
+        HBox hBox3 = getFactorHbox(populationRate, "Crowding");
+        HBox hBox4 = getFactorHbox(DataBank.getCurrentGovernment().getFearRate(), "Fear Factor");
         int religionRate = 0;
-        if(DataBank.getCurrentGovernment().getBuildingByName("Church") != null)
+        if (DataBank.getCurrentGovernment().getBuildingByName("Church") != null)
             religionRate = 1;
-        HBox hBox5 = getFactorHbox(religionRate,"Religion");
+        HBox hBox5 = getFactorHbox(religionRate, "Religion");
         int Ale = 0; //todo correct this for inn
-        HBox hBox6 = getFactorHbox(Ale,"Ale coverage");
+        HBox hBox6 = getFactorHbox(Ale, "Ale coverage");
 
         int sum = 4 * DataBank.getCurrentGovernment().getFoodRate() + taxRate + populationRate +
                 DataBank.getCurrentGovernment().getFearRate() + religionRate + Ale;
-        Text text1 = new Text();
-        HBox hBox7 = getFactorHbox(sum,"Sum");
-        vBox.getChildren().addAll(hBox1,hBox2,hBox3);
-        vBox1.getChildren().addAll(hBox4,hBox5,hBox6);
-        vBox2.getChildren().addAll(text,hBox7);
+        HBox hBox7 = getFactorHbox(sum, "Sum");
+        vBox.getChildren().addAll(hBox1, hBox2, hBox3);
+        vBox1.getChildren().addAll(hBox4, hBox5, hBox6);
+        vBox2.getChildren().addAll(text, hBox7);
         popularityHBox.setAlignment(Pos.CENTER);
         popularityHBox.setSpacing(10);
         popularityHBox.setLayoutX(300);
         popularityHBox.setLayoutY(620);
-        popularityHBox.getChildren().addAll(vBox2,vBox,vBox1);
+        popularityHBox.getChildren().addAll(vBox2, vBox, vBox1);
     }
 
-    public HBox getFactorHbox(int rate,String factor) {
+    public HBox getFactorHbox(int rate, String factor) {
         Text Factor = new Text(factor);
         String rateString = rate + "";
         Text Rate = new Text();
-        if(rate > 0) {
+        if (rate > 0) {
             rateString = "+" + rate;
             Rate.setFill(Color.GREEN);
-       } else if(rate < 0)
+        } else if (rate < 0)
             Rate.setFill(Color.RED);
         else
             Rate.setFill(Color.YELLOW);
         Rate.setText(rateString);
         Rate.setStyle("-fx-font-weight: bold");
         HBox hBox = new HBox();
-        hBox.getChildren().addAll(Rate,getFaceMask(rate),Factor);
+        hBox.getChildren().addAll(Rate, getFaceMask(rate), Factor);
         hBox.setSpacing(10);
         hBox.setAlignment(Pos.CENTER_LEFT);
         return hBox;
     }
 
     private ImageView getFaceMask(int rate) {
-        if(rate > 0) {
+        if (rate > 0) {
             return new ImageView(new Image(Objects.requireNonNull(getClass().getResource("/IMAGE/face1.png")).toExternalForm()));
-        } else if(rate == 0) {
+        } else if (rate == 0) {
             return new ImageView(new Image(Objects.requireNonNull(getClass().getResource("/IMAGE/face2.png")).toExternalForm()));
         } else {
             return new ImageView(new Image(Objects.requireNonNull(getClass().getResource("/IMAGE/face3.png")).toExternalForm()));
@@ -953,6 +1242,7 @@ public class GameMap extends Application {
     private String getUnitImageAddress(String name) {
         return Objects.requireNonNull(getClass().getResource("/IMAGE/Units/" + name + ".png")).toExternalForm();
     }
+
     private void moveMenuToRight(HBox hBox) {
         if (pane.getChildren().contains(hBox)) {
             if (startIndexForBuilding != 20) {
@@ -970,12 +1260,12 @@ public class GameMap extends Application {
             pane.getChildren().remove(foodRateVBox);
             pane.getChildren().add(fearRateVBox);
             showFearRate();
-        } else if(pane.getChildren().contains(fearRateVBox)) {
+        } else if (pane.getChildren().contains(fearRateVBox)) {
             clearEverything();
             pane.getChildren().remove(fearRateVBox);
             pane.getChildren().add(popularityHBox);
             showPopularityFactors();
-        } else if (pane.getChildren().contains(sell)){
+        } else if (pane.getChildren().contains(sell)) {
             updateShopImages(++shopStartRow);
         }
     }
@@ -999,17 +1289,17 @@ public class GameMap extends Application {
             pane.getChildren().remove(foodRateVBox);
             pane.getChildren().add(taxRateVBox);
             showTaxRate();
-        } else if(pane.getChildren().contains(fearRateVBox)) {
+        } else if (pane.getChildren().contains(fearRateVBox)) {
             clearEverything();
             pane.getChildren().remove(fearRateVBox);
             pane.getChildren().add(foodRateVBox);
             showFoodRate();
-        } else if(pane.getChildren().contains(popularityHBox)) {
+        } else if (pane.getChildren().contains(popularityHBox)) {
             clearEverything();
             pane.getChildren().remove(popularityHBox);
             pane.getChildren().add(fearRateVBox);
             showFearRate();
-        } else if (pane.getChildren().contains(sell)){
+        } else if (pane.getChildren().contains(sell)) {
             updateShopImages(--shopStartRow);
         }
     }
@@ -1025,27 +1315,26 @@ public class GameMap extends Application {
             unitsHbox.getChildren().add(unitImage);
         }
     }
-    public UnitMenuController selectUnit(int x,int y){
+
+    public UnitMenuController selectUnit(int x, int y) {
         UnitMenuController unitMenuController;
         for (Person person : Map.MAP_NUMBER_ONE.getACell(x, y).getPeople()) {
-            if(person.getGovernment().equals(DataBank.getCurrentGovernment()) && person instanceof Troop)
+            if (person.getGovernment().equals(DataBank.getCurrentGovernment()) && person instanceof Troop)
                 selectedTroop.add(person);
         }
-        unitMenuController=new UnitMenuController(selectedTroop,x,y,DataBank.getCurrentGovernment());
+        unitMenuController = new UnitMenuController(selectedTroop, x, y, DataBank.getCurrentGovernment());
         unitMenuController.setMap(Map.MAP_NUMBER_ONE);
         return unitMenuController;
     }
 
-    public void setSick(boolean sick)
-    {
+    public void setSick(boolean sick) {
         this.sick = sick;
-        if(sick)
-        {
-            DataBank.getCurrentGovernment().setPopularity( DataBank.getCurrentGovernment().getPopularity()-10);
+        if (sick) {
+            DataBank.getCurrentGovernment().setPopularity(DataBank.getCurrentGovernment().getPopularity() - 10);
             popularity.setText(DataBank.getCurrentGovernment().getPopularity() + "");
-            for (int i = 0; i < 7; i+=2) {
-                for (int j = (i/2)%2; j < 10; j+=2) {
-                    FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1),images[j][i]);
+            for (int i = 0; i < 7; i += 2) {
+                for (int j = (i / 2) % 2; j < 10; j += 2) {
+                    FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), images[j][i]);
                     fadeTransition.setFromValue(1);
                     fadeTransition.setToValue(0.5);
                     fadeTransition.setAutoReverse(true);
@@ -1054,10 +1343,9 @@ public class GameMap extends Application {
                     transitions.add(fadeTransition);
                 }
             }
-        }
-        else {
-            for (int i = 0; i < 7; i+=2) {
-                for (int j = (i/2)%2; j < 10; j+=2) {
+        } else {
+            for (int i = 0; i < 7; i += 2) {
+                for (int j = (i / 2) % 2; j < 10; j += 2) {
                     images[j][i].setOpacity(1);
                 }
             }
@@ -1065,5 +1353,30 @@ public class GameMap extends Application {
                 transition.stop();
             }
         }
+    }
+
+    private Government winner() {
+        for (Government government : gameMenuController.getGovernments()) {
+            if (government.isAlive()) return government;
+        }
+        return null;
+    }
+
+    public void setAttackBanner()
+    {
+        ImageView attackBanner = new ImageView(new Image(getClass().getResource("/IMAGE/Buildings/Other Buildings/attack.png").toExternalForm()));
+        attackBanner.setX(0);
+        attackBanner.setY(0);
+        attackBanner.setFitHeight(100);
+        attackBanner.setFitWidth(100);
+        pane.getChildren().add(attackBanner);
+        Timeline attackLogo = new Timeline(new KeyFrame(Duration.millis(3000), new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                pane.getChildren().remove(attackBanner);
+            }
+        }));
+        attackLogo.play();
+        attackLogo.setCycleCount(1);
     }
 }

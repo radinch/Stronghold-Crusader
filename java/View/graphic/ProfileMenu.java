@@ -2,10 +2,9 @@ package View.graphic;
 
 import Controller.DataBank;
 import Model.signup_login_profile.Avatar;
-import Model.signup_login_profile.User;
+import org.example.User;
 import javafx.application.Application;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -22,9 +21,7 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import Controller.SignUpController;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import java.util.Objects;
@@ -75,7 +72,7 @@ public class ProfileMenu extends Application {
         scene.getStylesheets().add(String.valueOf(ProfileMenu.class.getResource("/CSS/style1.css")));
         stage.setScene(scene);
         stage.setWidth(1200);
-        stage.setHeight(700);
+        stage.setHeight(725);
         javafx.scene.image.ImageView background = new ImageView(new Image(
                 Objects.requireNonNull(ProfileMenu.class.getResource("/IMAGE/02.jpg")).toString(), 1200, 700, false, false));
         pane.getChildren().addAll(background, changeAvatar);

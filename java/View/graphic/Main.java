@@ -1,22 +1,14 @@
 package View.graphic;
 
 import Controller.DataBank;
-import Controller.ProfileMenuController;
 import Controller.SignUpController;
-import Model.signup_login_profile.User;
-import View.menus.LoginMenu;
-import View.menus.SignUpMenu;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Application;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -32,7 +24,6 @@ public class Main extends Application {
         Scanner scanner = new Scanner(System.in);
         File loggedInUser = new File("loggedInUser.json");
         launch(args);
-        // TODO: 4/12/2023 1.unit 2.final check 3.package 4.errors method
     }
 
     @Override

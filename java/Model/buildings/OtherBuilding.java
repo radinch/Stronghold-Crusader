@@ -50,7 +50,6 @@ public class OtherBuilding extends Building {
     }
 
     private void extract() {
-        //todo get tree for woodcutter
         switch (getName()) {
             case "Iron mine" ->
                     this.getGovernment().getStockpile().setMetal(this.getGovernment().getStockpile().getMetal() + getStockpileRate(getRate()));
@@ -96,7 +95,6 @@ public class OtherBuilding extends Building {
     }
 
     private void processFood() {
-        //todo maximum food and resource
         switch (getName()) {
             case "Mill" -> {
                 if (this.getGovernment().getStockpile().getWheat() - getRate() >= 0) {

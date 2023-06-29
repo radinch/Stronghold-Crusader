@@ -4,10 +4,11 @@ import Controller.SignUpController;
 import Controller.SignUpController;
 import Model.Regex.SignUpRegexes;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class SignUpMenu {
-    public void run(Scanner scanner) {
+    public void run(Scanner scanner) throws IOException {
         System.out.println("Welcome to the sign up menu");
         String input;
         SignUpController signUpController = new SignUpController();

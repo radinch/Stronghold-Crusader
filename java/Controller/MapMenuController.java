@@ -147,6 +147,7 @@ public class MapMenuController {
     public static String showDetails(Map currentMap, int x,int y) {
         Cell cell = currentMap.getACell(x, y);
         StringBuilder result = new StringBuilder();
+        result.append("x: ").append(x).append(" y: ").append(y).append("\n");
         result.append("texture: ").append(cell.getTexture().getName());
         if(cell.getTexture().getName().equals("rock"))
             result.append(" direction: ").append(cell.getTexture().getDirection());
@@ -164,13 +165,13 @@ public class MapMenuController {
             result.append(" length: ").append(cell.getWall().getLength()).append("\n");
             result.append("accessibility: ").append(cell.getWall().isAccessible()).append("\n");
         }
-        if (cell.getBuilding() != null) { //todo check government for killing pit
+        if (cell.getBuilding() != null) {
             result.append("building: ").append(cell.getBuilding().getName());
             if (cell.getBuilding().getHitpoint() > 0)
                 result.append(" hp: ").append(cell.getBuilding().getHitpoint());
             else
                 result.append(" destroyed");
-            result.append(" color: ").append(cell.getBuilding().getGovernment().getColor()).append("\n");
+            result.append(" ruler: ").append(cell.getBuilding().getGovernment().getRuler().getNickname()).append("\n");
         }
         if (cell.getPeople().size() != 0) {
             result.append("people:\n");

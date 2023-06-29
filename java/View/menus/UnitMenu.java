@@ -52,8 +52,8 @@ public class UnitMenu {
             else if(input.equals("stop patrol")) unitMenuController.stopPatrol();
             else if(matcher3.matches()) System.out.println(unitMenuController.buildSurroundings(matcher3));
             else if(matcher4.matches()) System.out.println(unitMenuController.pourOil(matcher4));
-            else if(matcher5.matches()) System.out.println(unitMenuController.attack(matcher5));
-            else if (matcher6.matches()) System.out.println(unitMenuController.skyAttack(matcher6));
+          //  else if(matcher5.matches()) System.out.println(unitMenuController.attack(matcher5));
+          //  else if (matcher6.matches()) System.out.println(unitMenuController.skyAttack(matcher6));
             else if(UnitMenuRegexes.EQUIP_WITT_OIL.getMatcher(input).matches()) System.out.println(unitMenuController.equipWithOil());
             else if(input.equals("disband unit")) System.out.println(unitMenuController.disbandUnit());
             else if(matcher7.matches()) System.out.println(unitMenuController.digDitch(matcher7));

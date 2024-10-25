@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.Text?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="View.graphic.Main"
+            stylesheets="@../CSS/style1.css"
+            styleClass="BackGround"
+            prefHeight="525.0" prefWidth="675.0">
+    <center>
+        <VBox alignment="CENTER" spacing="35">
+            <Label text="Welcome" styleClass="main-label"/>
+            <Button text="Sign Up" onMouseClicked="#signup" styleClass="submit-button"/>
+            <Button text="Login" onMouseClicked="#login" styleClass="submit-button"/>
+            <Button text="Exit" onMouseClicked="#exit" styleClass="submit-button"/>
+            <Label/>
+            <Label/>
+        </VBox>
+    </center>
+</BorderPane>

@@ -1,11 +1,2 @@
-# پروژه‌ی برنامه‌سازی پیشرفته
-لطفا نام و نام‌خانوادگی و شماره‌ی دانشجووی اعضای گروه خود را این‌جا وارد کنید:
-
-شماره‌ی تیم: 28
-
-نام عضو اول: رادین چراغی شماره دانشجویی عضو اول: 401105815
-
-نام عضو دوم: امیرمحمد محفوظی شماره دانشجویی عضو دوم:401106469
-
-نام عضو سوم: سپهر ذوالفقاری شماره دانشجویی عضو سوم:401105923 
-
+# Stronghold Crusader
+This project is a JavaFX-based recreation of Stronghold Crusader, built to capture the essence of the original game with core gameplay elements like resource management, base-building, and AI opponents. Designed in Java, this version offers a familiar experience through a modern JavaFX UI. To run, simply clone the repository, build, and launch the game. Enjoy strategizing and building your medieval empire!
